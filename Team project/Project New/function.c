@@ -1,6 +1,13 @@
 #include "cprocessing.h"
 #include "game.h"
 
+#define PLAYER_SIZE    100.0f
+#define MOVE_SPEED     300.0f
+#define JUMP_SPEED     650.0f
+#define GRAVITY        1500.0f
+#define MAX_FALL_SPEED 900.0f
+
+static int onGround = 0;
 static CP_Vector position = { 100, 200 };
 static CP_Vector velocity = { 0, 0 };
 
@@ -36,39 +43,52 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	}
 }
 
-
 void Character_MovementDefault(void)
 {
-	float currentElapsedTime = CP_System_GetDt();
-	/*updating total elapsed time*/
-	static float totalElapsedTime = 0;
-	totalElapsedTime += currentElapsedTime;
+	float dt = CP_System_GetDt();
+	float groundY = (float)CP_System_GetWindowHeight();
+	float screenW = (float)CP_System_GetWindowWidth();
 
-	if (CP_Input_KeyDown(KEY_W)) {
-		velocity.y = -200.0f;
-		velocity.x = 0.0f;
+	/* --- Horizontal: works on the ground AND in mid-air --- */
+	velocity.x = 0.0f;
+	if (CP_Input_KeyDown(KEY_A)) velocity.x -= MOVE_SPEED;
+	if (CP_Input_KeyDown(KEY_D)) velocity.x += MOVE_SPEED;
+
+	/* --- Jump: only when standing on something --- */
+	if (CP_Input_KeyTriggered(KEY_W) && onGround) {
+		velocity.y = -JUMP_SPEED;
+		onGround = 0;
 	}
-	else if (CP_Input_KeyDown(KEY_S)) {
-		velocity.y = 200.0f;
-		velocity.x = 0.0f;
+
+	/* --- Gravity: always applied, S makes you fall faster --- */
+	velocity.y += GRAVITY * dt;
+	if (CP_Input_KeyDown(KEY_S) && !onGround) {
+		velocity.y += GRAVITY * dt;
 	}
-	else if (CP_Input_KeyDown(KEY_A)) {
-		velocity.x = -200.0f;
+	if (velocity.y > MAX_FALL_SPEED) velocity.y = MAX_FALL_SPEED;
+
+	/* --- Move --- */
+	position = CP_Vector_Add(position, CP_Vector_Scale(velocity, dt));
+
+	/* --- Ground check: snap to ground and stop falling --- */
+	if (position.y + PLAYER_SIZE >= groundY) {
+		position.y = groundY - PLAYER_SIZE;
 		velocity.y = 0.0f;
+		onGround = 1;
 	}
-	else if (CP_Input_KeyDown(KEY_D)) {
-		velocity.x = 200.0f;
-		velocity.y = 0.0f;
+	else {
+		onGround = 0;
 	}
-	else
-	{
-		velocity.x = 0.0f;
-		velocity.y = 0.0f;
-	}
-	position = CP_Vector_Add(position, CP_Vector_Scale(velocity, currentElapsedTime));
+
+	/* --- Keep player inside the screen horizontally --- */
+	if (position.x < 0.0f) position.x = 0.0f;
+	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
+
+	/* --- Draw --- */
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
-	CP_Image_Draw(background, 0, 0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
-	CP_Image_Draw(Zilong, position.v[0], position.v[1], 100, 100, 255);
+	CP_Settings_ImageMode(CP_POSITION_CORNER);
+	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
+	CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 }
 
 void Character_MovementCarry(void)
