@@ -14,6 +14,7 @@ int onGround;
 CP_Vector position;
 CP_Vector velocity;
 
+// For Resume Game Btn
 void Game_Init(void)
 {
 	g1 = CP_Image_Load("Assets/Grab1.png");
@@ -27,7 +28,6 @@ void Game_Init(void)
 
 }
 
-//
 void Game_Reset(void)
 {
 	Game_Init();
@@ -46,10 +46,16 @@ void Game_Update(void)
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 			status = 0;
 		}
+		// if player wins, go to win screen
+			// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+			// status = 0;
+			
+		// if player loses, go to Lose screen
+			// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+			// status = 0;
+
 		return 0;
 	}
-	
-
 }
 
 void Game_Exit(void)

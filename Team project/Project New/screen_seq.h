@@ -12,5 +12,5 @@ void dynamicBtn(const char* text, float rect_y, void *init(void), void *update(v
 void Exit_dynamicBtn(const char* text, float rect_y);
 
 // Elements for the menu buttons
-void drawRect(float y, float w, float h, const char* text, float scalar);
+void drawBtn(float y, float w, float h, const char* text, float scalar);
 void drawTextCenter(const char* text, float x, float y, float scalar);
