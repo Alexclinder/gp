@@ -55,7 +55,7 @@ void Character_MovementDefault(void)
 	if (CP_Input_KeyDown(KEY_D)) velocity.x += MOVE_SPEED;
 
 	/* --- Jump: only when standing on something --- */
-	if (CP_Input_KeyTriggered(KEY_W) && onGround) {
+	if ((CP_Input_KeyTriggered(KEY_W)) && onGround) {
 		velocity.y = -JUMP_SPEED;
 		onGround = 0;
 	}
