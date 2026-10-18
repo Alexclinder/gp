@@ -1,6 +1,6 @@
 #include "cprocessing.h"
-#include "mainmenu.h"
-#include "function.h"
+#include "screen_seq.h"
+#include "game_mechanics.h"
 
 CP_Image jump;
 CP_Image g1;
@@ -9,6 +9,10 @@ CP_Image c;
 CP_Image Zilong;
 CP_Image background;
 int status;
+
+int onGround;
+CP_Vector position;
+CP_Vector velocity;
 
 void Game_Init(void)
 {
@@ -20,13 +24,28 @@ void Game_Init(void)
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	status = 1;
 	CP_System_SetFrameRate(120.0f);
-	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
+
 }
+
+//
+void Game_Reset(void)
+{
+	Game_Init();
+	position = (CP_Vector){ 100,200 };
+	velocity = (CP_Vector){ 0,0 };
+	onGround = 0;
+}
+
 
 void Game_Update(void)
 {
+	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
 	while (status == 1) {
 		Character_MovementDefault();
+		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
+			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
+			status = 0;
+		}
 		return 0;
 	}
 	

@@ -7,9 +7,10 @@
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
 
-static int onGround = 0;
-static CP_Vector position = { 100, 200 };
-static CP_Vector velocity = { 0, 0 };
+int onGround = 0;
+CP_Vector position = { 100, 200 };
+CP_Vector velocity = { 0, 0 };
+
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
 {

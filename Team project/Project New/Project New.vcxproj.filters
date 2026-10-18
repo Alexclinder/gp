@@ -18,24 +18,24 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="function.c">
+    <ClCompile Include="game_mechanics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mainmenu.c">
+    <ClCompile Include="screen_seq.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="function.h">
+    <ClInclude Include="game_mechanics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="game.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="mainmenu.h">
+    <ClInclude Include="screen_seq.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
