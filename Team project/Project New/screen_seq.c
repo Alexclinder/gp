@@ -69,7 +69,7 @@ void Pause_Menu_Update(void)
 void Win_Screen(void) {
 
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
-
+    CP_Settings_RectMode(CP_POSITION_CENTER);
     // Next Level
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Restart
