@@ -55,7 +55,7 @@ void Pause_Menu_Update(void)
     // Resume
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Restart
-    second_y = CP_System_GetWindowHeight() / 2.0;
+    second_y = CP_System_GetWindowHeight() / 2.0; 
 	// Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     
