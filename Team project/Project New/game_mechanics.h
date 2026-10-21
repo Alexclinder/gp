@@ -7,3 +7,7 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 void Character_MovementDefault(void);
 
 void Character_MovementCarry(void);
+
+void DrawPlatform(float x, float y, float w, float h, float degrees, float cornerRadius);
+
+int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h);
