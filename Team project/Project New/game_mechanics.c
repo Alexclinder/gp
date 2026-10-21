@@ -8,8 +8,8 @@
 #define MAX_FALL_SPEED 900.0f
 
 int onGround = 0;
-CP_Vector position = { 100, 200 };
-CP_Vector velocity = { 0, 0 };
+CP_Vector position;
+CP_Vector velocity;
 
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
@@ -44,7 +44,7 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	}
 }
 
-void Character_MovementDefault(void)
+float Character_MovementDefault_x(void)
 {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
@@ -90,7 +90,60 @@ void Character_MovementDefault(void)
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
 	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
 	CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+
+	return position.x;
 }
+
+float Character_MovementDefault_y(void)
+{
+	float dt = CP_System_GetDt();
+	float groundY = (float)CP_System_GetWindowHeight();
+	float screenW = (float)CP_System_GetWindowWidth();
+
+	/* --- Horizontal: works on the ground AND in mid-air --- */
+	velocity.x = 0.0f;
+	if (CP_Input_KeyDown(KEY_A)) velocity.x -= MOVE_SPEED;
+	if (CP_Input_KeyDown(KEY_D)) velocity.x += MOVE_SPEED;
+
+	/* --- Jump: only when standing on something --- */
+	if ((CP_Input_KeyTriggered(KEY_W)) && onGround) {
+		velocity.y = -JUMP_SPEED;
+		onGround = 0;
+	}
+
+	/* --- Gravity: always applied, S makes you fall faster --- */
+	velocity.y += GRAVITY * dt;
+	if (CP_Input_KeyDown(KEY_S) && !onGround) {
+		velocity.y += GRAVITY * dt;
+	}
+	if (velocity.y > MAX_FALL_SPEED) velocity.y = MAX_FALL_SPEED;
+
+	/* --- Move --- */
+	position = CP_Vector_Add(position, CP_Vector_Scale(velocity, dt));
+
+	/* --- Ground check: snap to ground and stop falling --- */
+	if (position.y + PLAYER_SIZE >= groundY) {
+		position.y = groundY - PLAYER_SIZE;
+		velocity.y = 0.0f;
+		onGround = 1;
+	}
+	else {
+		onGround = 0;
+	}
+
+	/* --- Keep player inside the screen horizontally --- */
+	if (position.x < 0.0f) position.x = 0.0f;
+	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
+
+	/* --- Draw --- */
+	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
+	CP_Settings_ImageMode(CP_POSITION_CORNER);
+	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
+	CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+
+	return position.y;
+}
+
 
 void Character_MovementCarry(void)
 {

@@ -14,3 +14,6 @@ void Exit_dynamicBtn(const char* text, float rect_y);
 // Elements for the menu buttons
 void drawBtn(float y, float w, float h, const char* text, float scalar);
 void drawTextCenter(const char* text, float x, float y, float scalar);
+
+//Win Screen Menu
+void Win_Screen(void);
