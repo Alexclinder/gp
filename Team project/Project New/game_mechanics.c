@@ -1,15 +1,48 @@
 #include "cprocessing.h"
 #include "game.h"
+#include "game_mechanics.h"
+
 
 #define PLAYER_SIZE    100.0f
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     650.0f
+#define WALL_CLING_TIME 2.0f
+#define CLIMB_SPEED     250.0f
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
+#define GRAB_FRAME_TIME    0.15f
+#define THROW_SPEED 400.0f
 
-int onGround = 0;
+float collision_radius = 50.0f;
+float degrees;
+float cornerRadius;
+float animationTimer = 0.0f;
+int win = 0;
+int wall_climb = 1;
+float cling_wall_x = -1.0f;
+float cling_wall_y = -1.0f;
+float wall_timer = 0.0f;
 CP_Vector position = { 100, 200 };
 CP_Vector velocity = { 0, 0 };
+
+
+/* Player states */
+typedef enum player_states
+{
+	STANDING = 1, // 1
+	JUMPING,	  // 2
+	RUNNING,      // 3
+	GRABBING_1,   // 4
+	GRABBING_2,   // 5
+	CARRY,		  // 6
+	SLIDING       // 7
+} PlayerState;
+
+/* Player variables */
+int player_action = STANDING;
+int onGround = 0;
+int toggleGrab = 0;
+
 
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
@@ -43,8 +76,8 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 		return 0;
 	}
 }
-
-void Character_MovementDefault(void)
+//add input variable for the number to input to print out the array of platforms
+void Character_MovementDefault(int level)
 {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
@@ -89,10 +122,388 @@ void Character_MovementDefault(void)
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
 	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
-	CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+
+
+	//DrawPlatform(200, 800, 300, 30, 0, 10);
+	//DrawPlatform(600, 600, 30, 200, 0, 10);
+	//DrawPlatform(950, 600, 200, 30, 0, 10);
+
+	Player_Animation_Checks(dt);
+	Player_Animation();
+	//DrawPlatform(1200, 500, 200, 30, 0, 10);
+	//WinCondition(1300, 300, 100, 100, 0, 10);
 }
 
 void Character_MovementCarry(void)
 {
 
+}
+
+int collision_check(float area_center_x, float area_center_y, float area_width, float area_height)
+{
+	float dt = CP_System_GetDt();
+
+	// Standing on the floor or a platform -> cling time refills
+	if (onGround) wall_timer = 0.0f;
+
+	float area_left = area_center_x - area_width / 2;
+	float area_right = area_center_x + area_width / 2;
+	float area_top = area_center_y - area_height / 2;
+	float area_bottom = area_center_y + area_height / 2;
+
+	// Player edges (position is the player's top-left corner)
+	float player_left = position.x;
+	float player_right = position.x + PLAYER_SIZE;
+	float player_top = position.y;
+	float player_bottom = position.y + PLAYER_SIZE;
+
+	// How far the player has gone into the platform from each side
+	float overlap_top = player_bottom - area_top;
+	float overlap_bottom = area_bottom - player_top;
+	float overlap_left = player_right - area_left;
+	float overlap_right = area_right - player_left;
+	int side;
+
+	// Not touching the platform
+	if (player_right <= area_left || player_left >= area_right || player_bottom < area_top || player_top >= area_bottom)
+	{
+		return 0;
+	}
+
+
+	// TOP: stop falling through, platform becomes the new ground
+	if (overlap_top <= overlap_bottom && overlap_top <= overlap_left && overlap_top <= overlap_right)
+	{
+		position.y = area_top - PLAYER_SIZE;
+		if (velocity.y > 0) velocity.y = 0.0f;
+		onGround = 1;
+		wall_timer = 0.0f;
+		return 1;
+	}
+	// BOTTOM: stop phasing up through the platform
+	else if (overlap_bottom <= overlap_left && overlap_bottom <= overlap_right)
+	{
+		position.y = area_bottom;
+		if (velocity.y < 0) velocity.y = 0.0f;
+		return 2;
+	}
+	// LEFT SIDE: stop moving right into the platform
+	else if (overlap_left <= overlap_right)
+	{
+		position.x = area_left - PLAYER_SIZE;
+		side = 3;
+	}
+	// RIGHT SIDE: stop moving left into the platform
+	else
+	{
+		position.x = area_right;
+		side = 4;
+	}
+
+	// --- WALL CLIMB (only reached when touching a side) ---
+	if (wall_climb == 1)
+	{
+		// Touching a new wall -> fresh 3 seconds
+		if (area_center_x != cling_wall_x || area_center_y != cling_wall_y)
+		{
+			wall_timer = 0.0f;
+			cling_wall_x = area_center_x;
+			cling_wall_y = area_center_y;
+		}
+
+		if (wall_timer < WALL_CLING_TIME)
+		{
+			wall_timer += dt;
+
+			// Undo this frame's gravity so the player sticks
+			position.y -= velocity.y * dt;
+			velocity.y = 0.0f;
+
+			// Climb up / down the wall
+			if (CP_Input_KeyDown(KEY_W)) position.y -= CLIMB_SPEED * dt;
+			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
+		}
+	}
+
+	return side;
+}
+
+int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h)
+{
+	// Find the closest point on the platform to the sphere centre
+	float closestX = cx;
+	float closestY = cy;
+
+	if (closestX < x)
+		closestX = x;
+	else if (closestX > x + w)
+		closestX = x + w;
+
+	if (closestY < y)
+		closestY = y;
+	else if (closestY > y + h)
+		closestY = y + h;
+
+	// Vector from closest point to sphere centre
+	CP_Vector offset = CP_Vector_Subtract(
+		CP_Vector_Set(cx, cy),
+		CP_Vector_Set(closestX, closestY)
+	);
+
+	// Compare squared distances
+	float distanceSquared =
+		offset.x * offset.x + offset.y * offset.y;
+
+	float radiusSquared = radius * radius;
+
+	// Touching counts as intersection
+	if (distanceSquared <= radiusSquared) {
+		return 1;
+	}
+	return 0;
+}
+
+// Placed the collision detection within draw Platform
+//void DrawPlatform(float x, float y, float w, float h,
+//	float degrees, float cornerRadius)
+//{
+//	// Draw the platform
+//	CP_Settings_RectMode(CP_POSITION_CENTER);
+//
+//	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
+//
+//	float player_center = PLAYER_SIZE / 2.0f;
+//
+//	// Update the player sprite center
+//	float cx = position.x + player_center;
+//	float cy = position.y + player_center;
+//
+//	// Checking the y of sphere
+//	float current_y = cy + collision_radius;
+//
+//	// Check whether the sphere intersects the platform
+//	int intersect = sphere_aabb_intersection(cx, cy, player_center,x, y, w, h);
+//
+//	// If player is above the platform 
+//	if (intersect && current_y >= y)
+//	{
+//		// Update position y based on rect_y coords, radius
+//		position.y = y - player_center*2;
+//		velocity.y = 0.0f;
+//		onGround = 1;
+//	}
+//}
+
+void DrawPlatform(float x, float y, float w, float h,
+	float degrees, float cornerRadius)
+{
+	CP_Settings_Fill(CP_Color_Create(100, 180, 255, 255));
+	CP_Settings_RectMode(CP_POSITION_CENTER);
+	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
+
+	collision_check(x + w / 2.0f, y + h / 2.0f, w, h);
+}
+
+// dt is declared in default player movement
+void Player_Animation_Checks(float dt) {
+
+	// SPACE : Start the grabbing animation
+	if (onGround && CP_Input_KeyTriggered(KEY_SPACE))
+	{
+		if (player_action == STANDING)
+		{
+			toggleGrab = 1;
+			player_action = GRABBING_1;
+			animationTimer = 0.0f;
+		}
+	}
+
+	// G: Start reversing the animation
+	if (onGround && CP_Input_KeyTriggered(KEY_G))
+	{
+		if (player_action == CARRY)
+		{
+			player_action = GRABBING_2;
+			toggleGrab = 0;
+			animationTimer = 0.0f;
+		}
+	}
+
+	
+	if (!onGround)
+	{
+		player_action = JUMPING;
+		animationTimer = 0.0f;
+	}
+
+	// if player touches the ground and the previous action is jumping
+	if (onGround && player_action == JUMPING) {
+		player_action = STANDING;
+	}
+
+	// Animate grabbing or dropping
+	// Both conditions is needed for player action
+	if (player_action == GRABBING_1 || player_action == GRABBING_2)
+	{
+		animationTimer += dt;
+
+		if (animationTimer >= GRAB_FRAME_TIME)
+		{
+			animationTimer = 0.0f;
+
+			if (toggleGrab == 1)
+			{
+				/* Forward: grab */
+				if (player_action == GRABBING_1)
+				{
+					player_action = GRABBING_2;
+				}
+				else if (player_action == GRABBING_2)
+				{
+					player_action = CARRY;
+				}
+			}
+			else
+			{
+				/* Reverse: drop */
+				if (player_action == GRABBING_2)
+				{
+					player_action = GRABBING_1;
+				}
+				else if (player_action == GRABBING_1)
+				{
+					player_action = STANDING;
+					animationTimer = 0.0f;
+				}
+			}
+		}
+	}
+}
+
+void Player_Animation(void)
+{
+	switch (player_action)
+	{
+	case STANDING:
+		CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case RUNNING:
+		CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case JUMPING:
+		CP_Image_Draw(jump, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case GRABBING_1:
+		CP_Image_Draw(g1, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case GRABBING_2:
+		CP_Image_Draw(g2, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case CARRY:
+		CP_Image_Draw(carry, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+	}
+}
+int WinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
+{
+	CP_Settings_RectMode(CP_POSITION_CENTER);
+	CP_Settings_Fill(CP_Color_Create(100, 200, 100, 100));
+	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
+
+	if (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h)
+	{
+		win = 1;
+		CP_Graphics_DrawRectAdvanced(200, 100, 300, 30, 0, 0);
+		Win_Screen();
+	}
+	else
+	{
+		win = 0;
+		CP_Graphics_DrawRectAdvanced(1000, 100, 300, 30, 0, 0);
+	}
+	return win;
+}
+
+
+
+/////////// ############# ENEMY NPC ############# \\\\\\\\\\\\\\
+
+void NPC_Movement(NPC* n)
+{
+	float dt = CP_System_GetDt();
+
+	n->x += n->speed * n->dir * dt;
+
+	if (n->x <= n->minX) {
+		n->x = n->minX;
+		n->dir = 1.0f;
+	}
+	else if (n->x >= n->maxX) {
+		n->x = n->maxX;
+		n->dir = -1.0f;
+	}
+
+	CP_Settings_ImageMode(CP_POSITION_CORNER);
+	CP_Image_Draw(n->image, n->x, n->y, n->w, n->h, 255);
+}
+
+int NPC_CanSeePlayer(NPC* n, Platform* plats, int count)
+{
+	float x1 = n->x + n->w / 2;
+	float y1 = n->y + n->h / 2;
+	float x2 = position.x + PLAYER_SIZE / 2;
+	float y2 = position.y + PLAYER_SIZE / 2;
+
+	int steps = 100;
+	for (int s = 0; s <= steps; s++) {
+		float t = (float)s / steps;
+		float px = x1 + (x2 - x1) * t;
+		float py = y1 + (y2 - y1) * t;
+
+		for (int i = 0; i < count; i++) {
+			if (px >= plats[i].x && px <= plats[i].x + plats[i].w &&
+				py >= plats[i].y && py <= plats[i].y + plats[i].h) {
+				return 0;   /* a platform is in the way */
+			}
+		}
+	}
+	return 1;
+}
+
+void NPC_Attack(NPC* n, int canSee)
+{
+	float dt = CP_System_GetDt();
+
+	if (canSee) n->throwTimer -= dt;
+
+	if (canSee && n->throwTimer <= 0.0f && !n->shot.active) {
+		CP_Vector from = CP_Vector_Set(n->x + n->w / 2, n->y + n->h / 2);
+		CP_Vector to = CP_Vector_Set(position.x + PLAYER_SIZE / 2, position.y + PLAYER_SIZE / 2);
+		CP_Vector dir = CP_Vector_Normalize(CP_Vector_Subtract(to, from));
+
+		n->shot.x = from.x;
+		n->shot.y = from.y;
+		n->shot.vx = dir.x * THROW_SPEED;
+		n->shot.vy = dir.y * THROW_SPEED;
+		n->shot.active = 1;
+		n->throwTimer = 2.0f;
+	}
+
+	if (n->shot.active) {
+		n->shot.x += n->shot.vx * dt;
+		n->shot.y += n->shot.vy * dt;
+
+		if (n->shot.x < 0.0f || n->shot.x >(float)CP_System_GetWindowWidth() ||
+			n->shot.y < 0.0f || n->shot.y >(float)CP_System_GetWindowHeight()) {
+			n->shot.active = 0;
+		}
+
+		CP_Settings_Fill(CP_Color_Create(255, 80, 0, 255));
+		CP_Graphics_DrawCircle(n->shot.x, n->shot.y, n->shot.size);
+	}
 }
