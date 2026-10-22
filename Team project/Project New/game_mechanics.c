@@ -1,6 +1,7 @@
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"
+#include "screen_seq.h"
 
 
 #define PLAYER_SIZE    100.0f
@@ -75,8 +76,8 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 		return 0;
 	}
 }
-//add input variable for the number to input to print out the array of platforms
-void Character_MovementDefault(int level)
+
+void Character_MovementDefault(void)
 {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
@@ -122,15 +123,9 @@ void Character_MovementDefault(int level)
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
 	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
 
-
-	DrawPlatform(200, 800, 300, 30, 0, 10);
-	DrawPlatform(600, 600, 30, 200, 0, 10);
-	DrawPlatform(950, 600, 200, 30, 0, 10);
-
 	Player_Animation_Checks(dt);
 	Player_Animation();
-	DrawPlatform(1200, 500, 200, 30, 0, 10);
-	WinCondition(1300, 300, 100, 100, 0, 10);
+
 }
 
 void Character_MovementCarry(void)
@@ -408,22 +403,7 @@ void Player_Animation(void)
 		break;
 	}
 }
-int WinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
+int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
 {
-	CP_Settings_RectMode(CP_POSITION_CENTER);
-	CP_Settings_Fill(CP_Color_Create(100, 200, 100, 100));
-	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
-
-	if (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h)
-	{
-		win = 1;
-		CP_Graphics_DrawRectAdvanced(200, 100, 300, 30, 0, 0);
-		Win_Screen();
-	}
-	else
-	{
-		win = 0;
-		CP_Graphics_DrawRectAdvanced(1000, 100, 300, 30, 0, 0);
-	}
-	return win;
+	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
 }
