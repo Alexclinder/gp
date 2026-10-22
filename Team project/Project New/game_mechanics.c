@@ -33,7 +33,8 @@ typedef enum player_states
 	RUNNING,      // 3
 	GRABBING_1,   // 4
 	GRABBING_2,   // 5
-	CARRY		  // 6
+	CARRY,		  // 6
+	SLIDING       // 7
 } PlayerState;
 
 /* Player variables */
