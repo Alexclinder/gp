@@ -2,9 +2,12 @@
 #include "game.h"
 #include "game_mechanics.h"
 
+
 #define PLAYER_SIZE    100.0f
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     650.0f
+#define WALL_CLING_TIME 2.0f
+#define CLIMB_SPEED     250.0f
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
 
@@ -13,6 +16,10 @@ float degrees;
 float cornerRadius;
 int onGround = 0;
 int win = 0;
+int wall_climb = 1;
+float cling_wall_x = -1.0f;
+float cling_wall_y = -1.0f;
+float wall_timer = 0.0f;
 CP_Vector position = { 100, 200 };
 CP_Vector velocity = { 0, 0 };
 
@@ -97,7 +104,7 @@ void Character_MovementDefault(int level)
 
 
 	DrawPlatform(200, 800, 300, 30, 0, 10);
-	DrawPlatform(600, 700, 250, 30, 0, 10);
+	DrawPlatform(600, 600, 30, 200, 0, 10);
 	DrawPlatform(950, 600, 200, 30, 0, 10);
 	DrawPlatform(1200, 500, 200, 30, 0, 10);
 	WinCondition(1300, 300, 100, 100, 0, 10);
@@ -110,9 +117,11 @@ void Character_MovementCarry(void)
 
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height)
 {
-	//when checking the sides of the platform, it will stop player from moving through the platform
-	//when checking the bottom side of the platform, it will stop player from moving through the platform
-	//when checking the top side of the platform, it will stop player from falling through the platform and set new groundY
+	float dt = CP_System_GetDt();
+
+	// Standing on the floor or a platform -> cling time refills
+	if (onGround) wall_timer = 0.0f;
+
 	float area_left = area_center_x - area_width / 2;
 	float area_right = area_center_x + area_width / 2;
 	float area_top = area_center_y - area_height / 2;
@@ -124,17 +133,19 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	float player_top = position.y;
 	float player_bottom = position.y + PLAYER_SIZE;
 
+	// How far the player has gone into the platform from each side
+	float overlap_top = player_bottom - area_top;
+	float overlap_bottom = area_bottom - player_top;
+	float overlap_left = player_right - area_left;
+	float overlap_right = area_right - player_left;
+	int side;
+
 	// Not touching the platform
 	if (player_right <= area_left || player_left >= area_right || player_bottom < area_top || player_top >= area_bottom)
 	{
 		return 0;
 	}
 
-	// How far the player has gone into the platform from each side
-	float overlap_top = player_bottom - area_top;
-	float overlap_bottom = area_bottom - player_top;
-	float overlap_left = player_right - area_left;
-	float overlap_right = area_right - player_left;
 
 	// TOP: stop falling through, platform becomes the new ground
 	if (overlap_top <= overlap_bottom && overlap_top <= overlap_left && overlap_top <= overlap_right)
@@ -142,6 +153,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		position.y = area_top - PLAYER_SIZE;
 		if (velocity.y > 0) velocity.y = 0.0f;
 		onGround = 1;
+		wall_timer = 0.0f;
 		return 1;
 	}
 	// BOTTOM: stop phasing up through the platform
@@ -152,19 +164,44 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		return 2;
 	}
 	// LEFT SIDE: stop moving right into the platform
-	//add wall climb == 1 able to climb up the wall if player is touching the wall and pressing W for 2 seconds
-	//&& wall_climb == 1
 	else if (overlap_left <= overlap_right)
 	{
 		position.x = area_left - PLAYER_SIZE;
-		return 3;
+		side = 3;
 	}
 	// RIGHT SIDE: stop moving left into the platform
 	else
 	{
 		position.x = area_right;
-		return 4;
+		side = 4;
 	}
+
+	// --- WALL CLIMB (only reached when touching a side) ---
+	if (wall_climb == 1)
+	{
+		// Touching a new wall -> fresh 3 seconds
+		if (area_center_x != cling_wall_x || area_center_y != cling_wall_y)
+		{
+			wall_timer = 0.0f;
+			cling_wall_x = area_center_x;
+			cling_wall_y = area_center_y;
+		}
+
+		if (wall_timer < WALL_CLING_TIME)
+		{
+			wall_timer += dt;
+
+			// Undo this frame's gravity so the player sticks
+			position.y -= velocity.y * dt;
+			velocity.y = 0.0f;
+
+			// Climb up / down the wall
+			if (CP_Input_KeyDown(KEY_W)) position.y -= CLIMB_SPEED * dt;
+			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
+		}
+	}
+
+	return side;
 }
 
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h)
