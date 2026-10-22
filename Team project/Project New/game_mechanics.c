@@ -16,7 +16,6 @@ float collision_radius = 50.0f;
 float degrees;
 float cornerRadius;
 float animationTimer = 0.0f;
-int onGround = 0;
 int win = 0;
 int wall_climb = 1;
 float cling_wall_x = -1.0f;
