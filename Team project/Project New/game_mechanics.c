@@ -12,6 +12,7 @@ float collision_radius = 50.0f;
 float degrees;
 float cornerRadius;
 int onGround = 0;
+int win = 0;
 CP_Vector position = { 100, 200 };
 CP_Vector velocity = { 0, 0 };
 
@@ -94,12 +95,12 @@ void Character_MovementDefault(void)
 	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
 	CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 
-	CP_Settings_Fill(CP_Color_Create(100, 180, 255, 255));
 
 	DrawPlatform(200, 800, 300, 30, 0, 10);
 	DrawPlatform(600, 700, 250, 30, 0, 10);
 	DrawPlatform(950, 600, 200, 30, 0, 10);
-
+	DrawPlatform(1200, 500, 200, 30, 0, 10);
+	WinCondition(1300, 300, 100, 100, 0, 10);
 }
 
 void Character_MovementCarry(void)
@@ -151,6 +152,8 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		return 2;
 	}
 	// LEFT SIDE: stop moving right into the platform
+	//add wall climb == 1 able to climb up the wall if player is touching the wall and pressing W for 2 seconds
+	//&& wall_climb == 1
 	else if (overlap_left <= overlap_right)
 	{
 		position.x = area_left - PLAYER_SIZE;
@@ -233,8 +236,28 @@ int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y,
 void DrawPlatform(float x, float y, float w, float h,
 	float degrees, float cornerRadius)
 {
+	CP_Settings_Fill(CP_Color_Create(100, 180, 255, 255));
 	CP_Settings_RectMode(CP_POSITION_CENTER);
 	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
 
 	collision_check(x + w / 2.0f, y + h / 2.0f, w, h);
+}
+
+int WinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
+{
+	CP_Settings_RectMode(CP_POSITION_CENTER);
+	CP_Settings_Fill(CP_Color_Create(100, 200, 100, 100));
+	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
+
+	if (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h)
+	{
+		win = 1;
+		CP_Graphics_DrawRectAdvanced(200, 100, 300, 30, 0, 0);
+	}
+	else
+	{
+		win = 0;
+		CP_Graphics_DrawRectAdvanced(1000, 100, 300, 30, 0, 0);
+	}
+	return win;
 }
