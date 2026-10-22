@@ -48,7 +48,7 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	}
 }
 //add input variable for the number to input to print out the array of platforms
-void Character_MovementDefault(void)
+void Character_MovementDefault(int level)
 {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
@@ -253,6 +253,7 @@ int WinCondition(float x, float y, float w, float h, float degrees, float corner
 	{
 		win = 1;
 		CP_Graphics_DrawRectAdvanced(200, 100, 300, 30, 0, 0);
+		Win_Screen();
 	}
 	else
 	{
