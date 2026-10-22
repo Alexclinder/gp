@@ -27,7 +27,7 @@
     <ClCompile Include="screen_seq.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win_Cond.c">
+    <ClCompile Include="Levels.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,7 +41,7 @@
     <ClInclude Include="screen_seq.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Win_Cond.h">
+    <ClInclude Include="Levels.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

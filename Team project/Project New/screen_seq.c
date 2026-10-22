@@ -51,7 +51,7 @@ void Main_Menu_Update(void) {
 void Pause_Menu_Update(void)
 {
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
-
+    CP_Settings_RectMode(CP_POSITION_CENTER);
     // Resume
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Restart
@@ -86,7 +86,7 @@ void Win_Screen(void) {
 
 void Lose_Screen(void) {
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
-
+    CP_Settings_RectMode(CP_POSITION_CENTER);
 	// Restart Level
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
 	// Exit to Main Menu

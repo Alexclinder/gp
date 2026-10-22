@@ -1,7 +1,7 @@
 #include "cprocessing.h"
 #include "screen_seq.h"
 #include "game_mechanics.h"
-#include "Win_Cond.h"
+#include "Levels.h"
 
 CP_Image jump;
 CP_Image g1;
@@ -14,10 +14,11 @@ int status;
 int onGround;
 CP_Vector position;
 CP_Vector velocity;
-CP_Vector Win_con_Box;
-float Win_con_Height = 50.0f;
-float Win_con_Width = 50.0f;
 float PLAYER_SIZE = 100.0f;
+
+// Use to change the Level Number
+int level_num = 3; 
+// Use to change the Level Number
 
 
 // For Resume Game Btn
@@ -39,7 +40,6 @@ void Game_Reset(void)
 	Game_Init();
 	position = (CP_Vector){ 100,200 };
 	velocity = (CP_Vector){ 0,0 };
-	Win_con_Box = (CP_Vector){1000 , 700};
 	onGround = 0;
 }
 
@@ -48,18 +48,16 @@ void Game_Update(void)
 {
 	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
 	while (status == 1) {
-		position.x=Character_MovementDefault_x();
-		position.y=Character_MovementDefault_y();
-
-		//Draws Win Condition Box
-		CP_Settings_RectMode(CP_POSITION_CORNER);
-		CP_Graphics_DrawRect(Win_con_Box.x, Win_con_Box.y,Win_con_Width, Win_con_Height);
 
 		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 			status = 0;
 		}
-		if (Win_con(Win_con_Box.x, Win_con_Box.y, Win_con_Width, Win_con_Height,position.x,position.y, PLAYER_SIZE) == 1) {
+		position.x = Character_MovementDefault_x();
+		position.y = Character_MovementDefault_y();
+	
+		if (Level_Selection(level_num, position.x, position.y) == 1) {
+			// Note since CharacterMovement has clear background in it's function and drawing before it would not appear
 			CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 			status = 0;
 		}
