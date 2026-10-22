@@ -11,3 +11,7 @@ void Character_MovementCarry(void);
 void DrawPlatform(float x, float y, float w, float h, float degrees, float cornerRadius);
 
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h);
+
+void Player_Animation_Checks(float dt);
+
+void Player_Animation(void);

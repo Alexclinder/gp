@@ -5,7 +5,7 @@
 CP_Image jump;
 CP_Image g1;
 CP_Image g2;
-CP_Image c;
+CP_Image carry;
 CP_Image Zilong;
 CP_Image background;
 int status;
@@ -19,7 +19,7 @@ void Game_Init(void)
 {
 	g1 = CP_Image_Load("Assets/Grab1.png");
 	g2 = CP_Image_Load("Assets/Grab2.png");
-	c = CP_Image_Load("Assets/Carry.png");
+	carry = CP_Image_Load("Assets/Carry.png");
 	background = CP_Image_Load("Assets/Background.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");

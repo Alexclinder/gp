@@ -7,13 +7,33 @@
 #define JUMP_SPEED     650.0f
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
+#define GRAB_FRAME_TIME    0.15f
 
 float collision_radius = 50.0f;
 float degrees;
 float cornerRadius;
-int onGround = 0;
+float animationTimer = 0.0f;
 CP_Vector position = { 100, 200 };
 CP_Vector velocity = { 0, 0 };
+
+
+/* Player states */
+typedef enum player_states
+{
+	STANDING = 1, // 1
+	JUMPING,	  // 2
+	RUNNING,      // 3
+	GRABBING_1,   // 4
+	GRABBING_2,   // 5
+	CARRY		  // 6
+} PlayerState;
+
+/* Player variables */
+int player_action = STANDING;
+int onGround = 0;
+int toggleGrab = 0;
+
+
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
 {
@@ -92,7 +112,6 @@ void Character_MovementDefault(void)
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
 	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
-	CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 
 	CP_Settings_Fill(CP_Color_Create(100, 180, 255, 255));
 
@@ -100,6 +119,8 @@ void Character_MovementDefault(void)
 	DrawPlatform(600, 700, 250, 30, 0, 10);
 	DrawPlatform(950, 600, 200, 30, 0, 10);
 
+	Player_Animation_Checks(dt);
+	Player_Animation();
 }
 
 void Character_MovementCarry(void)
@@ -237,4 +258,110 @@ void DrawPlatform(float x, float y, float w, float h,
 	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
 
 	collision_check(x + w / 2.0f, y + h / 2.0f, w, h);
+}
+
+// dt is declared in default player movement
+void Player_Animation_Checks(float dt) {
+
+	// SPACE : Start the grabbing animation
+	if (onGround && CP_Input_KeyTriggered(KEY_SPACE))
+	{
+		if (player_action == STANDING)
+		{
+			toggleGrab = 1;
+			player_action = GRABBING_1;
+			animationTimer = 0.0f;
+		}
+	}
+
+	// G: Start reversing the animation
+	if (onGround && CP_Input_KeyTriggered(KEY_G))
+	{
+		if (player_action == CARRY)
+		{
+			player_action = GRABBING_2;
+			toggleGrab = 0;
+			animationTimer = 0.0f;
+		}
+	}
+
+	
+	if (!onGround)
+	{
+		player_action = JUMPING;
+		animationTimer = 0.0f;
+	}
+
+	// if player touches the ground and the previous action is jumping
+	if (onGround && player_action == JUMPING) {
+		player_action = STANDING;
+	}
+
+	// Animate grabbing or dropping
+	// Both conditions is needed for player action
+	if (player_action == GRABBING_1 || player_action == GRABBING_2)
+	{
+		animationTimer += dt;
+
+		if (animationTimer >= GRAB_FRAME_TIME)
+		{
+			animationTimer = 0.0f;
+
+			if (toggleGrab == 1)
+			{
+				/* Forward: grab */
+				if (player_action == GRABBING_1)
+				{
+					player_action = GRABBING_2;
+				}
+				else if (player_action == GRABBING_2)
+				{
+					player_action = CARRY;
+				}
+			}
+			else
+			{
+				/* Reverse: drop */
+				if (player_action == GRABBING_2)
+				{
+					player_action = GRABBING_1;
+				}
+				else if (player_action == GRABBING_1)
+				{
+					player_action = STANDING;
+					animationTimer = 0.0f;
+				}
+			}
+		}
+	}
+}
+
+void Player_Animation(void)
+{
+	switch (player_action)
+	{
+	case STANDING:
+		CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case RUNNING:
+		CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case JUMPING:
+		CP_Image_Draw(jump, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case GRABBING_1:
+		CP_Image_Draw(g1, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case GRABBING_2:
+		CP_Image_Draw(g2, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case CARRY:
+		CP_Image_Draw(carry, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+	}
 }
