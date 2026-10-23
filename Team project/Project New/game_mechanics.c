@@ -77,9 +77,8 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 		return 0;
 	}
 }
-
-<<<<<<< HEAD
 //add input variable for the number to input to print out the array of platforms
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 =======
 >>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
@@ -87,6 +86,9 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 >>>>>>> Stashed changes
 void Character_MovementDefault(void)
 {
+=======
+void Character_MovementDefault(void){
+>>>>>>> Stashed changes
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
@@ -94,7 +96,7 @@ void Character_MovementDefault(void)
 	if (CP_Input_KeyDown(KEY_SPACE)) {
 		carry_timer += dt;
 		if (carry_timer <= 3.0 && carry_timer <= 2.0){
-			CP_Image_Draw(c, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+			CP_Image_Draw(carry, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 		}
 		else if (carry_timer < 2.0 && carry_timer <= 1.0) {
 			CP_Image_Draw(g2, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);

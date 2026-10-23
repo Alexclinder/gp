@@ -11,15 +11,18 @@ CP_Image carry;
 CP_Image Zilong;
 CP_Image background;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+CP_Image background2;
+
+>>>>>>> Stashed changes
 CP_Image background2;
 =======
 CP_Image background2;
 
 >>>>>>> Stashed changes
 int status;
-=======
->>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
 
 int onGround;
 CP_Vector position;
@@ -50,24 +53,30 @@ void Game_Reset(void)
 
 void Game_Update(void)
 {
-<<<<<<< HEAD
+
 	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
 	while (status == 1) {
 		Character_MovementDefault();
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+
+>>>>>>> Stashed changes
 		CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
-	
+
 		Character_MovementDefault();
 		level_selection(level_selected);
-				
 
+<<<<<<< Updated upstream
 >>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
-	
+
 		}
 
 		if (CheckWinCondition(1300, 300, 100, 100, 0, 10) == 1) {
@@ -76,10 +85,11 @@ void Game_Update(void)
 		// if player wins, go to win screen
 			// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 			// status = 0;
-			
+
 		// if player loses, go to Lose screen
 			// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 			// status = 0;
+	}
 }
 
 void Game_Next_Level(void) {
