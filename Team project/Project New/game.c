@@ -10,7 +10,7 @@ CP_Image g2;
 CP_Image carry;
 CP_Image Zilong;
 CP_Image background;
-CP_Image background2;
+CP_Image backgroundtwo;
 
 int status;
 
@@ -25,7 +25,7 @@ void Game_Init(void)
 	g2 = CP_Image_Load("Assets/Grab2.png");
 	carry = CP_Image_Load("Assets/Carry.png");
 	background = CP_Image_Load("Assets/Background.png");
-	background2 = CP_Image_Load("Assets/Background2.png");
+	backgroundtwo = CP_Image_Load("Assets/Backgroundtwo.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	CP_System_SetFrameRate(120.0f);
