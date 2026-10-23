@@ -36,7 +36,7 @@ void Game_Init(void)
 
 void Game_Reset(void)
 {
-	position = (CP_Vector){ 100,200 };
+	position = (CP_Vector){ 100,100 };
 	velocity = (CP_Vector){ 0,0 };
 	onGround = 0;
 
@@ -44,21 +44,10 @@ void Game_Reset(void)
 
 
 void Game_Update(void)
-{
-		Character_MovementDefault();
-
+{		
 		level_selection(level_selected);
-		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
-			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
+		if (CP_Input_KeyTriggered(KEY_ESCAPE)) CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 
-		}
-
-		if (CheckWinCondition(1300, 300, 100, 100, 0, 10) == 1) {
-			CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
-		}
-		// if player wins, go to win screen
-			// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
-			// status = 0;
 
 		// if player loses, go to Lose screen
 			// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);

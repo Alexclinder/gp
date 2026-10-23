@@ -13,7 +13,7 @@ void DrawPlatform(float x, float y, float w, float h, float degrees, float corne
 
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h);
 
-void Player_Animation_Checks(float dt);
+void Player_Animation_Checks(void);
 
 void Player_Animation(void);
 

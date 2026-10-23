@@ -23,7 +23,7 @@ int carry_timer = 0.0f;
 float cling_wall_x = -1.0f;
 float cling_wall_y = -1.0f;
 float wall_timer = 0.0f;
-CP_Vector position = { 100, 200 };
+CP_Vector position = { 100, 100 };
 CP_Vector velocity = { 0, 0 };
 
 
@@ -130,15 +130,6 @@ void Character_MovementDefault(void){
 	/* --- Keep player inside the screen horizontally --- */
 	if (position.x < 0.0f) position.x = 0.0f;
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
-
-	/* --- Draw --- */
-	CP_Graphics_ClearBackground(CP_Color_Create(50, 0, 0, 100));
-	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(backgroundthree, 0, 0, screenW, groundY, 150);
-	
-
-	Player_Animation_Checks(dt);
-	Player_Animation();
 
 }
 
@@ -276,14 +267,15 @@ void DrawPlatform(float x, float y, float w, float h,
 {
 	CP_Settings_Fill(CP_Color_Create(100, 180, 255, 255));
 	CP_Settings_RectMode(CP_POSITION_CENTER);
-	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
+	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
 
-	collision_check(x + w / 2.0f, y + h / 2.0f, w, h);
+	collision_check(x, y, w, h);
 }
 
 // dt is declared in default player movement
-void Player_Animation_Checks(float dt) {
+void Player_Animation_Checks(void) {
 
+	float dt = CP_System_GetDt();
 	// SPACE : Start the grabbing animation
 	if (onGround && CP_Input_KeyTriggered(KEY_SPACE))
 	{
