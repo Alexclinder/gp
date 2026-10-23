@@ -10,18 +10,8 @@ CP_Image g2;
 CP_Image carry;
 CP_Image Zilong;
 CP_Image background;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-=======
 CP_Image background2;
 
->>>>>>> Stashed changes
-CP_Image background2;
-=======
-CP_Image background2;
-
->>>>>>> Stashed changes
 int status;
 
 int onGround;
@@ -54,26 +44,12 @@ void Game_Reset(void)
 void Game_Update(void)
 {
 
-	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
-	while (status == 1) {
-		Character_MovementDefault();
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
-
->>>>>>> Stashed changes
-		CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
+	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 255));
 
 		Character_MovementDefault();
+		//CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
+
 		level_selection(level_selected);
-
-<<<<<<< Updated upstream
->>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 
@@ -90,7 +66,7 @@ void Game_Update(void)
 			// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 			// status = 0;
 	}
-}
+
 
 void Game_Next_Level(void) {
 

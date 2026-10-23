@@ -78,21 +78,11 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	}
 }
 //add input variable for the number to input to print out the array of platforms
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
->>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
-=======
->>>>>>> Stashed changes
-void Character_MovementDefault(void)
-{
-=======
 void Character_MovementDefault(void){
->>>>>>> Stashed changes
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
-
+	/*
 	if (CP_Input_KeyDown(KEY_SPACE)) {
 		carry_timer += dt;
 		if (carry_timer <= 3.0 && carry_timer <= 2.0){
@@ -105,7 +95,7 @@ void Character_MovementDefault(void){
 			CP_Image_Draw(g1, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 		}
 	}
-
+	*/
 	/* --- Horizontal: works on the ground AND in mid-air --- */
 	velocity.x = 0.0f;
 	if (CP_Input_KeyDown(KEY_A)) velocity.x -= MOVE_SPEED;
@@ -144,7 +134,7 @@ void Character_MovementDefault(void){
 	/* --- Draw --- */
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
+	CP_Image_Draw(background2, 0, 0, screenW, groundY, 255);
 
 	Player_Animation_Checks(dt);
 	Player_Animation();
@@ -323,7 +313,7 @@ void Player_Animation_Checks(float dt) {
 	}
 
 	// if player touches the ground and the previous action is jumping
-	if (onGround && player_action == JUMPING) {
+	if (onGround==0 && player_action == JUMPING) {
 		player_action = STANDING;
 	}
 
