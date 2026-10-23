@@ -132,9 +132,10 @@ void Character_MovementDefault(void){
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
 
 	/* --- Draw --- */
-	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
+	CP_Graphics_ClearBackground(CP_Color_Create(50, 0, 0, 100));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(backgroundtwo, 0, 0, screenW, groundY, 255);
+	CP_Image_Draw(backgroundthree, 0, 0, screenW, groundY, 150);
+	
 
 	Player_Animation_Checks(dt);
 	Player_Animation();

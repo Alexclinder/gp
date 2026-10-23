@@ -8,6 +8,7 @@ extern CP_Image carry;
 extern CP_Image Zilong;
 extern CP_Image background;
 extern CP_Image backgroundtwo;
+extern CP_Image backgroundthree;
 
 void Game_Init(void);
 
