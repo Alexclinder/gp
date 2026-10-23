@@ -17,6 +17,7 @@ float cornerRadius;
 int onGround = 0;
 int win = 0;
 int wall_climb = 1;
+int carry_timer = 0.0f;
 float cling_wall_x = -1.0f;
 float cling_wall_y = -1.0f;
 float wall_timer = 0.0f;
@@ -54,12 +55,26 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 		return 0;
 	}
 }
+
 //add input variable for the number to input to print out the array of platforms
-void Character_MovementDefault(int level)
+void Character_MovementDefault(void)
 {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
+
+	if (CP_Input_KeyDown(KEY_SPACE)) {
+		carry_timer += dt;
+		if (carry_timer <= 3.0 && carry_timer <= 2.0){
+			CP_Image_Draw(c, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		}
+		else if (carry_timer < 2.0 && carry_timer <= 1.0) {
+			CP_Image_Draw(g2, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		}
+		else if (carry_timer < 1.0 && carry_timer <= 0.0) {
+			CP_Image_Draw(g1, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		}
+	}
 
 	/* --- Horizontal: works on the ground AND in mid-air --- */
 	velocity.x = 0.0f;
@@ -238,37 +253,6 @@ int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y,
 	}
 	return 0;
 }
-
-// Placed the collision detection within draw Platform
-//void DrawPlatform(float x, float y, float w, float h,
-//	float degrees, float cornerRadius)
-//{
-//	// Draw the platform
-//	CP_Settings_RectMode(CP_POSITION_CENTER);
-//
-//	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
-//
-//	float player_center = PLAYER_SIZE / 2.0f;
-//
-//	// Update the player sprite center
-//	float cx = position.x + player_center;
-//	float cy = position.y + player_center;
-//
-//	// Checking the y of sphere
-//	float current_y = cy + collision_radius;
-//
-//	// Check whether the sphere intersects the platform
-//	int intersect = sphere_aabb_intersection(cx, cy, player_center,x, y, w, h);
-//
-//	// If player is above the platform 
-//	if (intersect && current_y >= y)
-//	{
-//		// Update position y based on rect_y coords, radius
-//		position.y = y - player_center*2;
-//		velocity.y = 0.0f;
-//		onGround = 1;
-//	}
-//}
 
 void DrawPlatform(float x, float y, float w, float h,
 	float degrees, float cornerRadius)
