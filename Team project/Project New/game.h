@@ -7,6 +7,7 @@ extern CP_Image g2;
 extern CP_Image c;
 extern CP_Image Zilong;
 extern CP_Image background;
+extern CP_Image background2;
 
 void Game_Init(void);
 
