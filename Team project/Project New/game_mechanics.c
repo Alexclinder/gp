@@ -134,7 +134,7 @@ void Character_MovementDefault(void){
 	/* --- Draw --- */
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(background2, 0, 0, screenW, groundY, 255);
+	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
 
 	Player_Animation_Checks(dt);
 	Player_Animation();
