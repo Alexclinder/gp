@@ -27,6 +27,9 @@
     <ClCompile Include="screen_seq.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="level.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_mechanics.h">
@@ -37,6 +40,9 @@
     </ClInclude>
     <ClInclude Include="screen_seq.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

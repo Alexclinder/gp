@@ -12,6 +12,7 @@
 #include "game_mechanics.h"
 #include "game.h"
 #include "screen_seq.h"
+#include "level.h"
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
@@ -31,18 +32,26 @@ void Screen_Init(void)
     Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
     CP_Font_Set(Font);
 }
+
+void Next_level_Init(void) {
+    Game_Next_Level();
+    
+    Game_Reset();
+}
+
 /*
 CP_Graphics Clear Background needs to be at the top.
 Otherwise, it might clear buttons and text */
 void Main_Menu_Update(void) {
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
+    level_selected = 1;
 
     // Start Game
 	first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
 	// Exit to Desktop
 	second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     
-    dynamicBtn("Start Game!", first_y, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Start Game!", first_y, Game_Init, Game_Update, Game_Exit);
     Exit_dynamicBtn("Exit to Desktop", second_y);
 
     
@@ -76,8 +85,9 @@ void Win_Screen(void) {
     second_y = CP_System_GetWindowHeight() / 2.0;
     // Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-
-    dynamicBtn("Next Level", first_y, Game_Init, Game_Update, Game_Exit);
+    
+    
+    dynamicBtn("Next Level", first_y, Next_level_Init, Game_Update, Game_Exit);
     dynamicBtn("Restart Level", second_y, Game_Reset, Game_Update, Game_Exit);
     dynamicBtn("Exit to Main Menu", third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
@@ -98,6 +108,40 @@ void Lose_Screen(void) {
     
 }
 
+void Leaderboard_Screen(void) {
+    CP_Graphics_ClearBackground(CP_Color_Create(100, 140, 200, 0));
+
+    // Restart Level
+    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
+    // Exit to Main Menu
+    second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
+
+    dynamicBtn("Level Select", first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+
+}
+
+void Completed_Game_Screen(void) {
+    CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
+
+    // Next Level
+    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
+    // Restart
+    second_y = CP_System_GetWindowHeight() / 2.0;
+    // Exit to Main Menu
+    third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
+
+    dynamicBtn("Leaderboard", first_y, Screen_Init, Leaderboard_Screen, Screen_Exit);
+    dynamicBtn("Level Select", second_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+}
+
+void Level_Select_Screen(void) {
+    // Draw 4 boxes 
+
+    // Label them 
+    dynamicBtn("Exit to Main Menu", third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+}
 
 void Screen_Exit(void)
 {

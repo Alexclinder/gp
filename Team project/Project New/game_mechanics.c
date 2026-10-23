@@ -1,6 +1,7 @@
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"
+#include "screen_seq.h"
 
 
 #define PLAYER_SIZE    100.0f
@@ -10,11 +11,12 @@
 #define CLIMB_SPEED     250.0f
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
+#define GRAB_FRAME_TIME    0.15f
 
 float collision_radius = 50.0f;
 float degrees;
 float cornerRadius;
-int onGround = 0;
+float animationTimer = 0.0f;
 int win = 0;
 int wall_climb = 1;
 int carry_timer = 0.0f;
@@ -23,6 +25,26 @@ float cling_wall_y = -1.0f;
 float wall_timer = 0.0f;
 CP_Vector position = { 100, 200 };
 CP_Vector velocity = { 0, 0 };
+
+
+/* Player states */
+typedef enum player_states
+{
+	STANDING = 1, // 1
+	JUMPING,	  // 2
+	RUNNING,      // 3
+	GRABBING_1,   // 4
+	GRABBING_2,   // 5
+	CARRY,		  // 6
+	SLIDING       // 7
+} PlayerState;
+
+/* Player variables */
+int player_action = STANDING;
+int onGround = 0;
+int toggleGrab = 0;
+
+
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
 {
@@ -56,7 +78,10 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	}
 }
 
+<<<<<<< HEAD
 //add input variable for the number to input to print out the array of platforms
+=======
+>>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
 void Character_MovementDefault(void)
 {
 	float dt = CP_System_GetDt();
@@ -115,14 +140,10 @@ void Character_MovementDefault(void)
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
 	CP_Image_Draw(background, 0, 0, screenW, groundY, 255);
-	CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 
+	Player_Animation_Checks(dt);
+	Player_Animation();
 
-	DrawPlatform(200, 800, 300, 30, 0, 10);
-	DrawPlatform(600, 600, 30, 200, 0, 10);
-	DrawPlatform(950, 600, 200, 30, 0, 10);
-	DrawPlatform(1200, 500, 200, 30, 0, 10);
-	WinCondition(1300, 300, 100, 100, 0, 10);
 }
 
 void Character_MovementCarry(void)
@@ -264,22 +285,112 @@ void DrawPlatform(float x, float y, float w, float h,
 	collision_check(x + w / 2.0f, y + h / 2.0f, w, h);
 }
 
-int WinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
-{
-	CP_Settings_RectMode(CP_POSITION_CENTER);
-	CP_Settings_Fill(CP_Color_Create(100, 200, 100, 100));
-	CP_Graphics_DrawRectAdvanced(x + w / 2.0f, y + h / 2.0f, w, h, degrees, cornerRadius);
+// dt is declared in default player movement
+void Player_Animation_Checks(float dt) {
 
-	if (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h)
+	// SPACE : Start the grabbing animation
+	if (onGround && CP_Input_KeyTriggered(KEY_SPACE))
 	{
-		win = 1;
-		CP_Graphics_DrawRectAdvanced(200, 100, 300, 30, 0, 0);
-		Win_Screen();
+		if (player_action == STANDING)
+		{
+			toggleGrab = 1;
+			player_action = GRABBING_1;
+			animationTimer = 0.0f;
+		}
 	}
-	else
+
+	// G: Start reversing the animation
+	if (onGround && CP_Input_KeyTriggered(KEY_G))
 	{
-		win = 0;
-		CP_Graphics_DrawRectAdvanced(1000, 100, 300, 30, 0, 0);
+		if (player_action == CARRY)
+		{
+			player_action = GRABBING_2;
+			toggleGrab = 0;
+			animationTimer = 0.0f;
+		}
 	}
-	return win;
+
+	
+	if (!onGround)
+	{
+		player_action = JUMPING;
+		animationTimer = 0.0f;
+	}
+
+	// if player touches the ground and the previous action is jumping
+	if (onGround && player_action == JUMPING) {
+		player_action = STANDING;
+	}
+
+	// Animate grabbing or dropping
+	// Both conditions is needed for player action
+	if (player_action == GRABBING_1 || player_action == GRABBING_2)
+	{
+		animationTimer += dt;
+
+		if (animationTimer >= GRAB_FRAME_TIME)
+		{
+			animationTimer = 0.0f;
+
+			if (toggleGrab == 1)
+			{
+				/* Forward: grab */
+				if (player_action == GRABBING_1)
+				{
+					player_action = GRABBING_2;
+				}
+				else if (player_action == GRABBING_2)
+				{
+					player_action = CARRY;
+				}
+			}
+			else
+			{
+				/* Reverse: drop */
+				if (player_action == GRABBING_2)
+				{
+					player_action = GRABBING_1;
+				}
+				else if (player_action == GRABBING_1)
+				{
+					player_action = STANDING;
+					animationTimer = 0.0f;
+				}
+			}
+		}
+	}
+}
+
+void Player_Animation(void)
+{
+	switch (player_action)
+	{
+	case STANDING:
+		CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case RUNNING:
+		CP_Image_Draw(Zilong, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case JUMPING:
+		CP_Image_Draw(jump, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case GRABBING_1:
+		CP_Image_Draw(g1, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case GRABBING_2:
+		CP_Image_Draw(g2, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+
+	case CARRY:
+		CP_Image_Draw(carry, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
+		break;
+	}
+}
+int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
+{
+	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
 }
