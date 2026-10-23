@@ -80,8 +80,11 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 
 <<<<<<< HEAD
 //add input variable for the number to input to print out the array of platforms
+<<<<<<< Updated upstream
 =======
 >>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
+=======
+>>>>>>> Stashed changes
 void Character_MovementDefault(void)
 {
 	float dt = CP_System_GetDt();

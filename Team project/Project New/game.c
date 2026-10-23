@@ -10,8 +10,13 @@ CP_Image g2;
 CP_Image carry;
 CP_Image Zilong;
 CP_Image background;
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 CP_Image background2;
+=======
+CP_Image background2;
+
+>>>>>>> Stashed changes
 int status;
 =======
 >>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
@@ -49,6 +54,7 @@ void Game_Update(void)
 	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
 	while (status == 1) {
 		Character_MovementDefault();
+<<<<<<< Updated upstream
 =======
 		CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
 	
@@ -57,6 +63,8 @@ void Game_Update(void)
 				
 
 >>>>>>> d122ac9bb0eab149c3d52d4a85aceabb2c1b96e8
+=======
+>>>>>>> Stashed changes
 		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 	
