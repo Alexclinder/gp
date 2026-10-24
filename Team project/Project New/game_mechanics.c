@@ -85,17 +85,17 @@ void Character_MovementDefault(void) {
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/* --- Space: pick up animation --- */
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp) {
+	/* --- Space: pick up animation (only when grounded) --- */
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && onGround) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
 	}
 
 	if (pickingUp) {
 		carry_timer += dt;
-		if (carry_timer <= 1.0)      player_action = GRABBING_1;
-		else if (carry_timer <= 2.0) player_action = GRABBING_2;
-		else if (carry_timer <= 3.0) player_action = CARRY;
+		if (carry_timer <= 0.4)      player_action = GRABBING_1;
+		else if (carry_timer <= 0.8) player_action = GRABBING_2;
+		else if (carry_timer <= 1.2) player_action = CARRY;
 		else {
 			pickingUp = 0;
 			carry_timer = 0.0f;
@@ -104,13 +104,15 @@ void Character_MovementDefault(void) {
 		}
 	}
 
-	/* --- Horizontal: works on the ground AND in mid-air --- */
+	/* --- Horizontal: locked during the animation --- */
 	velocity.x = 0.0f;
-	if (CP_Input_KeyDown(KEY_A)) velocity.x -= MOVE_SPEED;
-	if (CP_Input_KeyDown(KEY_D)) velocity.x += MOVE_SPEED;
+	if (!pickingUp) {
+		if (CP_Input_KeyDown(KEY_A)) velocity.x -= MOVE_SPEED;
+		if (CP_Input_KeyDown(KEY_D)) velocity.x += MOVE_SPEED;
+	}
 
-	/* --- Jump: only when standing on something --- */
-	if ((CP_Input_KeyTriggered(KEY_W)) && onGround) {
+	/* --- Jump: only when standing on something, not during animation --- */
+	if (CP_Input_KeyTriggered(KEY_W) && onGround && !pickingUp) {
 		velocity.y = -JUMP_SPEED;
 		onGround = 0;
 	}
@@ -146,17 +148,17 @@ void Character_MovementCarry(void)
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/* --- G: drop animation (reverse of pick up) --- */
-	if (CP_Input_KeyTriggered(KEY_G) && !dropping) {
+	/* --- G: drop animation (only when grounded) --- */
+	if (CP_Input_KeyTriggered(KEY_G) && !dropping && onGround) {
 		dropping = 1;
 		carry_timer = 0.0f;
 	}
 
 	if (dropping) {
 		carry_timer += dt;
-		if (carry_timer <= 1.0)      player_action = CARRY;
-		else if (carry_timer <= 2.0) player_action = GRABBING_2;
-		else if (carry_timer <= 3.0) player_action = GRABBING_1;
+		if (carry_timer <= 0.4)      player_action = CARRY;
+		else if (carry_timer <= 0.8) player_action = GRABBING_2;
+		else if (carry_timer <= 1.2) player_action = GRABBING_1;
 		else {
 			dropping = 0;
 			carry_timer = 0.0f;
@@ -165,13 +167,15 @@ void Character_MovementCarry(void)
 		}
 	}
 
-	/* --- Horizontal: works on the ground AND in mid-air --- */
+	/* --- Horizontal: locked during the animation --- */
 	velocity.x = 0.0f;
-	if (CP_Input_KeyDown(KEY_A)) velocity.x -= MOVE_SPEED;
-	if (CP_Input_KeyDown(KEY_D)) velocity.x += MOVE_SPEED;
+	if (!dropping) {
+		if (CP_Input_KeyDown(KEY_A)) velocity.x -= MOVE_SPEED;
+		if (CP_Input_KeyDown(KEY_D)) velocity.x += MOVE_SPEED;
+	}
 
-	/* --- Jump: only when standing on something --- */
-	if ((CP_Input_KeyTriggered(KEY_W)) && onGround) {
+	/* --- Jump: only when standing on something, not during animation --- */
+	if (CP_Input_KeyTriggered(KEY_W) && onGround && !dropping) {
 		velocity.y = -JUMP_SPEED;
 		onGround = 0;
 	}
