@@ -19,5 +19,3 @@ void Game_Update(void);
 void Game_Exit(void);
 
 void Game_Next_Level(void);
-
-void DrawBG(CP_Image BG);

@@ -45,13 +45,22 @@ void Game_Reset(void)
 
 void Game_Update(void)
 {		
-		level_selection(level_selected);
-		if (CP_Input_KeyTriggered(KEY_ESCAPE)) CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
+	if (CP_Input_KeyTriggered(KEY_ESCAPE)) CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
+	
 
 
-		// if player loses, go to Lose screen
-			// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
-			// status = 0;
+	level_selection(level_selected);
+
+	Character_MovementDefault();
+	Player_Animation_Checks();
+	Player_Animation();
+
+	
+
+
+	// if player loses, go to Lose screen
+		// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+		// status = 0;
 }
 
 
