@@ -8,6 +8,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "cprocessing.h"
 #include "level.h"
 #include "game_mechanics.h"
+#include "PlayerMechanics.h"
 #include "game.h"
 #include "screen_seq.h"
 #include "Player's_Elements.h"

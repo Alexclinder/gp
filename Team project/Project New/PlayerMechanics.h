@@ -9,4 +9,4 @@ void Player_Animation_Checks(void);
 
 void Player_Animation(void);
 
-float Wall_Climb(float area_center_x, float area_center_y, float area_width, float area_height, int Wall_Climb_Status);
+void Wall_Climb(float area_center_x, float area_center_y, float area_width, float area_height, int Wall_Climb_Status);

@@ -1,7 +1,6 @@
 #include "cprocessing.h"
-#include "game.h"
-#include "game_mechanics.h"
 #include "lvl1.h"
+#include "PlayerMechanics.h"
 #include "Player's_Elements.h"
 
 #if 0

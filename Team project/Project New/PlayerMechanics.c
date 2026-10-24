@@ -1,8 +1,5 @@
 #include "cprocessing.h"
-#include "game.h"
 #include "game_mechanics.h"
-#include "screen_seq.h"
-#include "Physics.h"
 #include "PlayerMechanics.h"
 #include "Player's_Elements.h"
 
@@ -195,7 +192,7 @@ void Player_Animation(void)
 	}
 }
 
-float Wall_Climb(float area_center_x, float area_center_y, float area_width, float area_height, int Wall_Climb_Status) {
+void Wall_Climb(float area_center_x, float area_center_y, float area_width, float area_height, int Wall_Climb_Status) {
 	float dt = CP_System_GetDt();
 	if (onGround_status) wall_timer = 0.0f;
 	// --- WALL CLIMB (only reached when touching a side) ---

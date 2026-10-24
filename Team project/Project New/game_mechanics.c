@@ -1,8 +1,6 @@
 #include "cprocessing.h"
-#include "game.h"
-#include "game_mechanics.h"
-#include "screen_seq.h"
 #include "PlayerMechanics.h"
+#include "game_mechanics.h"
 #include "Player's_Elements.h"
 
 float collision_radius = 50.0f;
