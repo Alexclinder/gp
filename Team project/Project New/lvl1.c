@@ -3,6 +3,7 @@
 #include "game_mechanics.h"
 #include "lvl1.h"
 
+#if 0
 #define PLATFORM_COUNT 5
 
 static Platform platforms[PLATFORM_COUNT] = {
@@ -63,3 +64,4 @@ void lvl1_Exit(void) {
 void Win_Screen(void)
 {
 }
+#endif

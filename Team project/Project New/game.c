@@ -11,6 +11,7 @@ CP_Image carry;
 CP_Image Zilong;
 CP_Image background;
 CP_Image backgroundtwo;
+CP_Image backgroundthree;
 
 int status;
 
@@ -26,6 +27,7 @@ void Game_Init(void)
 	carry = CP_Image_Load("Assets/Carry.png");
 	background = CP_Image_Load("Assets/Background.png");
 	backgroundtwo = CP_Image_Load("Assets/Backgroundtwo.png");
+	backgroundthree = CP_Image_Load("Assets/Backgroundthree.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	CP_System_SetFrameRate(120.0f);
@@ -34,7 +36,7 @@ void Game_Init(void)
 
 void Game_Reset(void)
 {
-	position = (CP_Vector){ 100,200 };
+	position = (CP_Vector){ 100,100 };
 	velocity = (CP_Vector){ 0,0 };
 	onGround = 0;
 
@@ -42,30 +44,15 @@ void Game_Reset(void)
 
 
 void Game_Update(void)
-{
-
-	CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 255));
-
-		Character_MovementDefault();
-		//CP_Graphics_ClearBackground(CP_Color_Create(200, 200, 200, 0));
-
+{		
 		level_selection(level_selected);
-		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
-			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
+		if (CP_Input_KeyTriggered(KEY_ESCAPE)) CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 
-		}
-
-		if (CheckWinCondition(1300, 300, 100, 100, 0, 10) == 1) {
-			CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
-		}
-		// if player wins, go to win screen
-			// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
-			// status = 0;
 
 		// if player loses, go to Lose screen
 			// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 			// status = 0;
-	}
+}
 
 
 void Game_Next_Level(void) {
