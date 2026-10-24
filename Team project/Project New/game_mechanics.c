@@ -2,6 +2,7 @@
 #include "game.h"
 #include "game_mechanics.h"
 #include "screen_seq.h"
+#include "level.h"
 
 
 #define PLAYER_SIZE    100.0f
@@ -26,8 +27,11 @@ float wall_timer = 0.0f;
 int pickingUp = 0;
 int dropping = 0;
 int isCarrying = 0;
-CP_Vector position = { 100, 100 };
+CP_Vector position = {100,100};
 CP_Vector velocity = { 0, 0 };
+
+
+
 
 
 /* Player states */
@@ -448,4 +452,13 @@ void Player_Animation(void)
 int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
 {
 	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
+}
+
+
+// Used to determine the Character's starting position
+void Character_Starting_Pos(float arr[][2], int level_select) {
+	
+		position = (CP_Vector){ arr[level_select][0], arr[level_select][1] };
+		velocity = (CP_Vector){ 0.0f, 0.0f };
+	
 }

@@ -18,6 +18,7 @@
 float textSize= 50.0f;
 CP_Font Font;
 
+
 float first_y;
 float second_y;
 float third_y;
@@ -26,6 +27,10 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
+void Level_1_Init (void) { level_selected = 0; Character_Starting_Pos(player_spawn, level_selected); Game_Init(); }
+void Level_2_Init (void) { level_selected = 1; Character_Starting_Pos(player_spawn, level_selected); Game_Init(); }
+void Level_3_Init (void) { level_selected = 2; Character_Starting_Pos(player_spawn, level_selected); Game_Init(); }
+void Level_4_Init (void) { level_selected = 3; Character_Starting_Pos(player_spawn, level_selected); Game_Init(); }
 
 void Screen_Init(void)
 {
@@ -43,22 +48,22 @@ void Next_level_Init(void) {
 CP_Graphics Clear Background needs to be at the top.
 Otherwise, it might clear buttons and text */
 void Main_Menu_Update(void) {
+    float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
-    level_selected = 1;
+    level_selected = 0;
 
     // Start Game
 	first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
 	// Exit to Desktop
 	second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     
-    dynamicBtn("Start Game!", first_y, Game_Init, Game_Update, Game_Exit);
-    Exit_dynamicBtn("Exit to Desktop", second_y);
-
-    
+    dynamicBtn("Start Game!", rect_x, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    Exit_dynamicBtn("Exit to Desktop", rect_x, second_y);
 }
 
 void Pause_Menu_Update(void)
 {
+    float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
     // Resume
@@ -68,15 +73,15 @@ void Pause_Menu_Update(void)
 	// Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     
-    dynamicBtn("Resume Game!", first_y, Game_Init, Game_Update, Game_Exit);
-    dynamicBtn("Restart Level", second_y, Game_Reset, Game_Update, Game_Exit);
-    dynamicBtn("Exit to Main Menu", third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Resume Game!", rect_x, first_y, Game_Init, Game_Update, Game_Exit);
+    dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
 }
 
 void Win_Screen(void) {
-
+    float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
     // Next Level
@@ -87,14 +92,15 @@ void Win_Screen(void) {
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     
     
-    dynamicBtn("Next Level", first_y, Next_level_Init, Game_Update, Game_Exit);
-    dynamicBtn("Restart Level", second_y, Game_Reset, Game_Update, Game_Exit);
-    dynamicBtn("Exit to Main Menu", third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Next Level", rect_x, first_y, Next_level_Init, Game_Update, Game_Exit);
+    dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
 }
 
 void Lose_Screen(void) {
+    float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
 
 	// Restart Level
@@ -102,13 +108,14 @@ void Lose_Screen(void) {
 	// Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
 
-    dynamicBtn("Restart Level", first_y, Game_Reset, Game_Update, Game_Exit);
-    dynamicBtn("Exit to Main Menu", second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Restart Level", rect_x, first_y, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
 }
 
 void Leaderboard_Screen(void) {
+    float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 140, 200, 0));
 
     // Restart Level
@@ -116,12 +123,13 @@ void Leaderboard_Screen(void) {
     // Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
 
-    dynamicBtn("Level Select", first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
-    dynamicBtn("Exit to Main Menu", second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Level Select", rect_x, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
 }
 
 void Completed_Game_Screen(void) {
+    float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
     // Next Level
@@ -131,17 +139,54 @@ void Completed_Game_Screen(void) {
     // Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
 
-    dynamicBtn("Leaderboard", first_y, Screen_Init, Leaderboard_Screen, Screen_Exit);
-    dynamicBtn("Level Select", second_y, Screen_Init, Level_Select_Screen, Screen_Exit);
-    dynamicBtn("Exit to Main Menu", third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Leaderboard", rect_x, first_y, Screen_Init, Leaderboard_Screen, Screen_Exit);
+    dynamicBtn("Level Select", rect_x, second_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 }
 
 void Level_Select_Screen(void) {
-    // Draw 4 boxes 
+        CP_Graphics_ClearBackground(CP_Color_Create(80, 80, 80, 0));
 
-    // Label them 
-    dynamicBtn("Exit to Main Menu", third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
-}
+        float center_x = CP_System_GetWindowWidth()/2.0f;
+        float center_y = CP_System_GetWindowHeight()/2.0f;
+
+        drawTextCenter("SELECT A LEVEL", center_x, center_y - 250.0f, 1.2f);
+
+        // Level Button Positions
+        float col1_x = center_x - 250.0f;
+        float col2_x = center_x + 250.0f;
+
+        float row1_y = center_y - 80.0f;
+        float row2_y = center_y + 80.0f;
+
+
+        // Render in 2 by 2 matrix
+        /*
+        
+        btn 1 , btn 2
+        btn 3,  btn 4
+        
+        1,1 1,2
+        2,1 2,2
+        */
+
+        // Level 1
+        dynamicBtn("Level 1", col1_x, row1_y, Level_1_Init, Game_Update, Game_Exit);
+     
+        // Level 2
+        dynamicBtn("Level 2", col2_x, row1_y, Level_2_Init, Game_Update, Game_Exit);
+
+        // Level 3
+        dynamicBtn("Level 3", col1_x, row2_y, Level_3_Init, Game_Update, Game_Exit);
+
+        // Level 4
+        dynamicBtn("Level 4", col2_x, row2_y, Level_4_Init, Game_Update, Game_Exit);
+
+        third_y = center_y + 220.0f;
+        float menu_btn_x = center_x;
+
+        dynamicBtn("Back to Menu", menu_btn_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    }
 
 void Screen_Exit(void)
 {
@@ -151,12 +196,13 @@ void Screen_Exit(void)
 /*
 The functions below are the elements or functionalities of each updated screen*/
 
-void drawBtn(float y, float w, float h, const char* text, float scalar)
+void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
 {
-    float rect_x = CP_System_GetWindowWidth() / 2.0;
-    drawTextCenter(text, rect_x, y, scalar);
+    CP_Settings_RectMode(CP_POSITION_CENTER);
     CP_Settings_Fill(CP_Color_Create(255, 100, 100, 100));
-    CP_Graphics_DrawRect(rect_x, y, w, h);
+    CP_Graphics_DrawRect(x, y, w, h);
+
+    drawTextCenter(text, x, y, scalar);
 }
 
 void drawTextCenter(const char* text, float x, float y, float scalar)
@@ -171,29 +217,29 @@ void drawTextCenter(const char* text, float x, float y, float scalar)
 This function checks if the mouse is hovering over a button area
 and scales the button accordingly.
 If the button is clicked, it transitions to the game state.      */
-void dynamicBtn(const char* text, float rect_y, void* init(void), void* update(void), void* exit(void)) {
-    if (IsAreaClicked(CP_System_GetWindowWidth() / 2.0, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
+void dynamicBtn(const char* text, float rect_x, float rect_y, void* init(void), void* update(void), void* exit(void)) {
+    if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
-        drawBtn(rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
             CP_Engine_SetNextGameStateForced(init, update, exit);
     }
     else {
         scalar = 1.0f;
-        drawBtn(rect_y, rect_width, rect_height, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar);
     }
 }
 
 // Exclusively for exit to desktop button
-void Exit_dynamicBtn(const char* text, float rect_y) {
-    if (IsAreaClicked(CP_System_GetWindowWidth() / 2.0, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
+void Exit_dynamicBtn(const char* text, float rect_x, float rect_y) {
+    if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
-        drawBtn(rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
             CP_Engine_Terminate();
     }
     else {
         scalar = 1.0f;
-        drawBtn(rect_y, rect_width, rect_height, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar);
     }
 }

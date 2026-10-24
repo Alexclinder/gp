@@ -11,6 +11,8 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "game.h"
 #include "screen_seq.h"
 
+#define LEVELS 4
+#define PLAYER_SPAWN_POS 2
 #define PARAMETERS 6
 #define NO_ROTATION 0
 #define CORNER_RADIUS 0
@@ -26,14 +28,24 @@ typedef struct {
 } win_condition ;
 
 typedef enum{
-	level_1 = 1,
-	level_2,
-	level_3,
-	level_4
+	level_1,	// 0 
+	level_2,	// 1
+	level_3,	// 2
+	level_4		// 3
 } levels;
 
 
 int level_selected = level_1;
+
+
+// Player Spawn Coords for all levels
+float player_spawn[LEVELS][PLAYER_SPAWN_POS] = {
+					{ 800.0f, 100.0f },
+					{ 100.0f, 100.0f },
+					{ 200.0f, 100.0f },
+					{ 400.0f, 100.0f }
+					};
+
 
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
@@ -50,6 +62,7 @@ float first_level[5][PARAMETERS] = {
 // Parameters is for drawing and checking win_con in level 2
 win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER_RADIUS };
 
+
 // LEVEL 2: Entering the building
 float second_level[5][PARAMETERS] = {
 	{ 0.0f, 250.0f, 630.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
@@ -61,6 +74,7 @@ float second_level[5][PARAMETERS] = {
 
 // Parameters is for drawing and checking win_con in level 3
 win_condition level3_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
+
 
 // LEVEL 3: Final Level
 float third_level[6][PARAMETERS] = {
@@ -74,6 +88,7 @@ float third_level[6][PARAMETERS] = {
 
 // Parameters is for drawing and checking win_con in level 4
 win_condition level4_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
+
 
 // LEVEL 4: Infinite level??? lol
 float fourth_level[6][PARAMETERS] = {
@@ -91,11 +106,13 @@ void level_1st(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
+
 	//Player_Animation_Checks();
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 5; i++) {
 		DrawPlatform(first_level[i][0], 
 					 first_level[i][1], 
 					 first_level[i][2], 
@@ -114,6 +131,7 @@ void level_2nd(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
 	//Player_Animation_Checks();
 	Player_Animation();
 
@@ -138,6 +156,7 @@ void level_3rd(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
 	//Player_Animation_Checks();
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
@@ -162,7 +181,7 @@ void level_4th(void) {
 
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 6; i++) {
 		DrawPlatform(fourth_level[i][0],
 			fourth_level[i][1],
 			fourth_level[i][2],
@@ -180,13 +199,17 @@ void level_4th(void) {
 
 void level_selection(int level_no) {
 	switch (level_no) {
-		case level_1: level_1st();
+		case level_1: 
+			level_1st();
 			break;
-		case level_2: level_2nd();
+		case level_2: 
+			level_2nd();
 			break;
-		case level_3: level_3rd();
+		case level_3: 
+			level_3rd();
 			break;
-		case level_4: level_4th();
+		case level_4: 
+			level_4th();
 			break;
 	}
 }
@@ -201,5 +224,5 @@ void DrawBG(CP_Image BG) {
 	/* --- Draw --- */
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 100, 0, 100));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(BG, 0, 0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
+	CP_Image_Draw(BG, 0.0f, 0.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
 }

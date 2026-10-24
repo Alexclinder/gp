@@ -65,3 +65,19 @@ void Win_Screen(void)
 {
 }
 #endif
+
+/*
+* 
+* Use this to call your enemies in levels 
+float player_spawn[LEVELS][PLAYER_SPAWN_POS] = {
+					{ 800.0f, 100.0f },
+					{ 100.0f, 100.0f },
+					{ 200.0f, 100.0f },
+					{ 400.0f, 100.0f }
+};
+
+
+Character_Starting_Pos(player_spawn, level_selected);
+To spawn your enemies
+*/
+

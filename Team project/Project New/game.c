@@ -13,11 +13,6 @@ CP_Image background;
 CP_Image backgroundtwo;
 CP_Image backgroundthree;
 
-int status;
-
-int onGround;
-CP_Vector position;
-CP_Vector velocity;
 
 // For Resume Game Btn
 void Game_Init(void)
@@ -31,13 +26,17 @@ void Game_Init(void)
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	CP_System_SetFrameRate(120.0f);
+	onGround = 0;
+
+	Character_Starting_Pos(player_spawn, level_selected);
+
+	
 
 }
 
 void Game_Reset(void)
 {
-	position = (CP_Vector){ 100,100 };
-	velocity = (CP_Vector){ 0,0 };
+	Character_Starting_Pos(player_spawn, level_selected);
 	onGround = 0;
 
 }
@@ -46,6 +45,7 @@ void Game_Reset(void)
 void Game_Update(void)
 {		
 		level_selection(level_selected);
+		
 		if (CP_Input_KeyTriggered(KEY_ESCAPE)) CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 
 
@@ -57,12 +57,12 @@ void Game_Update(void)
 
 void Game_Next_Level(void) {
 
-	if (level_selected >= 4) {
+	if (level_selected > 3) {
 		CP_Engine_SetNextGameStateForced(Screen_Init, Completed_Game_Screen, Screen_Exit);
-		return;
 	}
 	else {
 		level_selected++;
+		Game_Reset();
 	}
 }
 
