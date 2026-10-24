@@ -2,6 +2,7 @@
 #include "game.h"
 #include "game_mechanics.h"
 #include "lvl1.h"
+#include "Player's_Elements.h"
 
 #if 0
 #define PLATFORM_COUNT 5
@@ -22,7 +23,7 @@ void lvl1_Init(void) {
 	carry = CP_Image_Load("Assets/Carry.png");
 	background = CP_Image_Load("Assets/lvl1Back.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
-	Zilong = CP_Image_Load("Assets/Main_Character.png");
+	Zilong = CP_Image_Load("Assets/Main_Character.png")
 
 	//ENEMY NPC
 	npc1 = CP_Image_Load("Assets/NPC1.png");

@@ -10,6 +10,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "game_mechanics.h"
 #include "game.h"
 #include "screen_seq.h"
+#include "Player's_Elements.h"
 
 #define PARAMETERS 6
 #define NO_ROTATION 0

@@ -3,15 +3,7 @@
 #include "game_mechanics.h"
 #include "level.h"
 #include "game.h"
-
-CP_Image jump;
-CP_Image g1;
-CP_Image g2;
-CP_Image carry;
-CP_Image Zilong;
-CP_Image background;
-CP_Image backgroundtwo;
-CP_Image backgroundthree;
+#include "Player's_Elements.h"
 
 int status;
 
@@ -31,17 +23,19 @@ void Game_Init(void)
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	CP_System_SetFrameRate(120.0f);
-
-}
-
-void Game_Reset(void)
-{
-	position = (CP_Vector){ 100,100 };
+	position = (CP_Vector){ 200,100 };
 	velocity = (CP_Vector){ 0,0 };
 	onGround = 0;
 
 }
 
+void Game_Reset(void)
+{
+	position = (CP_Vector){ 200,100 };
+	velocity = (CP_Vector){ 0,0 };
+	onGround = 0;
+
+}
 
 void Game_Update(void)
 {		
