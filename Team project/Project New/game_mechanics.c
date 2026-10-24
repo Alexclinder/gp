@@ -19,7 +19,7 @@ float cornerRadius;
 float animationTimer = 0.0f;
 int win = 0;
 int wall_climb = 1;
-int carry_timer = 0.0f;
+float carry_timer = 0.0f;
 float cling_wall_x = -1.0f;
 float cling_wall_y = -1.0f;
 float wall_timer = 0.0f;
@@ -80,12 +80,12 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 		return 0;
 	}
 }
-//add input variable for the number to input to print out the array of platforms
 void Character_MovementDefault(void) {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
+	/* --- Space: pick up animation --- */
 	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
@@ -93,19 +93,14 @@ void Character_MovementDefault(void) {
 
 	if (pickingUp) {
 		carry_timer += dt;
-		if (carry_timer <= 3.0 && carry_timer > 2.0) {
-			CP_Image_Draw(carry, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
-		}
-		else if (carry_timer <= 2.0 && carry_timer > 1.0) {
-			CP_Image_Draw(g2, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
-		}
-		else if (carry_timer <= 1.0 && carry_timer > 0.0) {
-			CP_Image_Draw(g1, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
-		}
-		else if (carry_timer > 3.0) {
+		if (carry_timer <= 1.0)      player_action = GRABBING_1;
+		else if (carry_timer <= 2.0) player_action = GRABBING_2;
+		else if (carry_timer <= 3.0) player_action = CARRY;
+		else {
 			pickingUp = 0;
 			carry_timer = 0.0f;
 			isCarrying = 1;          /* switch to carry movement */
+			player_action = CARRY;
 		}
 	}
 
@@ -143,7 +138,6 @@ void Character_MovementDefault(void) {
 	/* --- Keep player inside the screen horizontally --- */
 	if (position.x < 0.0f) position.x = 0.0f;
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
-
 }
 
 void Character_MovementCarry(void)
@@ -152,6 +146,7 @@ void Character_MovementCarry(void)
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
+	/* --- G: drop animation (reverse of pick up) --- */
 	if (CP_Input_KeyTriggered(KEY_G) && !dropping) {
 		dropping = 1;
 		carry_timer = 0.0f;
@@ -159,24 +154,15 @@ void Character_MovementCarry(void)
 
 	if (dropping) {
 		carry_timer += dt;
-		if (carry_timer <= 3.0 && carry_timer > 2.0) {
-			CP_Image_Draw(g1, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
-		}
-		else if (carry_timer <= 2.0 && carry_timer > 1.0) {
-			CP_Image_Draw(g2, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
-		}
-		else if (carry_timer <= 1.0 && carry_timer > 0.0) {
-			CP_Image_Draw(carry, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
-		}
-		else if (carry_timer > 3.0) {
+		if (carry_timer <= 1.0)      player_action = CARRY;
+		else if (carry_timer <= 2.0) player_action = GRABBING_2;
+		else if (carry_timer <= 3.0) player_action = GRABBING_1;
+		else {
 			dropping = 0;
 			carry_timer = 0.0f;
 			isCarrying = 0;          /* back to default movement */
+			player_action = STANDING;
 		}
-	}
-	else {
-		/* holding: keep showing the carry sprite */
-		CP_Image_Draw(carry, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 	}
 
 	/* --- Horizontal: works on the ground AND in mid-air --- */

@@ -89,8 +89,9 @@ float fourth_level[6][PARAMETERS] = {
 void level_1st(void) {
 	DrawBG(background);
 
-	Character_MovementDefault();
-	Player_Animation_Checks();
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+	//Player_Animation_Checks();
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
@@ -111,8 +112,9 @@ void level_1st(void) {
 void level_2nd(void) {
 	DrawBG(backgroundtwo);
 
-	Character_MovementDefault();
-	Player_Animation_Checks();
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+	//Player_Animation_Checks();
 	Player_Animation();
 
 	// iterates thru the 4 rows and 6 col
@@ -134,8 +136,9 @@ void level_2nd(void) {
 void level_3rd(void) {
 	DrawBG(backgroundthree);
 
-	Character_MovementDefault();
-	Player_Animation_Checks();
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+	//Player_Animation_Checks();
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
