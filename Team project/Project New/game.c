@@ -16,6 +16,9 @@ CP_Image platform;
 CP_Image objImg[OBJ_TYPE_COUNT];
 CP_Image objBG[OBJ_TYPE_COUNT];
 
+//NPC
+CP_Image npc1;
+
 // For Resume Game Btn
 void Game_Init(void)
 {
@@ -27,6 +30,7 @@ void Game_Init(void)
 	backgroundthree = CP_Image_Load("Assets/Backgroundthree.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
+	npc1 = CP_Image_Load("Assets/NPC1.png"); // Load npc 1
 	platform = CP_Image_Load("Assets/Platform.png");
 	objImg[OBJ_DESK] = CP_Image_Load("Assets/desk.png");
 	objBG[OBJ_DESK] = CP_Image_Load("Assets/desk_background.png");

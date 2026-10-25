@@ -10,6 +10,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "game_mechanics.h"
 #include "game.h"
 #include "screen_seq.h"
+#include "npc_mechanics.h"
 
 #define LEVELS 4
 #define PLAYER_SPAWN_POS 2
@@ -135,6 +136,21 @@ void level_1st(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles();
+	NPC_DrawProjectiles();
+	//Check For Collision then end game if hit
+	if (NPC_CheckPlayerCollision())
+	{
+		CP_Engine_SetNextGameState(Screen_Init,Lose_Screen,Screen_Exit);
+		return;
+	}
+
+	
+
+
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
@@ -152,6 +168,8 @@ void level_1st(void) {
 
 	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) 
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+
+	
 }
 
 void level_2nd(void) {
@@ -159,6 +177,19 @@ void level_2nd(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles();
+	NPC_DrawProjectiles();
+	//Check For Collision then end game if hit
+	if (NPC_CheckPlayerCollision())
+	{
+		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+		return;
+	}
+
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
@@ -184,6 +215,19 @@ void level_3rd(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles();
+	NPC_DrawProjectiles();
+	//Check For Collision then end game if hit
+	if (NPC_CheckPlayerCollision())
+	{
+		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+		return;
+	}
+
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
@@ -206,8 +250,22 @@ void level_3rd(void) {
 
 void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
+
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles();
+	NPC_DrawProjectiles();
+	//Check For Collision then end game if hit
+	if (NPC_CheckPlayerCollision())
+	{
+		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+		return;
+	}
+
 	Objects_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
