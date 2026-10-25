@@ -1,7 +1,10 @@
 #pragma once
+
+#define PLAYER_SIZE 100.f
 extern int isCarrying;
 extern int pickingUp;
 extern int dropping;
+extern float carry_timer;
 extern int onGround;
 extern int player_action;
 extern CP_Vector position;

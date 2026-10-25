@@ -12,7 +12,9 @@ CP_Image Zilong;
 CP_Image background;
 CP_Image backgroundtwo;
 CP_Image backgroundthree;
-
+CP_Image platform;
+CP_Image objImg[OBJ_TYPE_COUNT];
+CP_Image objBG[OBJ_TYPE_COUNT];
 
 // For Resume Game Btn
 void Game_Init(void)
@@ -25,6 +27,13 @@ void Game_Init(void)
 	backgroundthree = CP_Image_Load("Assets/Backgroundthree.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
+	platform = CP_Image_Load("Assets/Platform.png");
+	objImg[OBJ_DESK] = CP_Image_Load("Assets/desk.png");
+	objBG[OBJ_DESK] = CP_Image_Load("Assets/desk_background.png");
+	objImg[OBJ_PRINTER] = CP_Image_Load("Assets/printer.png");
+	objBG[OBJ_PRINTER] = CP_Image_Load("Assets/printer_background.png");
+	Objects_Reset();
+
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 
@@ -38,7 +47,7 @@ void Game_Reset(void)
 {
 	Character_Starting_Pos(player_spawn, level_selected);
 	onGround = 0;
-
+	Objects_Reset();
 }
 
 
@@ -63,10 +72,14 @@ void Game_Next_Level(void) {
 	else {
 		level_selected++;
 		Game_Reset();
+		Objects_Reset();
 	}
 }
 
 void Game_Exit(void)
 {
-
+	for (int i = 0; i < OBJ_TYPE_COUNT; i++) {
+		CP_Image_Free(&objImg[i]);
+		CP_Image_Free(&objBG[i]);
+	}
 }

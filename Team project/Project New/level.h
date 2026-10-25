@@ -5,7 +5,21 @@ extern level_selected;
 // 'player_spawn': 'float [4][2]' differs in levels of indirection from 'int'
 // This error occurs becoz i excluded [4][2] from player_spawn
 extern player_spawn[4][2];
+extern const float first_level_objects[2][5];
+extern float first_level_objects_ingame[2][5];
 
+extern const float second_level_objects[1][5];
+extern float second_level_objects_ingame[1][5];
+
+extern float (*current_objects)[5];
+extern int current_obj_count;
+extern int heldObject;
+
+void Objects_Reset(void);
+
+int Object_Check(void);
+
+void Objects_Draw(void);
 
 void level_1st(void);
 

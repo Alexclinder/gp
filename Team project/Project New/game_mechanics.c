@@ -5,7 +5,6 @@
 #include "level.h"
 
 
-#define PLAYER_SIZE    100.0f
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     650.0f
 #define WALL_CLING_TIME 2.0f
@@ -27,6 +26,7 @@ float wall_timer = 0.0f;
 int pickingUp = 0;
 int dropping = 0;
 int isCarrying = 0;
+float fromX, fromY, toX, toY;
 CP_Vector position = {100,100};
 CP_Vector velocity = { 0, 0 };
 
@@ -84,26 +84,38 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 		return 0;
 	}
 }
+
+// t = 0 at start spot, 1 at end spot
+void HeldObject_MoveTo(float t)
+{
+	current_objects[heldObject][0] = fromX + (toX - fromX) * t;
+	current_objects[heldObject][1] = fromY + (toY - fromY) * t;
+}
+
 void Character_MovementDefault(void) {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/* --- Space: pick up animation (only when grounded) --- */
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && onGround) {
+	/* --- Space: pick up (grounded + touching an object) --- */
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && onGround && (heldObject = Object_Check()) != -1) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
+		fromX = current_objects[heldObject][0];
+		fromY = current_objects[heldObject][1];
+		toX = position.x + (PLAYER_SIZE - current_objects[heldObject][2]) / 2.0f;
+		toY = position.y - current_objects[heldObject][3];
 	}
 
 	if (pickingUp) {
 		carry_timer += dt;
-		if (carry_timer <= 0.4)      player_action = GRABBING_1;
-		else if (carry_timer <= 0.8) player_action = GRABBING_2;
-		else if (carry_timer <= 1.2) player_action = CARRY;
+		if (carry_timer <= 0.4) { player_action = GRABBING_1; HeldObject_MoveTo(0.0f); }
+		else if (carry_timer <= 0.8) { player_action = GRABBING_2; HeldObject_MoveTo(0.5f); }
+		else if (carry_timer <= 1.2) { player_action = CARRY;      HeldObject_MoveTo(1.0f); }
 		else {
 			pickingUp = 0;
 			carry_timer = 0.0f;
-			isCarrying = 1;          /* switch to carry movement */
+			isCarrying = 1;
 			player_action = CARRY;
 		}
 	}
@@ -152,22 +164,30 @@ void Character_MovementCarry(void)
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/* --- G: drop animation (only when grounded) --- */
+	/* --- G: drop (grounded only) --- */
 	if (CP_Input_KeyTriggered(KEY_G) && !dropping && onGround) {
+		float w = current_objects[heldObject][2];
+		float h = current_objects[heldObject][3];
 		dropping = 1;
 		carry_timer = 0.0f;
+		fromX = current_objects[heldObject][0];
+		fromY = current_objects[heldObject][1];
+		toX = position.x + PLAYER_SIZE;
+		if (toX + w > screenW) toX = position.x - w;
+		toY = position.y + PLAYER_SIZE - h;
 	}
 
 	if (dropping) {
 		carry_timer += dt;
-		if (carry_timer <= 0.4)      player_action = CARRY;
-		else if (carry_timer <= 0.8) player_action = GRABBING_2;
-		else if (carry_timer <= 1.2) player_action = GRABBING_1;
+		if (carry_timer <= 0.4) { player_action = CARRY;      HeldObject_MoveTo(0.0f); }
+		else if (carry_timer <= 0.8) { player_action = GRABBING_2; HeldObject_MoveTo(0.5f); }
+		else if (carry_timer <= 1.2) { player_action = GRABBING_1; HeldObject_MoveTo(1.0f); }
 		else {
 			dropping = 0;
 			carry_timer = 0.0f;
-			isCarrying = 0;          /* back to default movement */
+			isCarrying = 0;
 			player_action = STANDING;
+			heldObject = -1;
 		}
 	}
 
@@ -207,6 +227,12 @@ void Character_MovementCarry(void)
 	/* --- Keep player inside the screen horizontally --- */
 	if (position.x < 0.0f) position.x = 0.0f;
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
+
+	/* --- Held object follows the head while walking/jumping --- */
+	if (!dropping) {
+		current_objects[heldObject][0] = position.x + (PLAYER_SIZE - current_objects[heldObject][2]) / 2.0f;
+		current_objects[heldObject][1] = position.y - current_objects[heldObject][3];
+	}
 }
 
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height)
@@ -339,6 +365,10 @@ void DrawPlatform(float x, float y, float w, float h,
 	CP_Settings_Fill(CP_Color_Create(100, 180, 255, 255));
 	CP_Settings_RectMode(CP_POSITION_CENTER);
 	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
+
+	CP_Settings_ImageMode(CP_POSITION_CENTER);
+	CP_Image_Draw(platform, x, y, w, h, 255);
+	CP_Settings_ImageMode(CP_POSITION_CORNER);
 
 	collision_check(x, y, w, h);
 }

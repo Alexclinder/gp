@@ -9,6 +9,11 @@ extern CP_Image Zilong;
 extern CP_Image background;
 extern CP_Image backgroundtwo;
 extern CP_Image backgroundthree;
+extern CP_Image platform;
+enum { OBJ_DESK, OBJ_PRINTER, OBJ_TYPE_COUNT };
+
+extern CP_Image objImg[OBJ_TYPE_COUNT];
+extern CP_Image objBG[OBJ_TYPE_COUNT];
 
 void Game_Init(void);
 

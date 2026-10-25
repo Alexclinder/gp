@@ -17,6 +17,8 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define NO_ROTATION 0
 #define CORNER_RADIUS 0
 #define RECT_HORIZ_H 40
+#define HIGHLIGHT_PAD 6.0f
+
 
 typedef struct {
 	float x;
@@ -100,6 +102,32 @@ float fourth_level[6][PARAMETERS] = {
 	{ 1370.0f, 350.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
 };
 
+// Object start coords for level 1 (const so the level start never changes)
+// { x, y, w, h, type }
+const float first_level_objects[2][5] = {
+	{ 120.0f, 690.0f, 120.0f, 90.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 100.0f, 110.0f, OBJ_PRINTER }
+};
+
+
+// Object coords in game for level 1 (carrying and dropping change these)
+float first_level_objects_ingame[2][5];
+
+
+// Object start coords for level 2 (const so the level start never changes)
+// { x, y, w, h, type }
+const float second_level_objects[1][5] = {
+	{ 100.0f, 140.0f, 120.0f, 90.0f, OBJ_DESK }
+};
+
+// Object coords in game for level 2 (carrying and dropping change these)
+float second_level_objects_ingame[1][5];
+
+
+// Points to the in-game object array of the level being played
+float (*current_objects)[5] = NULL;
+int current_obj_count = 0;
+int heldObject = -1;
 
 void level_1st(void) {
 	DrawBG(background);
@@ -107,7 +135,7 @@ void level_1st(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 
-
+	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
@@ -131,7 +159,7 @@ void level_2nd(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
-
+	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
 
@@ -156,7 +184,7 @@ void level_3rd(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
-
+	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
@@ -178,7 +206,9 @@ void level_3rd(void) {
 
 void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
-
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+	Objects_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < 6; i++) {
@@ -225,4 +255,64 @@ void DrawBG(CP_Image BG) {
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 100, 0, 100));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
 	CP_Image_Draw(BG, 0.0f, 0.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
+}
+// Copies the level's start coords into its in-game array. Call on level start/restart
+void Objects_Reset(void) {
+	current_objects = NULL;
+	current_obj_count = 0;
+	heldObject = -1;
+
+	switch (level_selected) {
+	case level_1:
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++)
+				first_level_objects_ingame[i][j] = first_level_objects[i][j];
+		current_objects = first_level_objects_ingame;
+		current_obj_count = 2;
+		break;
+	case level_2:
+		for (int i = 0; i < 1; i++)
+			for (int j = 0; j < 5; j++)
+				second_level_objects_ingame[i][j] = second_level_objects[i][j];
+		current_objects = second_level_objects_ingame;
+		current_obj_count = 1;
+		break;
+	}
+}
+
+// Returns the object the player is touching, or -1. Skips the held one
+int Object_Check(void) {
+	float cx = position.x + PLAYER_SIZE / 2.0f;
+	float cy = position.y + PLAYER_SIZE / 2.0f;
+	float radius = PLAYER_SIZE / 2.0f;
+
+	for (int i = 0; i < current_obj_count; i++) {
+		if (i == heldObject) continue;
+		if (sphere_aabb_intersection(cx, cy, radius,
+			current_objects[i][0], current_objects[i][1],
+			current_objects[i][2], current_objects[i][3])) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+// Background first (bigger, invisible unless touching), then the object
+void Objects_Draw(void) {
+	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
+
+	for (int i = 0; i < current_obj_count; i++) {
+		int type = (int)current_objects[i][4];
+
+		CP_Image_Draw(objBG[type],
+			current_objects[i][0] - HIGHLIGHT_PAD,
+			current_objects[i][1] - HIGHLIGHT_PAD,
+			current_objects[i][2] + HIGHLIGHT_PAD * 2,
+			current_objects[i][3] + HIGHLIGHT_PAD * 2,
+			(i == target) ? 255 : 0);
+
+		CP_Image_Draw(objImg[type],
+			current_objects[i][0], current_objects[i][1],
+			current_objects[i][2], current_objects[i][3], 255);
+	}
 }
