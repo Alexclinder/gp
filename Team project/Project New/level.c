@@ -267,6 +267,7 @@ void level_4th(void) {
 	}
 
 	Objects_Draw();
+	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < 6; i++) {
