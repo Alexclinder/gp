@@ -93,8 +93,8 @@ void Character_MovementDefault(void) {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
-
 	/* --- Space: pick up (grounded + touching an object) --- */
+
 	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && onGround && (heldObject = Object_Check()) != -1) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
