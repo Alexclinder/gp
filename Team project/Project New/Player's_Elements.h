@@ -25,3 +25,4 @@ but if no value is assigned checks memory & its stored value*/
 extern CP_Vector velocity;
 extern CP_Vector position;
 extern int onGround_status;
+extern int wall_climb_status;
