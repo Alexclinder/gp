@@ -139,11 +139,12 @@ void level_1st(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init,Lose_Screen,Screen_Exit);
 		return;
 	}
@@ -181,7 +182,7 @@ void level_2nd(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
@@ -219,7 +220,7 @@ void level_3rd(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
@@ -257,7 +258,7 @@ void level_4th(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
