@@ -41,13 +41,6 @@ typedef enum{
 int level_selected = level_1;
 
 
-// Player Spawn Coords for all levels
-float player_spawn[LEVELS][PLAYER_SPAWN_POS] = {
-					{ 800.0f, 100.0f },
-					{ 100.0f, 100.0f },
-					{ 200.0f, 100.0f },
-					{ 400.0f, 100.0f }
-					};
 
 
 // Parameters is for drawing and checking win_con in level 1
