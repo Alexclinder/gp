@@ -47,8 +47,6 @@ int player_action = STANDING;
 int onGround = 0;
 int toggleGrab = 0;
 
-
-
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
 {
 	// check if the click is within 
@@ -458,4 +456,59 @@ void Player_Animation(void)
 int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
 {
 	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
+}
+
+typedef struct {
+	float x, y, width, height;
+} health;
+
+health player_health_bar;
+health player_health;
+
+void player_healthbar(void) {
+
+	float x_offset = 20.0f;
+	float max_health = 100.0f;
+
+	player_health_bar.x = position.x - x_offset;
+	player_health_bar.y = position.y;
+	player_health_bar.width = 10.0f;
+	player_health_bar.height = 100.0f;
+	
+	player_health.x = player_health_bar.x;
+	player_health.width = 10.0f;
+
+	if (player_health.height > max_health)
+		player_health.height = max_health;
+
+	if (player_health.height < 0.0f)
+		player_health.height = 0.0f;
+
+	player_health.y = position.y;
+
+
+	CP_Color green = CP_Color_Create(0, 200, 0, 255);
+	CP_Color red = CP_Color_Create(255, 0, 0, 255);
+
+	CP_Settings_Fill(red);
+	CP_Settings_RectMode(CP_POSITION_CORNER);
+	CP_Graphics_DrawRect(player_health_bar.x, player_health_bar.y, player_health_bar.width, player_health_bar.height);
+
+	CP_Settings_Fill(green);
+	CP_Settings_RectMode(CP_POSITION_CORNER);
+	CP_Graphics_DrawRect(player_health.x, player_health.y, player_health.width, player_health.height);
+
+
+	// If enemy bullet hits player, player loses health
+
+	if (NPC_CheckPlayerCollision()) {
+		NPC_UpdateProjectiles(0);
+		player_health.height -= 10.0f;
+		if (player_health.height < 0.0f)
+			player_health.height = 0.0f;
+	}
+	
+	// If health == 0, go to lose screen.
+	if (player_health.width <= 0)
+		CP_Engine_SetNextGameStateForced(Screen_Init, Lose_Screen, Screen_Exit);
 }

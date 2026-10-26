@@ -20,3 +20,8 @@ void Player_Animation(void);
 int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius);
 
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height);
+<<<<<<< Updated upstream
+=======
+
+void player_healthbar(void);
+>>>>>>> Stashed changes

@@ -89,6 +89,28 @@ float fourth_level[6][PARAMETERS] = {
 void level_1st(void) {
 	DrawBG(background);
 
+<<<<<<< Updated upstream
+=======
+	ingameTimer(1);
+
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles(1);
+	NPC_DrawProjectiles();
+
+	player_healthbar();
+
+	
+
+
+	Objects_Draw();
+	//Player_Animation_Checks();
+	Player_Animation();
+>>>>>>> Stashed changes
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < 4; i++) {
@@ -108,6 +130,22 @@ void level_1st(void) {
 void level_2nd(void) {
 	DrawBG(backgroundtwo);
 
+<<<<<<< Updated upstream
+=======
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles(1);
+	NPC_DrawProjectiles();
+
+	Objects_Draw();
+	//Player_Animation_Checks();
+	Player_Animation();
+
+>>>>>>> Stashed changes
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < 5; i++) {
@@ -127,6 +165,21 @@ void level_2nd(void) {
 void level_3rd(void) {
 	DrawBG(backgroundthree);
 
+<<<<<<< Updated upstream
+=======
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles(1);
+	NPC_DrawProjectiles();
+
+	Objects_Draw();
+	//Player_Animation_Checks();
+	Player_Animation();
+>>>>>>> Stashed changes
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < 6; i++) {
@@ -147,6 +200,20 @@ void level_3rd(void) {
 void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
 
+<<<<<<< Updated upstream
+=======
+	if (isCarrying) Character_MovementCarry();
+	else Character_MovementDefault();
+
+	//  Spawn in Enemy
+	NPC_MovementDefault();
+	NPC_Attack();
+	NPC_UpdateProjectiles(1);
+	NPC_DrawProjectiles();
+
+	Objects_Draw();
+	Player_Animation();
+>>>>>>> Stashed changes
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < 4; i++) {
