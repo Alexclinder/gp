@@ -39,7 +39,7 @@ typedef enum{
 
 
 int level_selected = level_1;
-
+float Seconds;
 
 
 
@@ -123,8 +123,30 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
+void ingameTimer(int check) {
+	if (check == 1) {
+		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+		CP_Font_Set(Font);
+		CP_Settings_TextSize(100);
+		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+		CP_Settings_Fill(CP_Color_Create(255, 255, 255, 200));
+		Seconds = CP_System_GetSeconds();
+
+		char buffer[16] = { 0 };
+		sprintf_s(buffer, 16, "%.2f", Seconds);
+		CP_Font_DrawText(buffer, 0, 0);
+	}
+	else if (check == 0) {
+		Seconds = 0.0f;
+	}
+
+
+}
+
 void level_1st(void) {
 	DrawBG(background);
+
+	ingameTimer(1);
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
