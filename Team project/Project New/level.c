@@ -167,8 +167,11 @@ void level_1st(void) {
 	}
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
-	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) 
+	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
+		
 
 	
 }
@@ -208,8 +211,11 @@ void level_2nd(void) {
 	}
 	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
 
-	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1)
+	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
+		
 }
 
 void level_3rd(void) {
@@ -246,8 +252,11 @@ void level_3rd(void) {
 	}
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
 
-	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1)
+	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
+		
 }
 
 
@@ -284,8 +293,10 @@ void level_4th(void) {
 	}
 	DrawExit(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius);
 
-	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1)
+	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
 }
 
 
