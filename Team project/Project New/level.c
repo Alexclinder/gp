@@ -187,6 +187,7 @@ void level_2nd(void) {
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
 	}
@@ -225,6 +226,7 @@ void level_3rd(void) {
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
 	}
@@ -263,6 +265,7 @@ void level_4th(void) {
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
 	}
