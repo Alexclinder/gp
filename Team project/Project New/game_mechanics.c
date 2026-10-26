@@ -31,9 +31,6 @@ CP_Vector position = {100,100};
 CP_Vector velocity = { 0, 0 };
 
 
-
-
-
 /* Player states */
 typedef enum player_states
 {
@@ -109,9 +106,9 @@ void Character_MovementDefault(void) {
 
 	if (pickingUp) {
 		carry_timer += dt;
-		if (carry_timer <= 0.4) { player_action = GRABBING_1; HeldObject_MoveTo(0.0f); }
-		else if (carry_timer <= 0.8) { player_action = GRABBING_2; HeldObject_MoveTo(0.5f); }
-		else if (carry_timer <= 1.2) { player_action = CARRY;      HeldObject_MoveTo(1.0f); }
+		if (carry_timer <= 0.15) { player_action = GRABBING_1; HeldObject_MoveTo(0.0f); }
+		else if (carry_timer <= 0.3) { player_action = GRABBING_2; HeldObject_MoveTo(0.5f); }
+		else if (carry_timer <= 0.5) { player_action = CARRY;      HeldObject_MoveTo(1.0f); }
 		else {
 			pickingUp = 0;
 			carry_timer = 0.0f;
@@ -179,9 +176,9 @@ void Character_MovementCarry(void)
 
 	if (dropping) {
 		carry_timer += dt;
-		if (carry_timer <= 0.4) { player_action = CARRY;      HeldObject_MoveTo(0.0f); }
-		else if (carry_timer <= 0.8) { player_action = GRABBING_2; HeldObject_MoveTo(0.5f); }
-		else if (carry_timer <= 1.2) { player_action = GRABBING_1; HeldObject_MoveTo(1.0f); }
+		if (carry_timer <= 0.15) { player_action = CARRY;      HeldObject_MoveTo(0.0f); }
+		else if (carry_timer <= 0.3) { player_action = GRABBING_2; HeldObject_MoveTo(0.5f); }
+		else if (carry_timer <= 0.5) { player_action = GRABBING_1; HeldObject_MoveTo(1.0f); }
 		else {
 			dropping = 0;
 			carry_timer = 0.0f;

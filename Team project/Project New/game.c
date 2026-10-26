@@ -52,6 +52,10 @@ void Game_Reset(void)
 	Character_Starting_Pos(player_spawn, level_selected);
 	onGround = 0;
 	Objects_Reset();
+	isCarrying = 0;
+	pickingUp = 0;
+	dropping = 0;
+	player_action = 1;
 }
 
 
@@ -77,6 +81,10 @@ void Game_Next_Level(void) {
 		level_selected++;
 		Game_Reset();
 		Objects_Reset();
+		isCarrying = 0;
+		pickingUp = 0;
+		dropping = 0;
+
 	}
 }
 
