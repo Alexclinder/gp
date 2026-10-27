@@ -27,10 +27,10 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
-void Level_1_Init(void) { level_selected = 0;  Game_Init(); Starting_Pos(player_spawns, level_selected); }
-void Level_2_Init(void) { level_selected = 1;  Game_Init(); Starting_Pos(player_spawns, level_selected); }
-void Level_3_Init(void) { level_selected = 2;  Game_Init(); Starting_Pos(player_spawns, level_selected); }
-void Level_4_Init(void) { level_selected = 3;  Game_Init(); Starting_Pos(player_spawns, level_selected); }
+void Level_1_Init(void) { level_selected = 0;  Game_Init(); Starting_Pos(player_spawns, 0); }
+void Level_2_Init(void) { level_selected = 1;  Game_Init(); Starting_Pos(player_spawns, 1); }
+void Level_3_Init(void) { level_selected = 2;  Game_Init(); Starting_Pos(player_spawns, 2); }
+void Level_4_Init(void) { level_selected = 3;  Game_Init(); Starting_Pos(player_spawns, 3); }
 
 void Screen_Init(void)
 {

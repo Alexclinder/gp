@@ -13,7 +13,6 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "npc_mechanics.h"
 
 #define LEVELS 4
-#define PLAYER_SPAWN_POS 2
 #define PARAMETERS 6
 #define NO_ROTATION 0
 #define CORNER_RADIUS 0
@@ -41,12 +40,12 @@ typedef enum{
 int level_selected = level_1;
 float Seconds;
 
-struct spawn player_spawns[LEVELS][PLAYER_SPAWN_POS] = { 
-												{ 800.0f, 100.0f},
-												{ 300.0f, 100.0f},
-												{ 100.0f, 100.0f},
-												{ 200.0f, 100.0f}
-												};
+struct spawn player_spawns[LEVELS] = { 
+									  { 200.0f, 100.0f},
+									  { 100.0f, 100.0f},
+									  { 800.0f, 700.0f},
+									  { 200.0f, 300.0f}
+									 };
 
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};

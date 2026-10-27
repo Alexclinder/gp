@@ -53,6 +53,8 @@ void Game_Reset(void)
 	pickingUp = 0;
 	dropping = 0;
 	player_action = 1;
+	// Seconds = 0.0f;
+	Starting_Pos(player_spawns,level_selected);
 }
 
 
