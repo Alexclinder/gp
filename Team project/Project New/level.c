@@ -38,7 +38,7 @@ float Seconds;
 spawn player_spawns[LEVELS] = { 
 							   { 200.0f, 100.0f},
 							   { 100.0f, 100.0f},
-							   { 800.0f, 700.0f},
+							   { 200.0f, 600.0f},
 							   { 200.0f, 300.0f}
 							  };
 
