@@ -494,12 +494,3 @@ int CheckWinCondition(float x, float y, float w, float h, float degrees, float c
 {
 	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
 }
-
-
-// Used to determine the Character's starting position
-void Character_Starting_Pos(float arr[][2], int level_select) {
-	
-		position = (CP_Vector){ arr[level_select][0], arr[level_select][1] };
-		velocity = (CP_Vector){ 0.0f, 0.0f };
-	
-}

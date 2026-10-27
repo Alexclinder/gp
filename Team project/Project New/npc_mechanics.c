@@ -120,22 +120,23 @@ void NPC_Attack(void)
 	}
 }
 
-void NPC_UpdateProjectiles(void) {
+void NPC_UpdateProjectiles(int check) {
 	float dt = CP_System_GetDt();
+	if (check == 1) {
+		for (int i = 0; i < MAX_PROJECTILES; i++) {
+			if (shots[i].active) {
+				shots[i].Projposition = CP_Vector_Add(shots[i].Projposition, CP_Vector_Scale(shots[i].Projvelocity, dt));
 
-	for (int i = 0; i < MAX_PROJECTILES; i++) {
-		if (shots[i].active) {
-			shots[i].Projposition = CP_Vector_Add(shots[i].Projposition, CP_Vector_Scale(shots[i].Projvelocity, dt));
+				//Remove projecile when it leaves the screen 
+				if (shots[i].Projposition.x < 0 || shots[i].Projposition.x > CP_System_GetDisplayWidth() || shots[i].Projposition.y < 0 || shots[i].Projposition.y > CP_System_GetWindowHeight()) {
+					shots[i].active = 0;
 
-			//Remove projecile when it leaves the screen 
-			if (shots[i].Projposition.x < 0 || shots[i].Projposition.x > CP_System_GetDisplayWidth() || shots[i].Projposition.y < 0 || shots[i].Projposition.y > CP_System_GetWindowHeight()) {
-				shots[i].active = 0;
-
+				}
 			}
-		}
 
-		
-	}
+
+		}
+	}else if (check ==0) for (int i = 0; i< MAX_PROJECTILES; i++)shots[i].active = 0;
 }
 
 void NPC_DrawProjectiles(void) {

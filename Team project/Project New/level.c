@@ -39,15 +39,8 @@ typedef enum{
 
 
 int level_selected = level_1;
+float Seconds;
 
-
-// Player Spawn Coords for all levels
-float player_spawn[LEVELS][PLAYER_SPAWN_POS] = {
-					{ 800.0f, 100.0f },
-					{ 100.0f, 100.0f },
-					{ 200.0f, 100.0f },
-					{ 400.0f, 100.0f }
-					};
 
 
 // Parameters is for drawing and checking win_con in level 1
@@ -130,8 +123,30 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
+void ingameTimer(int check) {
+	if (check == 1) {
+		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+		CP_Font_Set(Font);
+		CP_Settings_TextSize(100);
+		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+		CP_Settings_Fill(CP_Color_Create(255, 255, 255, 200));
+		Seconds = CP_System_GetSeconds();
+
+		char buffer[16] = { 0 };
+		sprintf_s(buffer, 16, "%.2f", Seconds);
+		CP_Font_DrawText(buffer, 0, 0);
+	}
+	else if (check == 0) {
+		Seconds = 0.0f;
+	}
+
+
+}
+
 void level_1st(void) {
 	DrawBG(background);
+
+	ingameTimer(1);
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -139,11 +154,12 @@ void level_1st(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init,Lose_Screen,Screen_Exit);
 		return;
 	}
@@ -166,8 +182,11 @@ void level_1st(void) {
 	}
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
-	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) 
+	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
+		
 
 	
 }
@@ -181,11 +200,12 @@ void level_2nd(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
 	}
@@ -206,8 +226,11 @@ void level_2nd(void) {
 	}
 	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
 
-	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1)
+	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
+		
 }
 
 void level_3rd(void) {
@@ -219,11 +242,12 @@ void level_3rd(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
 	}
@@ -243,8 +267,11 @@ void level_3rd(void) {
 	}
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
 
-	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1)
+	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
+		
 }
 
 
@@ -257,11 +284,12 @@ void level_4th(void) {
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
-	NPC_UpdateProjectiles();
+	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
 	}
@@ -280,8 +308,10 @@ void level_4th(void) {
 	}
 	DrawExit(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius);
 
-	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1)
+	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
+		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+	}
 }
 
 

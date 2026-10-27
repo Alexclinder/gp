@@ -20,3 +20,5 @@ void Exit_dynamicBtn(const char* text, float rect_x, float rect_y);
 // Elements for the menu buttons
 void drawBtn(float x, float y, float w, float h, const char* text, float scalar);
 void drawTextCenter(const char* text, float x, float y, float scalar);
+
+extern CP_Font Font;

@@ -41,15 +41,12 @@ void Game_Init(void)
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 
-	Character_Starting_Pos(player_spawn, level_selected);
-
 	
 
 }
 
 void Game_Reset(void)
 {
-	Character_Starting_Pos(player_spawn, level_selected);
 	onGround = 0;
 	Objects_Reset();
 	isCarrying = 0;
