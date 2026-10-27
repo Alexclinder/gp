@@ -464,7 +464,7 @@ void Objects_Draw(void) {
 	}
 }
 
-// Returns 1 if a circle hits a platform, another object or the ground
+// Returns 0 = no hit, 1 = platform, 2 = other object, 3 = ground
 int Object_HitCheck(float cx, float cy, float radius, int self) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
@@ -473,7 +473,6 @@ int Object_HitCheck(float cx, float cy, float radius, int self) {
 	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
 
-	/* platforms are center mode, so convert to top-left */
 	for (int p = 0; p < plat_count; p++) {
 		if (sphere_aabb_intersection(cx, cy, radius,
 			plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f,
@@ -482,17 +481,15 @@ int Object_HitCheck(float cx, float cy, float radius, int self) {
 			return 1;
 	}
 
-	/* other objects */
 	for (int i = 0; i < current_obj_count; i++) {
 		if (i == self) continue;
 		if (sphere_aabb_intersection(cx, cy, radius,
 			current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
 			current_objects[i][OBJ_W], current_objects[i][OBJ_H]))
-			return 1;
+			return 2;
 	}
 
-	/* ground */
-	if (cy + radius >= (float)CP_System_GetWindowHeight()) return 1;
+	if (cy + radius >= (float)CP_System_GetWindowHeight()) return 3;
 
 	return 0;
 }

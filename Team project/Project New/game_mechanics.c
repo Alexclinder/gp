@@ -3,6 +3,7 @@
 #include "game_mechanics.h"
 #include "screen_seq.h"
 #include "level.h"
+#include <stdio.h>
 #include <math.h>
 
 #define MOVE_SPEED     300.0f
@@ -89,26 +90,41 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 void Throwing(float objX, float objY, int obj) {
 	static float throw_timer = 0.0f;
 	static float startX, startY;
+	static float fall_vel = 0.0f;
 	float dt = CP_System_GetDt();
+	float screenW = (float)CP_System_GetWindowWidth();
 	float w = current_objects[obj][OBJ_W];
 	float h = current_objects[obj][OBJ_H];
+	float x, y;
 
 	/* first frame: remember where the throw started (on your head) */
 	if (throw_timer == 0.0f) {
 		startX = objX;
 		startY = objY;
+		fall_vel = 0.0f;
 	}
 
-	throw_timer += 20 * dt;
-	if (throw_timer > 25) throw_timer = 25;
+	if (throw_timer < 25) {
+		/* --- Arc: the equation --- */
+		throw_timer += 20 * dt;
+		if (throw_timer > 25) throw_timer = 25;
+		x = startX + throw_timer * 16;
+		y = startY + PLAYER_SIZE * (throw_timer / 25) - 120 * cosf(0.126f * throw_timer - 1.571f);
+	}
+	else {
+		/* --- Arc finished without hitting: keep falling until it hits --- */
+		fall_vel += GRAVITY * dt;
+		x = current_objects[obj][OBJ_X];
+		y = current_objects[obj][OBJ_Y] + fall_vel * dt;
+	}
 
-	/* the equation */
-	float x = startX + throw_timer * 16;
-	float y = startY + PLAYER_SIZE * (throw_timer / 25) - 120 * cosf(0.126f * throw_timer - 1.571f);
-
-	/* --- Collision: hit anything = disappear --- */
+	/* --- Collision: platform, other object, ground or fully off screen = break --- */
 	float radius = (w < h ? w : h) / 2.0f;
-	if (Object_HitCheck(x + w / 2.0f, y + h / 2.0f, radius, obj)) {
+	int hit = Object_HitCheck(x + w / 2.0f, y + h / 2.0f, radius, obj);
+	if (hit || x + w < 0.0f || x > screenW) {
+		printf("break: hit %d  obj %d  count %d  x %.0f  y %.0f  timer %.2f\n",
+			hit, obj, current_obj_count, x, y, throw_timer);
+
 		/* remove it: move the last object into its slot and shrink the list */
 		current_obj_count--;
 		for (int j = 0; j < 5; j++)
@@ -123,14 +139,7 @@ void Throwing(float objX, float objY, int obj) {
 	/* move the object itself; Objects_Draw() draws it */
 	current_objects[obj][OBJ_X] = x;
 	current_objects[obj][OBJ_Y] = y;
-
-	if (throw_timer >= 25) {
-		throwing = 0;
-		throw_timer = 0.0f;
-		heldObject = -1;
-	}
 }
-
 
 // t = 0 at start spot, 1 at end spot
 void HeldObject_MoveTo(float t)
