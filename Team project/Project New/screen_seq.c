@@ -13,6 +13,7 @@
 #include "game.h"
 #include "screen_seq.h"
 #include "level.h"
+#include "npc_mechanics.h"
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
@@ -27,10 +28,10 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
-void Level_1_Init(void) { level_selected = 0;  Game_Init(); Starting_Pos(player_spawns, 0); }
-void Level_2_Init(void) { level_selected = 1;  Game_Init(); Starting_Pos(player_spawns, 1); }
-void Level_3_Init(void) { level_selected = 2;  Game_Init(); Starting_Pos(player_spawns, 2); }
-void Level_4_Init(void) { level_selected = 3;  Game_Init(); Starting_Pos(player_spawns, 3); }
+void Level_1_Init(void) { level_selected = level_1;  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_2_Init(void) { level_selected = level_2;  Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_3_Init(void) { level_selected = level_3;  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_4_Init(void) { level_selected = level_4;  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
 
 void Screen_Init(void)
 {

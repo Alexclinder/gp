@@ -558,7 +558,9 @@ int CheckWinCondition(float x, float y, float w, float h, float degrees, float c
 // p will be assigned the address of position, to avoid pass by value
 CP_Vector *p = &position;
 
-void Starting_Pos(struct spawn arr[], int level_selected) {
+void Player_Starting_Pos(spawn arr[], int level_selected) {
 	// When the address of p is updated, value stored within position is updated.
-	*p = arr[level_selected].player_pos;
+	*p = arr[level_selected].pos;
 }
+
+

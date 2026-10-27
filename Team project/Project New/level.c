@@ -29,23 +29,25 @@ typedef struct {
 	float cornerRadius;
 } win_condition ;
 
-typedef enum{
-	level_1,	// 0 
-	level_2,	// 1
-	level_3,	// 2
-	level_4		// 3
-} levels;
+
 
 
 int level_selected = level_1;
 float Seconds;
 
-struct spawn player_spawns[LEVELS] = { 
-									  { 200.0f, 100.0f},
-									  { 100.0f, 100.0f},
-									  { 800.0f, 700.0f},
-									  { 200.0f, 300.0f}
-									 };
+spawn player_spawns[LEVELS] = { 
+							   { 200.0f, 100.0f},
+							   { 100.0f, 100.0f},
+							   { 800.0f, 700.0f},
+							   { 200.0f, 300.0f}
+							  };
+
+spawn NPC_1_spawns[LEVELS] = {
+							   { 1030.0f, 200.0f },
+							   { 1250.0f, 200.0f },
+							   { 860.0f, 200.0f },
+							   { 200.0f, 300.0f }
+							 };
 
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
@@ -160,6 +162,7 @@ void level_1st(void) {
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
+	
 	//Check For Collision then end game if hit
 	if (NPC_CheckPlayerCollision())
 	{
@@ -317,7 +320,6 @@ void level_4th(void) {
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 	}
 }
-
 
 
 void level_selection(int level_no) {

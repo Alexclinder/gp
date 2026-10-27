@@ -2,11 +2,19 @@
 
 extern level_selected;
 // Needed for Game_Reset() reassign back to 0
-struct spawn {
-	CP_Vector player_pos;
-};
+typedef struct{
+	CP_Vector pos;
+} spawn;
 
-extern struct spawn player_spawns[4];
+typedef enum {
+	level_1,	// 0 
+	level_2,	// 1
+	level_3,	// 2
+	level_4		// 3
+} levels;
+
+extern spawn player_spawns[4];
+extern spawn NPC_1_spawns[4];
 
 extern const float first_level_objects[2][5];
 extern float first_level_objects_ingame[2][5];

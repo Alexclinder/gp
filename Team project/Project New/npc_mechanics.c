@@ -1,6 +1,7 @@
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"
+#include "level.h"
 #include <math.h>
 
 
@@ -163,4 +164,12 @@ int NPC_CheckPlayerCollision(void) {
 		}
 	}
 	return 0;
+}
+
+// p will be assigned the address of position, to avoid pass by value
+CP_Vector *npc_p = &NPCposition;
+
+void NPC_Starting_Pos(spawn arr[], int level_selected) {
+	// When the address of p is updated, value stored within position is updated.
+	*npc_p = arr[level_selected].pos;
 }

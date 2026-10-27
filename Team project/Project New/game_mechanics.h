@@ -33,5 +33,6 @@ int CheckWinCondition(float x, float y, float w, float h, float degrees, float c
 
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height);
 
-void Starting_Pos(struct spawn arr[], int level_selected);
+void Player_Starting_Pos(struct spawn arr[], int level_selected);
+
 
