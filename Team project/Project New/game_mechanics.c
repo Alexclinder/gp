@@ -3,7 +3,7 @@
 #include "game_mechanics.h"
 #include "screen_seq.h"
 #include "level.h"
-
+#include <math.h>
 
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     650.0f
@@ -27,6 +27,9 @@ int pickingUp = 0;
 int dropping = 0;
 int isCarrying = 0;
 float fromX, fromY, toX, toY;
+float throw_x;
+float throw_y;
+float throw_timer;
 CP_Vector position = {100,100};
 CP_Vector velocity = { 0, 0 };
 
@@ -79,6 +82,17 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	else
 	{
 		return 0;
+	}
+}
+
+void Throwing(void) {
+	float dt = CP_System_GetDt();
+	throw_timer += 10 * dt;
+	throw_x;
+	throw_y;
+	throw_y = 10 * cos(0.1 * throw_x - 1) * dt;
+	if (throw_timer >= 25) {
+
 	}
 }
 
