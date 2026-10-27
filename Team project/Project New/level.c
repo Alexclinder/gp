@@ -41,7 +41,12 @@ typedef enum{
 int level_selected = level_1;
 
 
-
+struct spawn player_spawns[LEVELS][PLAYER_SPAWN_POS] = { 
+												{ 800.0f, 100.0f},
+												{ 300.0f, 100.0f},
+												{ 100.0f, 100.0f},
+												{ 200.0f, 100.0f}
+												};
 
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};

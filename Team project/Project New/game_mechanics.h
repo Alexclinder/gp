@@ -30,5 +30,5 @@ int CheckWinCondition(float x, float y, float w, float h, float degrees, float c
 
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height);
 
-void Character_Starting_Pos(float arr[][2], int level_select);
+void Starting_Pos(float arr[][2], int level_selected);
 
