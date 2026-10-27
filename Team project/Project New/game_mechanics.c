@@ -26,6 +26,7 @@ float wall_timer = 0.0f;
 int pickingUp = 0;
 int dropping = 0;
 int isCarrying = 0;
+int throwing = 0;
 float fromX, fromY, toX, toY;
 float throw_x;
 float throw_y;
@@ -85,16 +86,51 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	}
 }
 
-void Throwing(void) {
+void Throwing(float objX, float objY, int obj) {
+	static float throw_timer = 0.0f;
+	static float startX, startY;
 	float dt = CP_System_GetDt();
-	throw_timer += 10 * dt;
-	throw_x;
-	throw_y;
-	throw_y = 10 * cos(0.1 * throw_x - 1) * dt;
-	if (throw_timer >= 25) {
+	float w = current_objects[obj][OBJ_W];
+	float h = current_objects[obj][OBJ_H];
 
+	/* first frame: remember where the throw started (on your head) */
+	if (throw_timer == 0.0f) {
+		startX = objX;
+		startY = objY;
+	}
+
+	throw_timer += 20 * dt;
+	if (throw_timer > 25) throw_timer = 25;
+
+	/* the equation */
+	float x = startX + throw_timer * 16;
+	float y = startY + PLAYER_SIZE * (throw_timer / 25) - 120 * cosf(0.126f * throw_timer - 1.571f);
+
+	/* --- Collision: hit anything = disappear --- */
+	float radius = (w < h ? w : h) / 2.0f;
+	if (Object_HitCheck(x + w / 2.0f, y + h / 2.0f, radius, obj)) {
+		/* remove it: move the last object into its slot and shrink the list */
+		current_obj_count--;
+		for (int j = 0; j < 5; j++)
+			current_objects[obj][j] = current_objects[current_obj_count][j];
+
+		throwing = 0;
+		throw_timer = 0.0f;
+		heldObject = -1;
+		return;
+	}
+
+	/* move the object itself; Objects_Draw() draws it */
+	current_objects[obj][OBJ_X] = x;
+	current_objects[obj][OBJ_Y] = y;
+
+	if (throw_timer >= 25) {
+		throwing = 0;
+		throw_timer = 0.0f;
+		heldObject = -1;
 	}
 }
+
 
 // t = 0 at start spot, 1 at end spot
 void HeldObject_MoveTo(float t)
@@ -107,9 +143,14 @@ void Character_MovementDefault(void) {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
+
+	/*keep the thrown object flying */
+	if (throwing) Throwing(current_objects[heldObject][0], current_objects[heldObject][1], heldObject);
+
 	/* --- Space: pick up (grounded + touching an object) --- */
 
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && onGround && (heldObject = Object_Check()) != -1) {
+	
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && !throwing && onGround && (heldObject = Object_Check()) != -1) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
 		fromX = current_objects[heldObject][0];
@@ -174,6 +215,13 @@ void Character_MovementCarry(void)
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
+
+	/*Space throws while carrying */
+	if (CP_Input_KeyTriggered(KEY_SPACE) && isCarrying == 1 && !throwing && !dropping) {
+		throwing = 1;
+		isCarrying = 0;
+		player_action = STANDING;
+	}
 
 	/* --- G: drop (grounded only) --- */
 	if (CP_Input_KeyTriggered(KEY_G) && !dropping && onGround) {
@@ -240,7 +288,8 @@ void Character_MovementCarry(void)
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
 
 	/* --- Held object follows the head while walking/jumping --- */
-	if (!dropping) {
+	/* CHANGED (7): added && !throwing */
+	if (!dropping && !throwing) {
 		current_objects[heldObject][0] = position.x + (PLAYER_SIZE - current_objects[heldObject][2]) / 2.0f;
 		current_objects[heldObject][1] = position.y - current_objects[heldObject][3];
 	}

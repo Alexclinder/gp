@@ -391,21 +391,108 @@ int Object_Check(void) {
 }
 
 // Background first (bigger, invisible unless touching), then the object
+//void Objects_Draw(void) {
+//	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
+//
+//	for (int i = 0; i < current_obj_count; i++) {
+//		int type = (int)current_objects[i][4];
+//
+//		CP_Image_Draw(objBG[type],
+//			current_objects[i][0] - HIGHLIGHT_PAD,
+//			current_objects[i][1] - HIGHLIGHT_PAD,
+//			current_objects[i][2] + HIGHLIGHT_PAD * 2,
+//			current_objects[i][3] + HIGHLIGHT_PAD * 2,
+//			(i == target) ? 255 : 0);
+//
+//		CP_Image_Draw(objImg[type],
+//			current_objects[i][0], current_objects[i][1],
+//			current_objects[i][2], current_objects[i][3], 255);
+//	}
+//}
+
 void Objects_Draw(void) {
 	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
-
+	float dt = CP_System_GetDt();
 	for (int i = 0; i < current_obj_count; i++) {
-		int type = (int)current_objects[i][4];
+		if (throwing && i == heldObject) continue;   /* ADDED: Throwing() draws this one */
 
-		CP_Image_Draw(objBG[type],
-			current_objects[i][0] - HIGHLIGHT_PAD,
-			current_objects[i][1] - HIGHLIGHT_PAD,
-			current_objects[i][2] + HIGHLIGHT_PAD * 2,
-			current_objects[i][3] + HIGHLIGHT_PAD * 2,
-			(i == target) ? 255 : 0);
+		int type = (int)current_objects[i][OBJ_TYPE];
 
-		CP_Image_Draw(objImg[type],
-			current_objects[i][0], current_objects[i][1],
-			current_objects[i][2], current_objects[i][3], 255);
+		/* platforms of the level being played */
+		float (*plats)[PARAMETERS] = first_level;
+		int plat_count = 5;
+		if (level_selected == level_2) { plats = second_level; plat_count = 5; }
+		if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
+		if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+
+		for (int i = 0; i < current_obj_count; i++) {
+			int type = (int)current_objects[i][OBJ_TYPE];
+
+			/* --- Fall when not being carried, until it hits something --- */
+			if (i != heldObject) {
+				float x = current_objects[i][OBJ_X];
+				float w = current_objects[i][OBJ_W];
+				float h = current_objects[i][OBJ_H];
+				float bottom = current_objects[i][OBJ_Y] + h;
+				float nextY = current_objects[i][OBJ_Y] + 400.0f * dt;   /* fall speed: 400 px/s */
+				float floor = (float)CP_System_GetWindowHeight();         /* ground */
+
+				/* closest platform top under the object */
+				for (int p = 0; p < plat_count; p++) {
+					float top = plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f;
+					if (x + w > plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f &&
+						x < plats[p][PLAT_X] + plats[p][PLAT_W] / 2.0f &&
+						bottom <= top + 1.0f && top < floor)
+						floor = top;
+				}
+
+				if (nextY + h >= floor) current_objects[i][OBJ_Y] = floor - h;   /* hit: sit on top */
+				else current_objects[i][OBJ_Y] = nextY;                         /* keep falling */
+			}
+
+			CP_Image_Draw(objBG[type],
+				current_objects[i][OBJ_X] - HIGHLIGHT_PAD,
+				current_objects[i][OBJ_Y] - HIGHLIGHT_PAD,
+				current_objects[i][OBJ_W] + HIGHLIGHT_PAD * 2,
+				current_objects[i][OBJ_H] + HIGHLIGHT_PAD * 2,
+				(i == target) ? 255 : 0);
+
+			CP_Image_Draw(objImg[type],
+				current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
+				current_objects[i][OBJ_W], current_objects[i][OBJ_H], 255);
+		}
 	}
+}
+
+// Returns 1 if a circle hits a platform, another object or the ground
+int Object_HitCheck(float cx, float cy, float radius, int self) {
+	/* platforms of the level being played */
+	float (*plats)[PARAMETERS] = first_level;
+	int plat_count = 5;
+	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
+	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+
+	/* platforms are center mode, so convert to top-left */
+	for (int p = 0; p < plat_count; p++) {
+		if (sphere_aabb_intersection(cx, cy, radius,
+			plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f,
+			plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f,
+			plats[p][PLAT_W], plats[p][PLAT_H]))
+			return 1;
+	}
+
+	/* other objects */
+	for (int i = 0; i < current_obj_count; i++) {
+		if (i == self) continue;
+		if (sphere_aabb_intersection(cx, cy, radius,
+			current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
+			current_objects[i][OBJ_W], current_objects[i][OBJ_H]))
+			return 1;
+	}
+
+	/* ground */
+	if (cy + radius >= (float)CP_System_GetWindowHeight()) return 1;
+
+	return 0;
 }

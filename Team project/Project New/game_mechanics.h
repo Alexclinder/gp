@@ -7,12 +7,15 @@ extern int dropping;
 extern float carry_timer;
 extern int onGround;
 extern int player_action;
+extern int throwing;
 extern CP_Vector position;
 extern CP_Vector velocity;
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
 
 int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter, float click_x, float click_y);
+
+void Throwing(float objX, float objY, int obj);
 
 void Character_MovementDefault(void);
 
