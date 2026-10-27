@@ -34,7 +34,7 @@ void Level_4_Init(void) { level_selected = 3;  Game_Init(); Starting_Pos(player_
 
 void Screen_Init(void)
 {
-    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
 }
 
