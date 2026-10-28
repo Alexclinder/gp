@@ -356,6 +356,7 @@ void Objects_Reset(void) {
 	current_objects = NULL;
 	current_obj_count = 0;
 	heldObject = -1;
+	kickedObject = -1;   /* stop any kick that was still sliding */
 
 	switch (level_selected) {
 	case level_1:
@@ -415,54 +416,49 @@ int Object_Check(void) {
 void Objects_Draw(void) {
 	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
 	float dt = CP_System_GetDt();
-	for (int i = 0; i < current_obj_count; i++) {
-		if (throwing && i == heldObject) continue;   /* ADDED: Throwing() draws this one */
 
+	/* platforms of the level being played */
+	float (*plats)[PARAMETERS] = first_level;
+	int plat_count = 5;
+	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
+	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+
+	for (int i = 0; i < current_obj_count; i++) {
 		int type = (int)current_objects[i][OBJ_TYPE];
 
-		/* platforms of the level being played */
-		float (*plats)[PARAMETERS] = first_level;
-		int plat_count = 5;
-		if (level_selected == level_2) { plats = second_level; plat_count = 5; }
-		if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
-		if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+		/* --- Fall when not being carried, until it hits something --- */
+		if (i != heldObject) {
+			float x = current_objects[i][OBJ_X];
+			float w = current_objects[i][OBJ_W];
+			float h = current_objects[i][OBJ_H];
+			float nextY = current_objects[i][OBJ_Y] + 400.0f * dt;   /* fall speed: 400 px/s */
+			float floor = (float)CP_System_GetWindowHeight();         /* ground */
 
-		for (int i = 0; i < current_obj_count; i++) {
-			int type = (int)current_objects[i][OBJ_TYPE];
-
-			/* --- Fall when not being carried, until it hits something --- */
-			if (i != heldObject) {
-				float x = current_objects[i][OBJ_X];
-				float w = current_objects[i][OBJ_W];
-				float h = current_objects[i][OBJ_H];
-				float bottom = current_objects[i][OBJ_Y] + h;
-				float nextY = current_objects[i][OBJ_Y] + 400.0f * dt;   /* fall speed: 400 px/s */
-				float floor = (float)CP_System_GetWindowHeight();         /* ground */
-
-				/* closest platform top under the object */
-				for (int p = 0; p < plat_count; p++) {
-					float top = plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f;
-					if (x + w > plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f &&
-						x < plats[p][PLAT_X] + plats[p][PLAT_W] / 2.0f &&
-						bottom <= top + 1.0f && top < floor)
-						floor = top;
-				}
-
-				if (nextY + h >= floor) current_objects[i][OBJ_Y] = floor - h;   /* hit: sit on top */
-				else current_objects[i][OBJ_Y] = nextY;                         /* keep falling */
+			/* closest platform top under the object's middle */
+			for (int p = 0; p < plat_count; p++) {
+				float top = plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f;
+				if (x + w > plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f &&
+					x < plats[p][PLAT_X] + plats[p][PLAT_W] / 2.0f &&
+					current_objects[i][OBJ_Y] + h / 2.0f <= top && top < floor)
+					floor = top;
 			}
 
-			CP_Image_Draw(objBG[type],
-				current_objects[i][OBJ_X] - HIGHLIGHT_PAD,
-				current_objects[i][OBJ_Y] - HIGHLIGHT_PAD,
-				current_objects[i][OBJ_W] + HIGHLIGHT_PAD * 2,
-				current_objects[i][OBJ_H] + HIGHLIGHT_PAD * 2,
-				(i == target) ? 255 : 0);
-
-			CP_Image_Draw(objImg[type],
-				current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
-				current_objects[i][OBJ_W], current_objects[i][OBJ_H], 255);
+			if (nextY + h >= floor) current_objects[i][OBJ_Y] = floor - h;   /* hit: sit on top */
+			else current_objects[i][OBJ_Y] = nextY;                         /* keep falling */
 		}
+
+		/* --- Draw: highlight behind (only when touching), then the object --- */
+		CP_Image_Draw(objBG[type],
+			current_objects[i][OBJ_X] - HIGHLIGHT_PAD,
+			current_objects[i][OBJ_Y] - HIGHLIGHT_PAD,
+			current_objects[i][OBJ_W] + HIGHLIGHT_PAD * 2,
+			current_objects[i][OBJ_H] + HIGHLIGHT_PAD * 2,
+			(i == target) ? 255 : 0);
+
+		CP_Image_Draw(objImg[type],
+			current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
+			current_objects[i][OBJ_W], current_objects[i][OBJ_H], 255);
 	}
 }
 

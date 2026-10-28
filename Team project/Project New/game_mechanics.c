@@ -13,6 +13,10 @@
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
 #define GRAB_FRAME_TIME    0.15f
+#define KICK_DIST      100.0f
+#define KICK_TIME      0.2f
+#define KICK_DIST 100.0f   /* how far a kick moves the object */
+#define KICK_TIME 0.2f     /* how long the slide takes, in seconds */
 
 float collision_radius = 50.0f;
 float degrees;
@@ -27,12 +31,11 @@ float wall_timer = 0.0f;
 int pickingUp = 0;
 int dropping = 0;
 int isCarrying = 0;
-int throwing = 0;
 float fromX, fromY, toX, toY;
-float throw_x;
-float throw_y;
-float throw_timer;
-CP_Vector position = {100,100};
+int kickedObject = -1;
+float kick_dir = 0.0f;
+float kick_moved = 0.0f;
+CP_Vector position = { 100,100 };
 CP_Vector velocity = { 0, 0 };
 
 
@@ -87,59 +90,7 @@ int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter
 	}
 }
 
-void Throwing(float objX, float objY, int obj) {
-	static float throw_timer = 0.0f;
-	static float startX, startY;
-	static float fall_vel = 0.0f;
-	float dt = CP_System_GetDt();
-	float screenW = (float)CP_System_GetWindowWidth();
-	float w = current_objects[obj][OBJ_W];
-	float h = current_objects[obj][OBJ_H];
-	float x, y;
 
-	/* first frame: remember where the throw started (on your head) */
-	if (throw_timer == 0.0f) {
-		startX = objX;
-		startY = objY;
-		fall_vel = 0.0f;
-	}
-
-	if (throw_timer < 25) {
-		/* --- Arc: the equation --- */
-		throw_timer += 20 * dt;
-		if (throw_timer > 25) throw_timer = 25;
-		x = startX + throw_timer * 16;
-		y = startY + PLAYER_SIZE * (throw_timer / 25) - 120 * cosf(0.126f * throw_timer - 1.571f);
-	}
-	else {
-		/* --- Arc finished without hitting: keep falling until it hits --- */
-		fall_vel += GRAVITY * dt;
-		x = current_objects[obj][OBJ_X];
-		y = current_objects[obj][OBJ_Y] + fall_vel * dt;
-	}
-
-	/* --- Collision: platform, other object, ground or fully off screen = break --- */
-	float radius = (w < h ? w : h) / 2.0f;
-	int hit = Object_HitCheck(x + w / 2.0f, y + h / 2.0f, radius, obj);
-	if (hit || x + w < 0.0f || x > screenW) {
-		printf("break: hit %d  obj %d  count %d  x %.0f  y %.0f  timer %.2f\n",
-			hit, obj, current_obj_count, x, y, throw_timer);
-
-		/* remove it: move the last object into its slot and shrink the list */
-		current_obj_count--;
-		for (int j = 0; j < 5; j++)
-			current_objects[obj][j] = current_objects[current_obj_count][j];
-
-		throwing = 0;
-		throw_timer = 0.0f;
-		heldObject = -1;
-		return;
-	}
-
-	/* move the object itself; Objects_Draw() draws it */
-	current_objects[obj][OBJ_X] = x;
-	current_objects[obj][OBJ_Y] = y;
-}
 
 // t = 0 at start spot, 1 at end spot
 void HeldObject_MoveTo(float t)
@@ -153,19 +104,14 @@ void Character_MovementDefault(void) {
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/*keep the thrown object flying */
-	if (throwing) Throwing(current_objects[heldObject][0], current_objects[heldObject][1], heldObject);
-
-	/* --- Space: pick up (grounded + touching an object) --- */
-
-	
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && !throwing && onGround && (heldObject = Object_Check()) != -1) {
+	/* --- Space: pick up (grounded + touching an object, not mid-kick) --- */
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && kickedObject == -1 && onGround && (heldObject = Object_Check()) != -1) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
-		fromX = current_objects[heldObject][0];
-		fromY = current_objects[heldObject][1];
-		toX = position.x + (PLAYER_SIZE - current_objects[heldObject][2]) / 2.0f;
-		toY = position.y - current_objects[heldObject][3];
+		fromX = current_objects[heldObject][OBJ_X];
+		fromY = current_objects[heldObject][OBJ_Y];
+		toX = position.x + (PLAYER_SIZE - current_objects[heldObject][OBJ_W]) / 2.0f;
+		toY = position.y - current_objects[heldObject][OBJ_H];
 	}
 
 	if (pickingUp) {
@@ -179,6 +125,35 @@ void Character_MovementDefault(void) {
 			isCarrying = 1;
 			player_action = CARRY;
 		}
+	}
+
+	/* --- F: kick the touched object away from the player --- */
+	if (CP_Input_KeyTriggered(KEY_F) && !pickingUp && kickedObject == -1) {
+		int i = Object_Check();
+		if (i != -1) {
+			float objMid = current_objects[i][OBJ_X] + current_objects[i][OBJ_W] / 2.0f;
+			float playerMid = position.x + PLAYER_SIZE / 2.0f;
+			kickedObject = i;
+			kick_moved = 0.0f;
+			kick_dir = (playerMid < objMid) ? 1.0f : -1.0f;   /* kicked from left = goes right */
+		}
+	}
+
+	/* --- Kick slide: move a bit each frame until it has gone KICK_DIST --- */
+	if (kickedObject != -1) {
+		float step = KICK_DIST / KICK_TIME * dt;
+		if (kick_moved + step > KICK_DIST) step = KICK_DIST - kick_moved;
+		kick_moved += step;
+
+		current_objects[kickedObject][OBJ_X] += kick_dir * step;
+
+		/* keep it on screen */
+		if (current_objects[kickedObject][OBJ_X] < 0.0f)
+			current_objects[kickedObject][OBJ_X] = 0.0f;
+		if (current_objects[kickedObject][OBJ_X] + current_objects[kickedObject][OBJ_W] > screenW)
+			current_objects[kickedObject][OBJ_X] = screenW - current_objects[kickedObject][OBJ_W];
+
+		if (kick_moved >= KICK_DIST) kickedObject = -1;   /* kick finished */
 	}
 
 	/* --- Horizontal: locked during the animation --- */
@@ -225,21 +200,14 @@ void Character_MovementCarry(void)
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/*Space throws while carrying */
-	if (CP_Input_KeyTriggered(KEY_SPACE) && isCarrying == 1 && !throwing && !dropping) {
-		throwing = 1;
-		isCarrying = 0;
-		player_action = STANDING;
-	}
-
 	/* --- G: drop (grounded only) --- */
 	if (CP_Input_KeyTriggered(KEY_G) && !dropping && onGround) {
-		float w = current_objects[heldObject][2];
-		float h = current_objects[heldObject][3];
+		float w = current_objects[heldObject][OBJ_W];
+		float h = current_objects[heldObject][OBJ_H];
 		dropping = 1;
 		carry_timer = 0.0f;
-		fromX = current_objects[heldObject][0];
-		fromY = current_objects[heldObject][1];
+		fromX = current_objects[heldObject][OBJ_X];
+		fromY = current_objects[heldObject][OBJ_Y];
 		toX = position.x + PLAYER_SIZE;
 		if (toX + w > screenW) toX = position.x - w;
 		toY = position.y + PLAYER_SIZE - h;
@@ -297,10 +265,9 @@ void Character_MovementCarry(void)
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
 
 	/* --- Held object follows the head while walking/jumping --- */
-	/* CHANGED (7): added && !throwing */
-	if (!dropping && !throwing) {
-		current_objects[heldObject][0] = position.x + (PLAYER_SIZE - current_objects[heldObject][2]) / 2.0f;
-		current_objects[heldObject][1] = position.y - current_objects[heldObject][3];
+	if (!dropping) {
+		current_objects[heldObject][OBJ_X] = position.x + (PLAYER_SIZE - current_objects[heldObject][OBJ_W]) / 2.0f;
+		current_objects[heldObject][OBJ_Y] = position.y - current_objects[heldObject][OBJ_H];
 	}
 }
 
