@@ -28,10 +28,10 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
-void Level_1_Init(void) { level_selected = level_1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_2_Init(void) { level_selected = level_2;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_3_Init(void) { level_selected = level_3;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_4_Init(void) { level_selected = level_4;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_1_Init(void) { level_selected = level_1; TimeSet = 0;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+void Level_2_Init(void) { level_selected = level_2; TimeSet = 0;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_3_Init(void) { level_selected = level_3; TimeSet = 0;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
 
 void Screen_Init(void)
 {
@@ -67,6 +67,7 @@ void Pause_Menu_Update(void)
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
+    PauseTimeCount = 1;
     // Resume
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Restart
