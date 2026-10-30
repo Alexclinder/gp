@@ -19,8 +19,11 @@ extern spawn NPC_1_spawns[4];
 extern const float first_level_objects[2][5];
 extern float first_level_objects_ingame[2][5];
 
-extern const float second_level_objects[1][5];
-extern float second_level_objects_ingame[1][5];
+extern const float second_level_objects[2][5];
+extern float second_level_objects_ingame[2][5];
+
+extern const float third_level_objects[2][5];
+extern float third_level_objects_ingame[2][5];
 
 /* columns of an object row: { x, y, w, h, type } */
 enum { OBJ_X, OBJ_Y, OBJ_W, OBJ_H, OBJ_TYPE };

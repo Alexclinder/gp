@@ -116,12 +116,23 @@ float first_level_objects_ingame[2][5];
 
 // Object start coords for level 2 (const so the level start never changes)
 // { x, y, w, h, type }
-const float second_level_objects[1][5] = {
-	{ 100.0f, 140.0f, 120.0f, 90.0f, OBJ_DESK }
+const float second_level_objects[2][5] = {
+	{ 120.0f, 690.0f, 120.0f, 90.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 100.0f, 110.0f, OBJ_PRINTER }
 };
 
 // Object coords in game for level 2 (carrying and dropping change these)
-float second_level_objects_ingame[1][5];
+float second_level_objects_ingame[2][5];
+
+// Object start coords for level 3 (const so the level start never changes)
+// { x, y, w, h, type }
+const float third_level_objects[2][5] = {
+	{ 120.0f, 690.0f, 120.0f, 90.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 100.0f, 110.0f, OBJ_PRINTER }
+};
+
+// Object coords in game for level 3 (carrying and dropping change these)
+float third_level_objects_ingame[2][5];
 
 
 // Points to the in-game object array of the level being played
@@ -170,9 +181,6 @@ void level_1st(void) {
 		CP_Engine_SetNextGameState(Screen_Init,Lose_Screen,Screen_Exit);
 		return;
 	}
-
-	
-
 
 	Objects_Draw();
 	//Player_Animation_Checks();
@@ -367,11 +375,18 @@ void Objects_Reset(void) {
 		current_obj_count = 2;
 		break;
 	case level_2:
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 5; j++)
 				second_level_objects_ingame[i][j] = second_level_objects[i][j];
 		current_objects = second_level_objects_ingame;
-		current_obj_count = 1;
+		current_obj_count = 2;
+		break;
+	case level_3:
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++)
+				third_level_objects_ingame[i][j] = third_level_objects[i][j];
+		current_objects = third_level_objects_ingame;
+		current_obj_count = 2;
 		break;
 	}
 }
@@ -392,26 +407,6 @@ int Object_Check(void) {
 	}
 	return -1;
 }
-
-// Background first (bigger, invisible unless touching), then the object
-//void Objects_Draw(void) {
-//	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
-//
-//	for (int i = 0; i < current_obj_count; i++) {
-//		int type = (int)current_objects[i][4];
-//
-//		CP_Image_Draw(objBG[type],
-//			current_objects[i][0] - HIGHLIGHT_PAD,
-//			current_objects[i][1] - HIGHLIGHT_PAD,
-//			current_objects[i][2] + HIGHLIGHT_PAD * 2,
-//			current_objects[i][3] + HIGHLIGHT_PAD * 2,
-//			(i == target) ? 255 : 0);
-//
-//		CP_Image_Draw(objImg[type],
-//			current_objects[i][0], current_objects[i][1],
-//			current_objects[i][2], current_objects[i][3], 255);
-//	}
-//}
 
 void Objects_Draw(void) {
 	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
