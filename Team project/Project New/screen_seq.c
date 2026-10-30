@@ -17,6 +17,7 @@
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
+CP_Image frame;
 CP_Font Font;
 
 
@@ -35,6 +36,7 @@ void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;ResetTime = 1;  
 
 void Screen_Init(void)
 {
+    frame = CP_Image_Load("Assets/buttonframe.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
     PauseTimeCount = 1;
@@ -203,9 +205,8 @@ void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
     CP_Settings_RectMode(CP_POSITION_CENTER);
     CP_Settings_Fill(CP_Color_Create(255, 100, 100, 100));
     CP_Graphics_DrawRect(x, y, w, h);
-    CP_Settings_RectMode(CP_POSITION_CORNER);
-    CP_Image_Draw(frame, x, y, w, h, 255);
-    CP_Settings_RectMode(CP_POSITION_CENTER);
+    //CP_Settings_ImageMode(CP_POSITION_CENTER);
+    //CP_Image_Draw(frame, x, y, w, h, 255);
     drawTextCenter(text, x, y, scalar);
 }
 
@@ -225,12 +226,16 @@ void dynamicBtn(const char* text, float rect_x, float rect_y, void* init(void), 
     if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
         drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
+        CP_Settings_ImageMode(CP_POSITION_CENTER);
+        CP_Image_Draw(frame, rect_x, rect_y, rect_width * scalar, rect_height * scalar, 255);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
             CP_Engine_SetNextGameStateForced(init, update, exit);
     }
     else {
         scalar = 1.0f;
         drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar);
+        CP_Settings_ImageMode(CP_POSITION_CENTER);
+        CP_Image_Draw(frame, rect_x, rect_y, rect_width, rect_height, 255);
     }
 }
 
@@ -239,11 +244,15 @@ void Exit_dynamicBtn(const char* text, float rect_x, float rect_y) {
     if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
         drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
+        CP_Settings_ImageMode(CP_POSITION_CENTER);
+        CP_Image_Draw(frame, rect_x, rect_y, rect_width * scalar, rect_height * scalar, 255);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
             CP_Engine_Terminate();
     }
     else {
         scalar = 1.0f;
         drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar);
+        CP_Settings_ImageMode(CP_POSITION_CENTER);
+        CP_Image_Draw(frame, rect_x, rect_y, rect_width, rect_height, 255);
     }
 }

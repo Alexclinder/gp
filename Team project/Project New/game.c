@@ -6,7 +6,6 @@
 #include "npc_mechanics.h"
 
 CP_Image jump;
-CP_Image frame;
 CP_Image g1;
 CP_Image g2;
 CP_Image carry;
@@ -24,7 +23,6 @@ CP_Image npc1;
 // For Resume Game Btn
 void Game_Init(void)
 {
-	frame = CP_Image_Load("Assets/buttonframe.png");
 	g1 = CP_Image_Load("Assets/Grab1.png");
 	g2 = CP_Image_Load("Assets/Grab2.png");
 	carry = CP_Image_Load("Assets/Carry.png");

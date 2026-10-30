@@ -1,7 +1,6 @@
 #pragma once
 #include  "cprocessing.h"
 
-extern CP_Image frame;
 extern CP_Image jump;
 extern CP_Image g1;
 extern CP_Image g2;
