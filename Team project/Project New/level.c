@@ -30,6 +30,15 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 
 #define HIGHLIGHT_PAD 6.0f
 
+#define PRESSURE_WIDTH 100.0f
+#define PRESSURE_HEIGHT 50.0f
+#define DOOR_WIDTH 50.0f
+#define DOOR_HEIGHT 100.0f
+
+typedef struct {
+	float px, py, pw, ph;
+	float dx, dy, dw, dh;
+} pressure_door_pos ;
 
 typedef struct {
 	float x;
@@ -39,9 +48,6 @@ typedef struct {
 	float degrees;
 	float cornerRadius;
 } win_condition ;
-
-
-
 
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
@@ -61,6 +67,9 @@ spawn NPC_1_spawns[LEVELS] = {
 							   { 860.0f, 200.0f },
 							   { 200.0f, 300.0f }
 							 };
+
+pressure_door_pos level1 = {.px = 1150.0f, .py = 600.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1450.0f, .dy = 500.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
 
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
@@ -268,6 +277,10 @@ void level_1st(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
+	
+	// Produce the Pressure_Plate_Door
+	Pressure_Plate_Door(level1.px, level1.py, level1.pw, level1.ph,
+		level1.dx, level1.dy, level1.dw, level1.dh);
 
 	Objects_Draw();
 	//Player_Animation_Checks();

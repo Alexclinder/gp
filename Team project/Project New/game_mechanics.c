@@ -515,6 +515,7 @@ void Player_Animation(void)
 		break;
 	}
 }
+
 int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
 {
 	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
