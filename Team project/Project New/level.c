@@ -13,21 +13,20 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "npc_mechanics.h"
 #include "colors.h"
 
-<<<<<<< Updated upstream
-=======
+
 #define LEVEL1_PLATFORMS 30
 #define LEVEL1_SEC_BUILDING 580.0f
 #define LEVEL1_THIRD_BUILDING 280.0f
 #define LEVEL1_FOURTH_BUILDING 400.0f
 #define LEVEL1_BUILDING_WALL 10.0f
 #define LEVEL1_FOURTH_BUILDING_WIDTH 3.0f
+#define PLATFORM_WIDTH_1 120.0f
 
->>>>>>> Stashed changes
 #define LEVELS 4
 #define PARAMETERS 6
 #define NO_ROTATION 0
 #define CORNER_RADIUS 0
-#define RECT_HORIZ_H 40
+#define RECT_HORIZ_H 20
 #define HIGHLIGHT_PAD 6.0f
 
 
@@ -65,15 +64,6 @@ spawn NPC_1_spawns[LEVELS] = {
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
 
-// LEVEL 1: Outside the building
-<<<<<<< Updated upstream
-float first_level[5][PARAMETERS] = {
-	{ 180.0f, 800.0f, 360.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 500.0f, 740.0f, 180.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 760.0f, 670.0f, 180.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1020.0f, 600.0f, 180.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1370.0f, 530.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
-=======
 float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 1st building ----------  */
@@ -136,8 +126,7 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 	{ 1400.0f, 500.0f,  PLATFORM_WIDTH_1 * 1.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	
-	
->>>>>>> Stashed changes
+
 };
 
 // Parameters is for drawing and checking win_con in level 2
@@ -281,7 +270,7 @@ void level_1st(void) {
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < LEVEL1_PLATFORMS; i++) {
 		DrawPlatform(first_level[i][0], 
 					 first_level[i][1], 
 					 first_level[i][2], 
