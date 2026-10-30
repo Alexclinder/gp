@@ -34,8 +34,8 @@ typedef struct {
 
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
-int TimeSet,PauseTimeCount;
-float CurrentingameTime = 0.0,differenceTime = 0.0;
+int TimeSet,PauseTimeCount, ResetTime;
+float PauseingameTime = 0.0,differenceTime = 0.0;
 
 spawn player_spawns[LEVELS] = { 
 							   { 200.0f, 100.0f},
@@ -135,12 +135,13 @@ void ingameTimer(void) {
 
 
 	if (TimeSet == 1) {
+		//differenceTime = Seconds - PauseingameTime;
 		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
 		CP_Font_Set(Font);
 		CP_Settings_TextSize(100);
 		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
 		CP_Settings_Fill(CP_Color_Create(255, 255, 255, 200));
-		Seconds = CP_System_GetSeconds()-Zeroing_Time;
+		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
 		char buffer[16] = { 0 };
 		sprintf_s(buffer, 16, "%.2f", Seconds);
@@ -152,11 +153,14 @@ void ingameTimer(void) {
 		TimeSet = 1;
 
 	}
-	else if (PauseTimeCount == 1) {
-			CurrentingameTime = Seconds;
-			differenceTime = Seconds - CurrentingameTime;
+	if (PauseTimeCount == 1) {
+		PauseingameTime = Seconds;
 			PauseTimeCount = 0;
-		}
+	}
+	if (ResetTime == 1) {
+		PauseingameTime = 0.0;
+		ResetTime = 0;
+	}
 }
 
 void level_1st(void) {
