@@ -17,6 +17,7 @@
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
+CP_Image mainbackground;
 CP_Image frame;
 CP_Font Font;
 
@@ -36,6 +37,7 @@ void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;ResetTime = 1;  
 
 void Screen_Init(void)
 {
+	mainbackground = CP_Image_Load("Assets/Mainbackground.png");
     frame = CP_Image_Load("Assets/buttonframe.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
@@ -54,6 +56,7 @@ Otherwise, it might clear buttons and text */
 void Main_Menu_Update(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
+    CP_Image_Draw(mainbackground, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
     level_selected = 0;
 
     // Start Game
@@ -203,10 +206,8 @@ The functions below are the elements or functionalities of each updated screen*/
 void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
 {
     CP_Settings_RectMode(CP_POSITION_CENTER);
-    CP_Settings_Fill(CP_Color_Create(255, 100, 100, 100));
+    CP_Settings_Fill(CP_Color_Create(255, 100, 100, 50));
     CP_Graphics_DrawRect(x, y, w, h);
-    //CP_Settings_ImageMode(CP_POSITION_CENTER);
-    //CP_Image_Draw(frame, x, y, w, h, 255);
     drawTextCenter(text, x, y, scalar);
 }
 

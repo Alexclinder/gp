@@ -21,5 +21,6 @@ void Exit_dynamicBtn(const char* text, float rect_x, float rect_y);
 void drawBtn(float x, float y, float w, float h, const char* text, float scalar);
 void drawTextCenter(const char* text, float x, float y, float scalar);
 
+extern CP_Image mainbackground;
 extern CP_Image frame;
 extern CP_Font Font;
