@@ -3,6 +3,7 @@
 #include "game_mechanics.h"
 #include "screen_seq.h"
 #include "level.h"
+#include "colors.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -398,7 +399,7 @@ int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y,
 void DrawPlatform(float x, float y, float w, float h,
 	float degrees, float cornerRadius)
 {
-	CP_Settings_Fill(CP_Color_Create(100, 180, 255, 255));
+	CP_Settings_Fill(light_sky_blue);
 	CP_Settings_RectMode(CP_POSITION_CENTER);
 	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
 
@@ -530,4 +531,12 @@ void Player_Starting_Pos(spawn arr[], int level_selected) {
 	*p = arr[level_selected].pos;
 }
 
+void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
+						 float door_x, float door_y, float door_width, float door_height) {
+	
+	CP_Settings_Fill(light_green);
+	CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
 
+	CP_Settings_Fill(purple);
+	CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
+}

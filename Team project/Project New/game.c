@@ -4,6 +4,7 @@
 #include "level.h"
 #include "game.h"
 #include "npc_mechanics.h"
+#include "colors.h"
 
 CP_Image jump;
 CP_Image g1;
@@ -23,6 +24,8 @@ CP_Image npc1;
 // For Resume Game Btn
 void Game_Init(void)
 {
+	// Use to initalize the color variables with values stored
+	color_create();
 	g1 = CP_Image_Load("Assets/Grab1.png");
 	g2 = CP_Image_Load("Assets/Grab2.png");
 	carry = CP_Image_Load("Assets/Carry.png");
@@ -93,7 +96,6 @@ void Game_Next_Level(void) {
 		isCarrying = 0;
 		pickingUp = 0;
 		dropping = 0;
-
 	}
 }
 

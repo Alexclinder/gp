@@ -11,7 +11,18 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "game.h"
 #include "screen_seq.h"
 #include "npc_mechanics.h"
+#include "colors.h"
 
+<<<<<<< Updated upstream
+=======
+#define LEVEL1_PLATFORMS 30
+#define LEVEL1_SEC_BUILDING 580.0f
+#define LEVEL1_THIRD_BUILDING 280.0f
+#define LEVEL1_FOURTH_BUILDING 400.0f
+#define LEVEL1_BUILDING_WALL 10.0f
+#define LEVEL1_FOURTH_BUILDING_WIDTH 3.0f
+
+>>>>>>> Stashed changes
 #define LEVELS 4
 #define PARAMETERS 6
 #define NO_ROTATION 0
@@ -55,12 +66,78 @@ spawn NPC_1_spawns[LEVELS] = {
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
 
 // LEVEL 1: Outside the building
+<<<<<<< Updated upstream
 float first_level[5][PARAMETERS] = {
 	{ 180.0f, 800.0f, 360.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 500.0f, 740.0f, 180.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 760.0f, 670.0f, 180.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1020.0f, 600.0f, 180.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1370.0f, 530.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
+=======
+float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
+
+	/* ---------- 1st building ----------  */
+
+	// 260.0f is first building height
+	{ 350.0f, 840.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 750.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 330.0f, 680.0f, PLATFORM_WIDTH_1 + 30.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 600.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 350.0f, 530.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 250.0f, 440.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 360.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	// first building roof
+	{ 300.0f, 260.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	 /* ---------- 2nd building ----------  */
+
+	// Left wall
+	{ 545.0f, 610.0f, LEVEL1_BUILDING_WALL, LEVEL1_SEC_BUILDING, NO_ROTATION, CORNER_RADIUS },
+	// Roof
+	{ 660.0f, 320.0f, PLATFORM_WIDTH_1 * 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	// 5th floor
+	{ 600.0f, 580.0f, PLATFORM_WIDTH_1 / 2.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	/* ---------- 2nd/3rd building ----------  */
+
+	// Top Platform connecting 2nd and 3rd building 
+	{ 850.0f, 450.0f, PLATFORM_WIDTH_1 / 3.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	// Bottom Platform connecting 2nd and 3rd building 
+	{ 720.0f, 700.0f, PLATFORM_WIDTH_1 * 0.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	// Bottom Platform connecting 2nd and 3rd building 
+	{ 880.0f, 650.0f, PLATFORM_WIDTH_1*1.5, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	
+	/* ---------- 3rd building ----------  */
+
+	// Left Wall
+	{ 905.0f, 430.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING, NO_ROTATION, CORNER_RADIUS },
+
+	// 4th Level
+	{ 1000.0f, 500.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	// Right Wall
+	{ 1206.0f, 430.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING, NO_ROTATION, CORNER_RADIUS },
+
+	/* ---------- 4th building ----------  */
+
+	// Left Wall
+	{ 1320.0f, 700.0f,  LEVEL1_BUILDING_WALL, LEVEL1_FOURTH_BUILDING, NO_ROTATION, CORNER_RADIUS },
+
+	// Platform
+	{ 1400.0f, 500.0f,  PLATFORM_WIDTH_1 * 1.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	
+	
+>>>>>>> Stashed changes
 };
 
 // Parameters is for drawing and checking win_con in level 2
@@ -151,7 +228,7 @@ void ingameTimer(void) {
 		CP_Font_Set(Font);
 		CP_Settings_TextSize(100);
 		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
-		CP_Settings_Fill(CP_Color_Create(255, 255, 255, 200));
+		CP_Settings_Fill(translucent_white);
 		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
 		char buffer[16] = { 0 };
@@ -355,7 +432,6 @@ void level_4th(void) {
 	}
 }
 
-
 void level_selection(int level_no) {
 	switch (level_no) {
 		case level_1: 
@@ -375,7 +451,7 @@ void level_selection(int level_no) {
 
 void DrawExit(float x, float y, float w, float h, float degrees, float cornerRadius){
 	CP_Settings_RectMode(CP_POSITION_CENTER);
-	CP_Settings_Fill(CP_Color_Create(100, 200, 100, 255));
+	CP_Settings_Fill(medium_light_green);
 	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
 }
 

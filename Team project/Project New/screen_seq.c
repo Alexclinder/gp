@@ -14,6 +14,7 @@
 #include "screen_seq.h"
 #include "level.h"
 #include "npc_mechanics.h"
+#include "colors.h"
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
@@ -37,6 +38,9 @@ void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;ResetTime = 1;  
 
 void Screen_Init(void)
 {
+    // Use to initalize the color variables with values stored
+    color_create();
+
 	mainbackground = CP_Image_Load("Assets/Mainbackground.png");
     frame = CP_Image_Load("Assets/buttonframe.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
@@ -206,7 +210,7 @@ The functions below are the elements or functionalities of each updated screen*/
 void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
 {
     CP_Settings_RectMode(CP_POSITION_CENTER);
-    CP_Settings_Fill(CP_Color_Create(255, 100, 100, 50));
+    CP_Settings_Fill(translucent_light_red);
     CP_Graphics_DrawRect(x, y, w, h);
     drawTextCenter(text, x, y, scalar);
 }
@@ -214,7 +218,7 @@ void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
 void drawTextCenter(const char* text, float x, float y, float scalar)
 {
     CP_Settings_TextSize(textSize * scalar);
-    CP_Settings_Fill(CP_Color_Create(0, 0, 0, 255));
+    CP_Settings_Fill(white);
     CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
     CP_Font_DrawText(text, x, y);
 }

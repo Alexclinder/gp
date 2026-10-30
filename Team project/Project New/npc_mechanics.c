@@ -2,6 +2,7 @@
 #include "game.h"
 #include "game_mechanics.h"
 #include "level.h"
+#include "colors.h"
 #include <math.h>
 
 
@@ -141,7 +142,7 @@ void NPC_UpdateProjectiles(int check) {
 }
 
 void NPC_DrawProjectiles(void) {
-	CP_Settings_Fill(CP_Color_Create(255, 0, 0, 255));
+	CP_Settings_Fill(red);
 
 	for (int i = 0; i < MAX_PROJECTILES; i++) {
 		if (shots[i].active == 1) {
