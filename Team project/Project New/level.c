@@ -70,8 +70,8 @@ win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER
 // LEVEL 2: Entering the building
 float second_level[5][PARAMETERS] = {
 	{ 0.0f, 250.0f, 630.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 570.0f, 530.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 940.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 10.0f, 50.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 500.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1240.0f, 350.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1500.0f, 260.0f, 220.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
 };
@@ -189,11 +189,14 @@ void level_1st(void) {
 	NPC_DrawProjectiles();
 	
 	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision())
+	if (NPC_CheckPlayerCollision()==1)
 	{
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init,Lose_Screen,Screen_Exit);
 		return;
+	}
+	else if (NPC_CheckPlayerCollision() == 2) {
+		NPC_UpdateProjectiles(0);
 	}
 
 	Objects_Draw();
@@ -232,11 +235,14 @@ void level_2nd(void) {
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision())
+	if (NPC_CheckPlayerCollision()==1)
 	{
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
+	}
+	else if (NPC_CheckPlayerCollision() == 2) {
+		NPC_UpdateProjectiles(0);
 	}
 
 	Objects_Draw();
@@ -274,11 +280,14 @@ void level_3rd(void) {
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision())
+	if (NPC_CheckPlayerCollision()==1)
 	{
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
+	}
+	else if (NPC_CheckPlayerCollision() == 2) {
+		NPC_UpdateProjectiles(0);
 	}
 
 	Objects_Draw();
@@ -316,11 +325,14 @@ void level_4th(void) {
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision())
+	if (NPC_CheckPlayerCollision()==1)
 	{
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
+	}
+	else if (NPC_CheckPlayerCollision() == 2) {
+		NPC_UpdateProjectiles(0);
 	}
 
 	Objects_Draw();

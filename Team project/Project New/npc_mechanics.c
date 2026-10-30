@@ -162,6 +162,7 @@ int NPC_CheckPlayerCollision(void) {
 				return 1;
 			}
 		}
+		//add if hit object
 	}
 	return 0;
 }

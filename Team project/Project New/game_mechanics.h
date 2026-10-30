@@ -1,6 +1,6 @@
 #pragma once
 
-#define PLAYER_SIZE 100.f
+#define PLAYER_SIZE 50.f
 extern int isCarrying;
 extern int pickingUp;
 extern int dropping;
