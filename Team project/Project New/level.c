@@ -30,10 +30,10 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 
 #define HIGHLIGHT_PAD 6.0f
 
-#define PRESSURE_WIDTH 100.0f
-#define PRESSURE_HEIGHT 50.0f
-#define DOOR_WIDTH 50.0f
-#define DOOR_HEIGHT 100.0f
+#define PRESSURE_WIDTH 50.0f
+#define PRESSURE_HEIGHT 20.0f
+#define DOOR_WIDTH 10.0f
+#define DOOR_HEIGHT 80.0f
 
 typedef struct {
 	float kx, ky, kw, kh;
@@ -72,28 +72,28 @@ spawn NPC_1_spawns[LEVELS] = {
 							   { 200.0f, 300.0f }
 							 };
 
-pressure_door_pos level1 = {.px = 1150.0f, .py = 600.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
-							.dx = 1450.0f, .dy = 500.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
+pressure_door_pos level1 = {.px = 1150.0f, .py = 320.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1455.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
 
-k_zone level1_k = { .kx = 930.0f, .ky = 730.0f, .kw = 780.0f, .kh = 40.0f };
+k_zone level1_k = { .kx = 990.0f, .ky = 730.0f, .kw = 810.0f, .kh = 20.0f };
 
 // Parameters is for drawing and checking win_con in level 1
-win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
+win_condition level1_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
 
 
 // LEVEL 1: Outside the building
 float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 1st building ----------  */
-
+	// Jump max is 80f
 	// 260.0f is first building height
-	{ 350.0f, 840.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 750.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 330.0f, 680.0f, PLATFORM_WIDTH_1 + 30.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 600.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 350.0f, 530.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 250.0f, 440.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 360.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 350.0f, 820.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 740.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 330.0f, 660.0f, PLATFORM_WIDTH_1 + 30.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 580.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 350.0f, 500.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 250.0f, 420.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 340.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	// first building roof
 	{ 300.0f, 260.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
@@ -127,7 +127,7 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 	{ 940.0f, 404.0f, LEVEL1_FOURTH_BUILDING_WIDTH * 15.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1180.0f, 515.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 951.0f, 592.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1100.0f, 645.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1050.0f, 645.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	
 
 	// Right Wall

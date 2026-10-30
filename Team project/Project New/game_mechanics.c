@@ -330,7 +330,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		position.x = area_right;
 		side = 4;
 	}
-
+	/*
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
@@ -355,8 +355,9 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
 		}
 	}
-
+	*/
 	return side;
+	
 }
 
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h)
