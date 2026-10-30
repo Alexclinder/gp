@@ -128,6 +128,7 @@ void ingameTimer(void) {
 		Zeroing_Time= CP_System_GetSeconds();
 		TimeSet = 1;
 
+	}
 	if (PauseTimeCount == 1) {
 		PauseingameTime = Seconds;
 			PauseTimeCount = 0;
