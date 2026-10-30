@@ -88,6 +88,66 @@ float fourth_level[6][PARAMETERS] = {
 };
 
 
+// Object coords in game for level 1 (carrying and dropping change these)
+float first_level_objects_ingame[2][5];
+
+
+// Object start coords for level 2 (const so the level start never changes)
+// { x, y, w, h, type }
+const float second_level_objects[1][5] = {
+	{ 100.0f, 140.0f, 120.0f, 90.0f, OBJ_DESK }
+};
+
+// Object coords in game for level 2 (carrying and dropping change these)
+float second_level_objects_ingame[1][5];
+
+
+// Points to the in-game object array of the level being played
+float (*current_objects)[5] = NULL;
+int current_obj_count = 0;
+int heldObject = -1;
+
+void ingameTimer(void) {
+
+
+	if (TimeSet == 1) {
+		//differenceTime = Seconds - PauseingameTime;
+		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+		CP_Font_Set(Font);
+		CP_Settings_TextSize(100);
+		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+		CP_Settings_Fill(CP_Color_Create(255, 255, 255, 200));
+		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
+
+		char buffer[16] = { 0 };
+		sprintf_s(buffer, 16, "%.2f", Seconds);
+		CP_Font_DrawText(buffer, 0, 0);
+
+	}
+	else if (TimeSet == 0) {
+		Zeroing_Time= CP_System_GetSeconds();
+		TimeSet = 1;
+
+	if (PauseTimeCount == 1) {
+		PauseingameTime = Seconds;
+			PauseTimeCount = 0;
+	}
+	if (ResetTime == 1) {
+		PauseingameTime = 0.0;
+		ResetTime = 0;
+	}
+
+	//if Under 15s return3
+	//if Under 30s return2
+	//if Above 45s return1
+	if (Seconds < 15.0)
+		return 3;
+	else if(Seconds < 30.0)
+		return 2;
+	else if (Seconds > 45.0)
+		return 1;
+}
+
 void level_1st(void) {
 	DrawBG(background);
 
