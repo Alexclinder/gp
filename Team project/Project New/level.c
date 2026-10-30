@@ -36,9 +36,13 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define DOOR_HEIGHT 100.0f
 
 typedef struct {
+	float kx, ky, kw, kh;
+} k_zone;
+
+typedef struct {
 	float px, py, pw, ph;
 	float dx, dy, dw, dh;
-} pressure_door_pos ;
+} pressure_door_pos;
 
 typedef struct {
 	float x;
@@ -47,7 +51,7 @@ typedef struct {
 	float h;
 	float degrees;
 	float cornerRadius;
-} win_condition ;
+} win_condition;
 
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
@@ -71,9 +75,10 @@ spawn NPC_1_spawns[LEVELS] = {
 pressure_door_pos level1 = {.px = 1150.0f, .py = 600.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
 							.dx = 1450.0f, .dy = 500.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
 
+k_zone level1_k = { .kx = 930.0f, .ky = 730.0f, .kw = 780.0f, .kh = 40.0f };
+
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
-
 
 
 // LEVEL 1: Outside the building
@@ -254,6 +259,8 @@ void ingameTimer(void) {
 }
 
 void level_1st(void) {
+
+
 	DrawBG(background);
 
 	ingameTimer();
@@ -282,6 +289,8 @@ void level_1st(void) {
 	Pressure_Plate_Door(level1.px, level1.py, level1.pw, level1.ph,
 		level1.dx, level1.dy, level1.dw, level1.dh);
 
+	kill_zone(level1_k.kx, level1_k.ky, level1_k.kw, level1_k.kh);
+
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
@@ -301,9 +310,6 @@ void level_1st(void) {
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 	}
-		
-
-	
 }
 
 void level_2nd(void) {

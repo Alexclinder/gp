@@ -36,4 +36,6 @@ void Player_Starting_Pos(struct spawn arr[], int level_selected);
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 					     float door_x, float door_y, float door_width, float door_height);
 
+void kill_zone(float x, float y, float w, float h);
+
 

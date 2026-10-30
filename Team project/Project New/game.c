@@ -44,10 +44,6 @@ void Game_Init(void)
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 	TimeSet = 0;
-
-
-	
-
 }
 
 void Game_Reset(void)
