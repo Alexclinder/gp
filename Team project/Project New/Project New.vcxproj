@@ -106,6 +106,7 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="colors.c" />
     <ClCompile Include="game_mechanics.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="level.c" />
@@ -114,6 +115,7 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
     <ClCompile Include="screen_seq.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="colors.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="game_mechanics.h" />
     <ClInclude Include="level.h" />

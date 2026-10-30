@@ -30,15 +30,15 @@
     <ClCompile Include="level.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lvl1.c">
+    <ClCompile Include="npc_mechanics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="colors.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lvl1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game.h">
@@ -48,6 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="screen_seq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="npc_mechanics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
