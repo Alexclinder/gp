@@ -7,7 +7,7 @@
 #include <math.h>
 
 #define MOVE_SPEED     300.0f
-#define JUMP_SPEED     650.0f
+#define JUMP_SPEED     500.0f
 #define WALL_CLING_TIME 2.0f
 #define CLIMB_SPEED     250.0f
 #define GRAVITY        1500.0f
