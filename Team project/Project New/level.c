@@ -122,18 +122,21 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 	// Left Wall
 	{ 905.0f, 401.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING-58.0f, NO_ROTATION, CORNER_RADIUS },
 
-	// 4th Level
-	{ 1020.0f, 407.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	// 4th Level	
 	{ 1038.0f, 487.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1073.0f, 391.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1114.0f, 487.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1175.0f, 487.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 940.0f, 404.0f, LEVEL1_FOURTH_BUILDING_WIDTH * 15.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1180.0f, 515.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 951.0f, 592.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1033.0f, 592.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1116.0f, 592.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1100.0f, 645.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	
 
 	// Right Wall
-	{ 1206.0f, 430.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING, NO_ROTATION, CORNER_RADIUS },
+	{ 1206.0f, 331.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING / 3.25f, NO_ROTATION, CORNER_RADIUS },
+
+	/* ---------- 3rd/4th building ----------  */
+
+	// Bottom Platform connecting 3rd and 4th building 
+	{ 1280.0f, 600.0f, PLATFORM_WIDTH_1 / 2.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	/* ---------- 4th building ----------  */
 
@@ -267,7 +270,7 @@ void level_1st(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
-	
+	/*
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -284,7 +287,7 @@ void level_1st(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
-	
+	*/
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level1.px, level1.py, level1.pw, level1.ph,
 		level1.dx, level1.dy, level1.dw, level1.dh);
