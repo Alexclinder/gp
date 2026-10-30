@@ -203,7 +203,7 @@ void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
     CP_Settings_RectMode(CP_POSITION_CENTER);
     CP_Settings_Fill(CP_Color_Create(255, 100, 100, 100));
     CP_Graphics_DrawRect(x, y, w, h);
-
+    CP_Image_Draw(frame, x, y, w, h,255);
     drawTextCenter(text, x, y, scalar);
 }
 
