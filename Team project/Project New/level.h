@@ -58,3 +58,6 @@ void DrawExit(float x, float y, float w, float h, float degrees, float cornerRad
 
 void DrawBG(CP_Image BG);
 
+extern int TimeSet;
+extern int PauseTimeCount;
+extern int ResetTime;

@@ -33,7 +33,9 @@ typedef struct {
 
 
 int level_selected = level_1;
-float Seconds;
+float Seconds, Zeroing_Time;
+int TimeSet,PauseTimeCount, ResetTime;
+float PauseingameTime = 0.0,differenceTime = 0.0;
 
 spawn player_spawns[LEVELS] = { 
 							   { 200.0f, 100.0f},
@@ -140,30 +142,42 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
-void ingameTimer(int check) {
-	if (check == 1) {
+void ingameTimer(void) {
+
+
+	if (TimeSet == 1) {
+		//differenceTime = Seconds - PauseingameTime;
 		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
 		CP_Font_Set(Font);
 		CP_Settings_TextSize(100);
 		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
 		CP_Settings_Fill(CP_Color_Create(255, 255, 255, 200));
-		Seconds = CP_System_GetSeconds();
+		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
 		char buffer[16] = { 0 };
 		sprintf_s(buffer, 16, "%.2f", Seconds);
 		CP_Font_DrawText(buffer, 0, 0);
-	}
-	else if (check == 0) {
-		Seconds = 0.0f;
-	}
 
+	}
+	else if (TimeSet == 0) {
+		Zeroing_Time= CP_System_GetSeconds();
+		TimeSet = 1;
 
+	}
+	if (PauseTimeCount == 1) {
+		PauseingameTime = Seconds;
+			PauseTimeCount = 0;
+	}
+	if (ResetTime == 1) {
+		PauseingameTime = 0.0;
+		ResetTime = 0;
+	}
 }
 
 void level_1st(void) {
 	DrawBG(background);
 
-	ingameTimer(1);
+	ingameTimer();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
