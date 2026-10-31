@@ -8,14 +8,12 @@
 #include <math.h>
 
 #define MOVE_SPEED     300.0f
-#define JUMP_SPEED     650.0f
+#define JUMP_SPEED     500.0f
 #define WALL_CLING_TIME 2.0f
 #define CLIMB_SPEED     250.0f
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
 #define GRAB_FRAME_TIME    0.15f
-#define KICK_DIST      100.0f
-#define KICK_TIME      0.2f
 #define KICK_DIST 100.0f   /* how far a kick moves the object */
 #define KICK_TIME 0.2f     /* how long the slide takes, in seconds */
 #define AirDashDistance 100.0f;
@@ -335,7 +333,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		position.x = area_right;
 		side = 4;
 	}
-
+	/*
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
@@ -360,8 +358,9 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
 		}
 	}
-
+	*/
 	return side;
+	
 }
 
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h)
@@ -519,6 +518,7 @@ void Player_Animation(void)
 		break;
 	}
 }
+
 int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
 {
 	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
@@ -542,6 +542,91 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 
 	CP_Settings_Fill(purple);
 	CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
+
+	// if characteer or object intersects the pressure plate, the door will open.
+
+	{
+		int pressed = 0;
+
+		
+		float plate_left = pres_x - pres_width / 2.0f;
+		float plate_right = pres_x + pres_width / 2.0f;
+		float plate_top = pres_y - pres_height / 2.0f;
+		float plate_bottom = pres_y + pres_height / 2.0f;
+
+		float player_left = position.x;
+		float player_right = position.x + PLAYER_SIZE;
+		float player_top = position.y;
+		float player_bottom = position.y + PLAYER_SIZE;
+
+		
+		if (player_right > plate_left &&
+			player_left < plate_right &&
+			player_bottom > plate_top &&
+			player_top < plate_bottom)
+		{
+			pressed = 1;
+		}
+
+		// for loop to check how long player/object is intersecting pressure plate 
+		for (int i = 0; i < current_obj_count && !pressed; i++)
+		{
+			float obj_left = current_objects[i][OBJ_X];
+			float obj_right = obj_left + current_objects[i][OBJ_W];
+			float obj_top = current_objects[i][OBJ_Y];
+			float obj_bottom = obj_top + current_objects[i][OBJ_H];
+
+			if (obj_right > plate_left &&
+				obj_left < plate_right &&
+				obj_bottom > plate_top &&
+				obj_top < plate_bottom)
+			{
+				pressed = 1;
+			}
+		}
+
+		if (pressed)
+			CP_Settings_Fill(medium_light_green);
+		else
+			CP_Settings_Fill(light_green);
+
+		CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
+
+		
+		if (!pressed)
+		{
+			CP_Settings_Fill(purple);
+			CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
+
+			collision_check(door_x, door_y, door_width, door_height);
+		}
+	}
+
+
+void kill_zone(float x, float y, float w, float h)
+{
+	
+	CP_Settings_Fill(red);
+	CP_Graphics_DrawRect(x, y, w, h);
+	
+	float zone_left = x - w / 2.0f;
+	float zone_right = x + w / 2.0f;
+	float zone_top = y - h / 2.0f;
+	float zone_bottom = y + h / 2.0f;
+	
+	float player_left = position.x;
+	float player_right = position.x + PLAYER_SIZE;
+	float player_top = position.y;
+	float player_bottom = position.y + PLAYER_SIZE;
+
+	if (player_right > zone_left &&
+		player_left < zone_right &&
+		player_bottom > zone_top &&
+		player_top < zone_bottom)
+	{
+		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+		return;
+	}
 }
 
 void Air_Dash_Mechannic(void) {
@@ -553,7 +638,7 @@ void Air_Dash_Mechannic(void) {
 			DashWindowTiming = 0; // Clamp the dash window timing to 0 if it goes below 0
 			DoubleTap_dash_Status = 0; // reset the double tap status once the dash window timing has expired
 		}
-
+	
 		if (CP_Input_KeyTriggered(KEY_D) && velocity.x > 0) {// If the player is moving to the right and presses the D key, check for double tap
 			//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
 			//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.

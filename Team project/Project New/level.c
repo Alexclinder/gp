@@ -22,13 +22,37 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define LEVEL1_FOURTH_BUILDING_WIDTH 3.0f
 #define PLATFORM_WIDTH_1 120.0f
 
+#define LEVEL1_PLATFORMS 30
+#define LEVEL1_SEC_BUILDING 580.0f
+#define LEVEL1_THIRD_BUILDING 280.0f
+#define LEVEL1_FOURTH_BUILDING 320.0f
+#define LEVEL1_BUILDING_WALL 10.0f
+#define LEVEL1_FOURTH_BUILDING_WIDTH 2.0f
+
 #define LEVELS 4
+
+// Platform Parameters
+#define PLATFORM_WIDTH_1 120.0f
 #define PARAMETERS 6
 #define NO_ROTATION 0
 #define CORNER_RADIUS 0
-#define RECT_HORIZ_H 20
+#define RECT_HORIZ_H 15
+
 #define HIGHLIGHT_PAD 6.0f
 
+#define PRESSURE_WIDTH 30.0f
+#define PRESSURE_HEIGHT 15.0f
+#define DOOR_WIDTH 10.0f
+#define DOOR_HEIGHT 80.0f
+
+typedef struct {
+	float kx, ky, kw, kh;
+} k_zone;
+
+typedef struct {
+	float px, py, pw, ph;
+	float dx, dy, dw, dh;
+} pressure_door_pos;
 
 typedef struct {
 	float x;
@@ -37,10 +61,7 @@ typedef struct {
 	float h;
 	float degrees;
 	float cornerRadius;
-} win_condition ;
-
-
-
+} win_condition;
 
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
@@ -48,7 +69,7 @@ int TimeSet,PauseTimeCount, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0;
 
 spawn player_spawns[LEVELS] = { 
-							   { 200.0f, 100.0f},
+							   { 100.0f, 800.0f},
 							   { 100.0f, 100.0f},
 							   { 200.0f, 600.0f},
 							   { 200.0f, 300.0f}
@@ -61,21 +82,31 @@ spawn NPC_1_spawns[LEVELS] = {
 							   { 200.0f, 300.0f }
 							 };
 
-// Parameters is for drawing and checking win_con in level 1
-win_condition level1_win = {1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS};
+pressure_door_pos level1 = {.px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1460.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
+// Bottom Pit 
+k_zone level1_k = { .kx = 1010.0f, .ky = 730.0f, .kw = 910.0f, .kh = 20.0f };
+// 4th Roof Kill
+k_zone level1_4b = { .kx = 1055.0f, .ky = 295.0f, .kw = 295.0f, .kh = 5.0f };
 
+// Parameters is for drawing and checking win_con in level 1
+win_condition level1_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
+
+
+// LEVEL 1: Outside the building
 float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 1st building ----------  */
-
+	// Jump max is 80f
 	// 260.0f is first building height
-	{ 350.0f, 840.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 750.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 330.0f, 680.0f, PLATFORM_WIDTH_1 + 30.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 600.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 350.0f, 530.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 250.0f, 440.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 360.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 290.0f, 830.0f, PLATFORM_WIDTH_1 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 350.0f, 820.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 740.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 330.0f, 660.0f, PLATFORM_WIDTH_1 + 30.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 580.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 350.0f, 500.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 250.0f, 420.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 340.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	// first building roof
 	{ 300.0f, 260.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
@@ -85,48 +116,66 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 	{ 545.0f, 610.0f, LEVEL1_BUILDING_WALL, LEVEL1_SEC_BUILDING, NO_ROTATION, CORNER_RADIUS },
 	// Roof
 	{ 660.0f, 320.0f, PLATFORM_WIDTH_1 * 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	// 5th floor
-	{ 600.0f, 580.0f, PLATFORM_WIDTH_1 / 2.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	// 6th floor
+	{ 583.08f, 514.0f, PLATFORM_WIDTH_1 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	/* ---------- 2nd/3rd building ----------  */
 
 	// Top Platform connecting 2nd and 3rd building 
 	{ 850.0f, 450.0f, PLATFORM_WIDTH_1 / 3.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
-	// Bottom Platform connecting 2nd and 3rd building 
-	{ 720.0f, 700.0f, PLATFORM_WIDTH_1 * 0.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
 
 	// Bottom Platform connecting 2nd and 3rd building 
-	{ 880.0f, 650.0f, PLATFORM_WIDTH_1*1.5, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 784.0f, 650.0f, PLATFORM_WIDTH_1*1.4, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	
 	/* ---------- 3rd building ----------  */
 
 	// Left Wall
-	{ 905.0f, 430.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING, NO_ROTATION, CORNER_RADIUS },
+	{ 905.0f, 400.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING-58.0f, NO_ROTATION, CORNER_RADIUS },
 
-	// 4th Level
-	{ 1000.0f, 500.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1100.0f, 730.0f,  LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	// 4th Level	
+	{ 1038.0f, 500.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1190.0f, 500.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 940.0f, 445.0f, LEVEL1_FOURTH_BUILDING_WIDTH * 20.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1080.0f, 580.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 951.0f, 592.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1055.0f, 710.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	
 
 	// Right Wall
-	{ 1206.0f, 430.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING, NO_ROTATION, CORNER_RADIUS },
+	{ 1206.0f, 333.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
+
+	/* ---------- 3rd/4th building ----------  */
+
+	// Bottom Platform connecting 3rd and 4th building 
+	{ 1250.0f, 660.0f, PLATFORM_WIDTH_1 * 1.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1300.0f, 390.0f, PLATFORM_WIDTH_1 * 2.8f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	/* ---------- 4th building ----------  */
 
-	// Left Wall
-	{ 1320.0f, 700.0f,  LEVEL1_BUILDING_WALL, LEVEL1_FOURTH_BUILDING, NO_ROTATION, CORNER_RADIUS },
+	// Right Wall
+	{ 1490.0f, 730.0f,  LEVEL1_BUILDING_WALL * 4.8f, LEVEL1_FOURTH_BUILDING, NO_ROTATION, CORNER_RADIUS },
+	
+	// Top Right Wall
+	{ 1460.0f, 435.0f,  LEVEL1_BUILDING_WALL, LEVEL1_FOURTH_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
+
+	// Top Left Wall
+	{ 1320.0f, 530.0f,  LEVEL1_BUILDING_WALL, LEVEL1_FOURTH_BUILDING / 2.8f, NO_ROTATION, CORNER_RADIUS },
+
+	// Top Left Platform
+	{ 1300.0f, 480.0f,  PLATFORM_WIDTH_1/2.2f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	// Platform
-	{ 1400.0f, 500.0f,  PLATFORM_WIDTH_1 * 1.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1415.0f, 580.0f,  PLATFORM_WIDTH_1 * 1.6f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	// Stair Platform
+	{ 1350.0f, 520.0f,  PLATFORM_WIDTH_1 / 3.0f, RECT_HORIZ_H * 1.5f, NO_ROTATION, CORNER_RADIUS },
+
 
 	
-
+	
 };
 
 // Parameters is for drawing and checking win_con in level 2
@@ -241,13 +290,15 @@ void ingameTimer(void) {
 }
 
 void level_1st(void) {
+
+
 	DrawBG(background);
 
 	ingameTimer();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
-
+	
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -264,6 +315,13 @@ void level_1st(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
+	
+	// Produce the Pressure_Plate_Door
+	Pressure_Plate_Door(level1.px, level1.py, level1.pw, level1.ph,
+		level1.dx, level1.dy, level1.dw, level1.dh);
+
+	kill_zone(level1_k.kx, level1_k.ky, level1_k.kw, level1_k.kh);
+	kill_zone(level1_4b.kx, level1_4b.ky, level1_4b.kw, level1_4b.kh);
 
 	Objects_Draw();
 	//Player_Animation_Checks();
@@ -286,9 +344,6 @@ void level_1st(void) {
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 	}
-		
-
-	
 }
 
 void level_2nd(void) {
@@ -507,7 +562,7 @@ void Objects_Draw(void) {
 
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = 5;
+	int plat_count = LEVEL1_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
@@ -554,7 +609,7 @@ void Objects_Draw(void) {
 int Object_HitCheck(float cx, float cy, float radius, int self) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = 5;
+	int plat_count = LEVEL1_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }

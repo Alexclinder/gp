@@ -24,7 +24,6 @@ CP_Image npc1;
 // For Resume Game Btn
 void Game_Init(void)
 {
-	// Use to initalize the color variables with values stored
 	color_create();
 	g1 = CP_Image_Load("Assets/Grab1.png");
 	g2 = CP_Image_Load("Assets/Grab2.png");
@@ -45,10 +44,6 @@ void Game_Init(void)
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 	TimeSet = 0;
-
-
-	
-
 }
 
 void Game_Reset(void)
