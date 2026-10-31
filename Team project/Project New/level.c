@@ -59,7 +59,7 @@ int TimeSet,PauseTimeCount, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0;
 
 spawn player_spawns[LEVELS] = { 
-							   { 200.0f, 100.0f},
+							   { 100.0f, 800.0f},
 							   { 100.0f, 100.0f},
 							   { 200.0f, 600.0f},
 							   { 200.0f, 300.0f}
@@ -288,7 +288,7 @@ void level_1st(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
-	/*
+	
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -305,7 +305,7 @@ void level_1st(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
-	*/
+	
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level1.px, level1.py, level1.pw, level1.ph,
 		level1.dx, level1.dy, level1.dw, level1.dh);
@@ -551,7 +551,7 @@ void Objects_Draw(void) {
 
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = 5;
+	int plat_count = LEVEL1_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
@@ -598,7 +598,7 @@ void Objects_Draw(void) {
 int Object_HitCheck(float cx, float cy, float radius, int self) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = 5;
+	int plat_count = LEVEL1_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
