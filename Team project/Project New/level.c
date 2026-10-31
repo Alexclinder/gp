@@ -12,7 +12,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "screen_seq.h"
 #include "npc_mechanics.h"
 
-#define LEVEL1_PLATFORMS 100
+#define LEVEL1_PLATFORMS 30
 #define LEVEL1_SEC_BUILDING 580.0f
 #define LEVEL1_THIRD_BUILDING 280.0f
 #define LEVEL1_FOURTH_BUILDING 320.0f
