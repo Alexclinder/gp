@@ -26,12 +26,12 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define PARAMETERS 6
 #define NO_ROTATION 0
 #define CORNER_RADIUS 0
-#define RECT_HORIZ_H 20
+#define RECT_HORIZ_H 15
 
 #define HIGHLIGHT_PAD 6.0f
 
-#define PRESSURE_WIDTH 50.0f
-#define PRESSURE_HEIGHT 20.0f
+#define PRESSURE_WIDTH 30.0f
+#define PRESSURE_HEIGHT 15.0f
 #define DOOR_WIDTH 10.0f
 #define DOOR_HEIGHT 80.0f
 
@@ -72,10 +72,12 @@ spawn NPC_1_spawns[LEVELS] = {
 							   { 200.0f, 300.0f }
 							 };
 
-pressure_door_pos level1 = {.px = 1150.0f, .py = 320.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
-							.dx = 1455.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
-
-k_zone level1_k = { .kx = 990.0f, .ky = 730.0f, .kw = 810.0f, .kh = 20.0f };
+pressure_door_pos level1 = {.px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1460.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
+// Bottom Pit 
+k_zone level1_k = { .kx = 1010.0f, .ky = 730.0f, .kw = 910.0f, .kh = 20.0f };
+// 4th Roof Kill
+k_zone level1_4b = { .kx = 1055.0f, .ky = 295.0f, .kw = 295.0f, .kh = 5.0f };
 
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
@@ -121,7 +123,7 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 	/* ---------- 3rd building ----------  */
 
 	// Left Wall
-	{ 905.0f, 401.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING-58.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 905.0f, 400.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING-58.0f, NO_ROTATION, CORNER_RADIUS },
 
 	// 4th Level	
 	{ 1038.0f, 487.0f, LEVEL1_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
@@ -132,21 +134,34 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 	
 
 	// Right Wall
-	{ 1206.0f, 330.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 1206.0f, 333.0f,  LEVEL1_BUILDING_WALL, LEVEL1_THIRD_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
 
 	/* ---------- 3rd/4th building ----------  */
 
 	// Bottom Platform connecting 3rd and 4th building 
 	{ 1280.0f, 600.0f, PLATFORM_WIDTH_1 / 2.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1300.0f, 390.0f, PLATFORM_WIDTH_1 * 2.8f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1300.0f, 390.0f, PLATFORM_WIDTH_1 * 2.5f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	/* ---------- 4th building ----------  */
 
-	// Left Wall
+	// Right Wall
 	{ 1490.0f, 730.0f,  LEVEL1_BUILDING_WALL * 4.8f, LEVEL1_FOURTH_BUILDING, NO_ROTATION, CORNER_RADIUS },
+	
+	// Top Right Wall
+	{ 1460.0f, 435.0f,  LEVEL1_BUILDING_WALL, LEVEL1_FOURTH_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
+
+	// Top Left Wall
+	{ 1320.0f, 530.0f,  LEVEL1_BUILDING_WALL, LEVEL1_FOURTH_BUILDING / 2.8f, NO_ROTATION, CORNER_RADIUS },
+
+	// Top Left Platform
+	{ 1300.0f, 480.0f,  PLATFORM_WIDTH_1/2.2f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	// Platform
-	{ 1408.0f, 580.0f,  PLATFORM_WIDTH_1 * 1.8f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1415.0f, 580.0f,  PLATFORM_WIDTH_1 * 1.6f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	// Stair Platform
+	{ 1350.0f, 520.0f,  PLATFORM_WIDTH_1 / 3.0f, RECT_HORIZ_H * 1.5f, NO_ROTATION, CORNER_RADIUS },
+
 
 	
 	
@@ -295,6 +310,7 @@ void level_1st(void) {
 		level1.dx, level1.dy, level1.dw, level1.dh);
 
 	kill_zone(level1_k.kx, level1_k.ky, level1_k.kw, level1_k.kh);
+	kill_zone(level1_4b.kx, level1_4b.ky, level1_4b.kw, level1_4b.kh);
 
 	Objects_Draw();
 	//Player_Animation_Checks();
