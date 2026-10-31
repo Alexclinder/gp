@@ -16,7 +16,7 @@
 #define GRAB_FRAME_TIME    0.15f
 #define KICK_DIST 100.0f   /* how far a kick moves the object */
 #define KICK_TIME 0.2f     /* how long the slide takes, in seconds */
-#define AirDashDistance 100.0f;
+#define AirDashDistance 100.0f
 
 float collision_radius = 50.0f;
 float degrees;
@@ -196,6 +196,7 @@ void Character_MovementDefault(void) {
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
 }
 
+
 void Character_MovementCarry(void)
 {
 	float dt = CP_System_GetDt();
@@ -333,7 +334,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		position.x = area_right;
 		side = 4;
 	}
-	/*
+	
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
@@ -358,7 +359,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
 		}
 	}
-	*/
+	
 	return side;
 	
 }
@@ -535,8 +536,8 @@ void Player_Starting_Pos(spawn arr[], int level_selected) {
 }
 
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
-						 float door_x, float door_y, float door_width, float door_height) {
-	
+	float door_x, float door_y, float door_width, float door_height) {
+
 	CP_Settings_Fill(light_green);
 	CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
 
@@ -548,7 +549,7 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 	{
 		int pressed = 0;
 
-		
+
 		float plate_left = pres_x - pres_width / 2.0f;
 		float plate_right = pres_x + pres_width / 2.0f;
 		float plate_top = pres_y - pres_height / 2.0f;
@@ -559,7 +560,7 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 		float player_top = position.y;
 		float player_bottom = position.y + PLAYER_SIZE;
 
-		
+
 		if (player_right > plate_left &&
 			player_left < plate_right &&
 			player_bottom > plate_top &&
@@ -592,7 +593,7 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 
 		CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
 
-		
+
 		if (!pressed)
 		{
 			CP_Settings_Fill(purple);
@@ -601,7 +602,7 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 			collision_check(door_x, door_y, door_width, door_height);
 		}
 	}
-
+}
 
 void kill_zone(float x, float y, float w, float h)
 {
