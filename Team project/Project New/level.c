@@ -14,7 +14,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "colors.h"
 
 
-#define LEVEL1_PLATFORMS 30
+#define LEVEL1_STATIC_PLATFORMS 29
 #define LEVEL1_SEC_BUILDING 580.0f
 #define LEVEL1_THIRD_BUILDING 280.0f
 #define LEVEL1_FOURTH_BUILDING 400.0f
@@ -94,7 +94,7 @@ win_condition level1_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CO
 
 
 // LEVEL 1: Outside the building
-float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
+float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 1st building ----------  */
 	// Jump max is 80f
@@ -121,11 +121,6 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 2nd/3rd building ----------  */
 
-	// Top Platform connecting 2nd and 3rd building 
-	{ 850.0f, 450.0f, PLATFORM_WIDTH_1 / 3.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-
-
-
 	// Bottom Platform connecting 2nd and 3rd building 
 	{ 784.0f, 650.0f, PLATFORM_WIDTH_1*1.4, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
@@ -150,7 +145,8 @@ float first_level[LEVEL1_PLATFORMS][PARAMETERS] = {
 	/* ---------- 3rd/4th building ----------  */
 
 	// Bottom Platform connecting 3rd and 4th building 
-	{ 1250.0f, 660.0f, PLATFORM_WIDTH_1 * 1.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1250.0f, 660.0f, PLATFORM_WIDTH_1, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	
 	{ 1300.0f, 390.0f, PLATFORM_WIDTH_1 * 2.8f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	/* ---------- 4th building ----------  */
@@ -289,9 +285,10 @@ void ingameTimer(void) {
 	}
 }
 
+#define LEFT_BOUNDARY 650.0f
+#define RIGHT_BOUNDARY 850.0f
+
 void level_1st(void) {
-
-
 	DrawBG(background);
 
 	ingameTimer();
@@ -299,6 +296,12 @@ void level_1st(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 	
+	// Top Platform connecting 2nd and 3rd building 
+
+	platform_alternating_movement(850.0f, 450.0f, PLATFORM_WIDTH_1 / 3.0f,
+								  RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS,
+								 LEFT_BOUNDARY, RIGHT_BOUNDARY);
+
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -329,7 +332,7 @@ void level_1st(void) {
 
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < LEVEL1_PLATFORMS; i++) {
+	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
 		DrawPlatform(first_level[i][0], 
 					 first_level[i][1], 
 					 first_level[i][2], 
@@ -562,7 +565,7 @@ void Objects_Draw(void) {
 
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = LEVEL1_PLATFORMS;
+	int plat_count = LEVEL1_STATIC_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
@@ -609,7 +612,7 @@ void Objects_Draw(void) {
 int Object_HitCheck(float cx, float cy, float radius, int self) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = LEVEL1_PLATFORMS;
+	int plat_count = LEVEL1_STATIC_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }

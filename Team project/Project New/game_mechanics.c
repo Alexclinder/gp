@@ -668,3 +668,41 @@ void Air_Dash_Mechannic(void) {
 		}
 	}
 }
+
+float platform_velocity = -100.0f;
+float platform_move = 0.0f;
+
+void platform_alternating_movement(float x, float y, float w, float h,
+								   float degrees, float cornerRadius, 
+								   float left_boundary, float right_boundary) {
+	float dt = CP_System_GetDt();
+
+	// This code makes stuff move 
+	platform_move += platform_velocity * dt;
+
+	// new x with offset 
+	float updated_x = x + platform_move;
+
+	// Reverse direction at the left boundary
+	if (updated_x <= left_boundary)
+	{
+		// lock the x to the left limit
+		updated_x = left_boundary;
+		// update offset with the remaining distance
+		platform_move = updated_x - x;
+		// makes thing go right
+		platform_velocity = 100.0f;
+	}
+	// Reverse direction at the right boundary
+	else if (updated_x >= right_boundary)
+	{
+		// lock the x to the right limit
+		updated_x = right_boundary;
+		// update offset with the remaining distance
+		platform_move = updated_x - x;
+		// makes thing go right
+		platform_velocity = -100.0f;
+	}
+	// draw stuff
+	DrawPlatform(updated_x, y, w, h, degrees, cornerRadius);
+}

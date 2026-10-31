@@ -10,6 +10,8 @@ extern int player_action;
 extern int kickedObject;
 extern CP_Vector position;
 extern CP_Vector velocity;
+extern float platform_velocity;
+extern float platform_move;
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
 
@@ -39,5 +41,9 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 					     float door_x, float door_y, float door_width, float door_height);
 
 void kill_zone(float x, float y, float w, float h);
+
+void platform_alternating_movement(float x, float y, float w, float h,
+	float degrees, float cornerRadius,
+	float left_boundary, float right_boundary);
 
 
