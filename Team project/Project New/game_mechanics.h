@@ -33,4 +33,6 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 
 void Player_Starting_Pos(struct spawn arr[], int level_selected);
 
+void Air_Dash_Mechannic(void);
+
 

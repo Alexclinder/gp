@@ -18,6 +18,7 @@
 #define KICK_TIME      0.2f
 #define KICK_DIST 100.0f   /* how far a kick moves the object */
 #define KICK_TIME 0.2f     /* how long the slide takes, in seconds */
+#define AirDashDistance 100.0f;
 
 float collision_radius = 50.0f;
 float degrees;
@@ -36,6 +37,8 @@ float fromX, fromY, toX, toY;
 int kickedObject = -1;
 float kick_dir = 0.0f;
 float kick_moved = 0.0f;
+int DoubleTap_dash_Status = 0;
+float DashWindowTiming = 0.0f;
 CP_Vector position = { 100,100 };
 CP_Vector velocity = { 0, 0 };
 
@@ -539,4 +542,43 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 
 	CP_Settings_Fill(purple);
 	CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
+}
+
+void Air_Dash_Mechannic(void) {
+	// Air dash mechanic
+
+	float dt = CP_System_GetDt();
+	DashWindowTiming -= dt; // Contuously decrease the dash window timing based on the delta time
+		if (DashWindowTiming <= 0) {
+			DashWindowTiming = 0; // Clamp the dash window timing to 0 if it goes below 0
+			DoubleTap_dash_Status = 0; // reset the double tap status once the dash window timing has expired
+		}
+
+		if (CP_Input_KeyTriggered(KEY_D) && velocity.x > 0) {// If the player is moving to the right and presses the D key, check for double tap
+			//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
+			//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
+			if (DashWindowTiming > 0 && DoubleTap_dash_Status) {
+				position.x += AirDashDistance; // Dash to the right
+				DoubleTap_dash_Status = 0; // Reset the double tap status after dashing
+			}
+			else
+			{
+				DoubleTap_dash_Status = 1; // Set the double tap status to indicate the first tap has been detected
+				DashWindowTiming = 0.5f; // Set the dash window timing (0.5 seconds)
+			}
+	}
+	
+	if (CP_Input_KeyTriggered(KEY_A) && velocity.x < 0) {// If the player is moving to the left and presses the A key, check for double tap
+		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
+		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
+		if (DashWindowTiming > 0 && DoubleTap_dash_Status) {
+			position.x -= AirDashDistance; // Dash to the left
+			DoubleTap_dash_Status = 0; // Reset the double tap status after dashing
+		}
+		else
+		{
+			DoubleTap_dash_Status = 1;// Set the double tap status to indicate the first tap has been detected
+			DashWindowTiming = 0.5f; // Set the dash window timing (0.5 seconds)
+		}
+	}
 }

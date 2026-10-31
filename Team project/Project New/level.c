@@ -268,6 +268,7 @@ void level_1st(void) {
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
+
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < LEVEL1_PLATFORMS; i++) {
@@ -278,6 +279,7 @@ void level_1st(void) {
 			         first_level[i][4], 
 			         first_level[i][5]);
 	}
+	Air_Dash_Mechannic();
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
 	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) {
