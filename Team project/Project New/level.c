@@ -91,6 +91,8 @@ pressure_door_pos level1 = {.px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .
 k_zone level1_k = { .kx = 1010.0f, .ky = 730.0f, .kw = 910.0f, .kh = 20.0f };
 // 4th Roof Kill
 k_zone level1_4b = { .kx = 1055.0f, .ky = 295.0f, .kw = 295.0f, .kh = 5.0f };
+// 2th and 3rd Building moving platform
+k_zone level1_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
 
 // Parameters is for drawing and checking win_con in level 1
 win_condition level1_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
@@ -120,7 +122,7 @@ float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
 	// Roof
 	{ 660.0f, 320.0f, PLATFORM_WIDTH_1 * 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	// 6th floor
-	{ 583.08f, 514.0f, PLATFORM_WIDTH_1 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 583.08f, 540.0f, PLATFORM_WIDTH_1 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 
 	/* ---------- 2nd/3rd building ----------  */
 
@@ -329,6 +331,7 @@ void level_1st(void) {
 
 	kill_zone(level1_k.kx, level1_k.ky, level1_k.kw, level1_k.kh);
 	kill_zone(level1_4b.kx, level1_4b.ky, level1_4b.kw, level1_4b.kh);
+	kill_zone(level1_23b.kx, level1_23b.ky, level1_23b.kw, level1_23b.kh);
 
 	Objects_Draw();
 	//Player_Animation_Checks();
