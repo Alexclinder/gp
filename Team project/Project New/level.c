@@ -29,6 +29,8 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define LEVEL1_BUILDING_WALL 10.0f
 #define LEVEL1_FOURTH_BUILDING_WIDTH 2.0f
 
+#define LEVEL3_STATIC_PLATFORMS 29
+
 #define LEVELS 4
 
 // Platform Parameters
@@ -192,7 +194,7 @@ win_condition level3_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
 
 // LEVEL 3: Final Level
-float third_level[6][PARAMETERS] = {
+float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 180.0f, 800.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 440.0f, 730.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 650.0f, 650.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
@@ -301,7 +303,7 @@ void level_1st(void) {
 	platform_alternating_movement(850.0f, 450.0f, PLATFORM_WIDTH_1 / 3.0f,
 								  RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS,
 								 LEFT_BOUNDARY, RIGHT_BOUNDARY);
-
+	/*
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -318,7 +320,7 @@ void level_1st(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
-	
+	*/
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level1.px, level1.py, level1.pw, level1.ph,
 		level1.dx, level1.dy, level1.dw, level1.dh);
@@ -401,7 +403,7 @@ void level_3rd(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
-
+	/*
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -417,13 +419,13 @@ void level_3rd(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
-
+	*/
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
 		DrawPlatform(third_level[i][0],
 			third_level[i][1],
 			third_level[i][2],
@@ -569,7 +571,7 @@ void Objects_Draw(void) {
 	float (*plats)[PARAMETERS] = first_level;
 	int plat_count = LEVEL1_STATIC_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
-	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
+	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
 
 	for (int i = 0; i < current_obj_count; i++) {
@@ -616,7 +618,7 @@ int Object_HitCheck(float cx, float cy, float radius, int self) {
 	float (*plats)[PARAMETERS] = first_level;
 	int plat_count = LEVEL1_STATIC_PLATFORMS;
 	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
-	if (level_selected == level_3) { plats = third_level;  plat_count = 6; }
+	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
 	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
 
 	for (int p = 0; p < plat_count; p++) {
