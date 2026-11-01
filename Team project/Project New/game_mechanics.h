@@ -13,6 +13,8 @@ extern CP_Vector velocity;
 extern float platform_velocity;
 extern float platform_move;
 
+void Air_Dash_Mechannic(void);
+
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
 
 int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter, float click_x, float click_y);
@@ -34,8 +36,6 @@ int CheckWinCondition(float x, float y, float w, float h, float degrees, float c
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height);
 
 void Player_Starting_Pos(struct spawn arr[], int level_selected);
-
-void Air_Dash_Mechannic(void);
 
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 					     float door_x, float door_y, float door_width, float door_height);

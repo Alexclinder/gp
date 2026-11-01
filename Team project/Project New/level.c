@@ -330,6 +330,8 @@ void level_1st(void) {
 	//Player_Animation_Checks();
 	Player_Animation();
 
+
+
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
