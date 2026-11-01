@@ -591,7 +591,6 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 	{
 		int pressed = 0;
 
-
 		float plate_left = pres_x - pres_width / 2.0f;
 		float plate_right = pres_x + pres_width / 2.0f;
 		float plate_top = pres_y - pres_height / 2.0f;
@@ -601,7 +600,6 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 		float player_right = position.x + PLAYER_SIZE;
 		float player_top = position.y;
 		float player_bottom = position.y + PLAYER_SIZE;
-
 
 		if (player_right > plate_left &&
 			player_left < plate_right &&
