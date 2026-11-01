@@ -12,6 +12,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "screen_seq.h"
 #include "npc_mechanics.h"
 #include "colors.h"
+#include "player_save.h"
 
 
 #define LEVEL1_STATIC_PLATFORMS 29
@@ -30,8 +31,6 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define LEVEL1_FOURTH_BUILDING_WIDTH 2.0f
 
 #define LEVEL3_STATIC_PLATFORMS 29
-
-#define LEVELS 4
 
 // Platform Parameters
 #define PLATFORM_WIDTH_1 120.0f
@@ -172,10 +171,6 @@ float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
 
 	// Stair Platform
 	{ 1350.0f, 520.0f,  PLATFORM_WIDTH_1 / 3.0f, RECT_HORIZ_H * 1.5f, NO_ROTATION, CORNER_RADIUS },
-
-
-	
-	
 };
 
 // Parameters is for drawing and checking win_con in level 2
@@ -296,7 +291,6 @@ void level_1st(void) {
 	DrawBG(background);
 
 	ingameTimer();
-
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 	
