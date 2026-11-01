@@ -1,6 +1,9 @@
 #pragma once
 
 extern level_selected;
+
+#define LEVELS 4
+
 // Needed for Game_Reset() reassign back to 0
 typedef struct{
 	CP_Vector pos;

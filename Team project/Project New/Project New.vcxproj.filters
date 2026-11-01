@@ -36,6 +36,15 @@
     <ClCompile Include="colors.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cJSON.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="player_save.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="player_abilities.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="level.h">
@@ -56,5 +65,17 @@
     <ClInclude Include="colors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cJSON.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="player_save.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="player_abilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="player_save.json" />
   </ItemGroup>
 </Project>
