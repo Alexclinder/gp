@@ -218,8 +218,8 @@ float fourth_level[6][PARAMETERS] = {
 // Object start coords for level 1 (const so the level start never changes)
 // { x, y, w, h, type }
 const float first_level_objects[2][5] = {
-	{ 120.0f, 690.0f, 120.0f, 90.0f, OBJ_DESK },
-	{ 970.0f, 470.0f, 100.0f, 110.0f, OBJ_PRINTER }
+	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
 };
 
 
@@ -230,8 +230,8 @@ float first_level_objects_ingame[2][5];
 // Object start coords for level 2 (const so the level start never changes)
 // { x, y, w, h, type }
 const float second_level_objects[2][5] = {
-	{ 120.0f, 690.0f, 120.0f, 90.0f, OBJ_DESK },
-	{ 970.0f, 470.0f, 100.0f, 110.0f, OBJ_PRINTER }
+	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
 };
 
 // Object coords in game for level 2 (carrying and dropping change these)
@@ -240,8 +240,8 @@ float second_level_objects_ingame[2][5];
 // Object start coords for level 3 (const so the level start never changes)
 // { x, y, w, h, type }
 const float third_level_objects[2][5] = {
-	{ 120.0f, 690.0f, 120.0f, 90.0f, OBJ_DESK },
-	{ 970.0f, 470.0f, 100.0f, 110.0f, OBJ_PRINTER }
+	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
 };
 
 // Object coords in game for level 3 (carrying and dropping change these)
