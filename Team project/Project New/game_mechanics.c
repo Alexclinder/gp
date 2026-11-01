@@ -586,12 +586,6 @@ void Player_Starting_Pos(spawn arr[], int level_selected) {
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 	float door_x, float door_y, float door_width, float door_height) {
 
-	CP_Settings_Fill(light_green);
-	CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
-
-	CP_Settings_Fill(purple);
-	CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
-
 	// if characteer or object intersects the pressure plate, the door will open.
 
 	{
