@@ -450,13 +450,13 @@ int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y,
 void DrawPlatform(float x, float y, float w, float h,
 	float degrees, float cornerRadius)
 {
-	CP_Settings_Fill(light_sky_blue);
+	CP_Settings_Fill(grey);
 	CP_Settings_RectMode(CP_POSITION_CENTER);
 	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
 
-	CP_Settings_ImageMode(CP_POSITION_CENTER);
-	CP_Image_Draw(platform, x, y, w, h, 255);
-	CP_Settings_ImageMode(CP_POSITION_CORNER);
+	//CP_Settings_ImageMode(CP_POSITION_CENTER);
+	//CP_Image_Draw(platform, x, y, w, h, 255);
+	//CP_Settings_ImageMode(CP_POSITION_CORNER);
 
 	collision_check(x, y, w, h);
 }

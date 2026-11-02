@@ -21,6 +21,8 @@ float textSize= 50.0f;
 CP_Image mainbackground;
 CP_Image frame;
 CP_Image levelselection;
+CP_Image defeat;
+CP_Image pausemenu;
 CP_Font Font;
 
 
@@ -43,8 +45,10 @@ void Screen_Init(void)
     color_create();
 
 	mainbackground = CP_Image_Load("Assets/MainMenu.png");
+	defeat = CP_Image_Load("Assets/Defeat.png");
     levelselection = CP_Image_Load("Assets/LevelSelect.png");
     frame = CP_Image_Load("Assets/buttonframe.png");
+    pausemenu = CP_Image_Load("Assets/pause.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
     PauseTimeCount = 1;
@@ -126,20 +130,23 @@ void Main_Menu_Update(void) {
 
 void Pause_Menu_Update(void)
 {
-    float rect_x = CP_System_GetWindowWidth() / 2.0;
+    float rect_x = 250.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
-
+    CP_Image_Draw(pausemenu, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
+    CP_Settings_Fill(CP_Color_Create(255, 255, 255, 255));
+    CP_Settings_TextSize(100.0f);
+    CP_Font_DrawText("PAUSED", 250.0f, 80.0f);
     // Resume
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Restart
     second_y = CP_System_GetWindowHeight() / 2.0; 
 	// Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-    CP_Settings_Fill(orange);
+    CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Resume Game!", rect_x, first_y, Game_Init, Game_Update, Game_Exit);
-    CP_Settings_Fill(orange);
+    CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
-    CP_Settings_Fill(orange);
+    CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
@@ -167,17 +174,18 @@ void Win_Screen(void) {
 }
 
 void Lose_Screen(void) {
-    float rect_x = CP_System_GetWindowWidth() / 2.0;
+    float rect_y = CP_System_GetWindowHeight() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
+    CP_Image_Draw(defeat, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
 
 	// Restart Level
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
 	// Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-    CP_Settings_Fill(orange);
-    dynamicBtn("Restart Level", rect_x, first_y, Game_Reset, Game_Update, Game_Exit);
-    CP_Settings_Fill(orange);
-    dynamicBtn("Exit to Main Menu", rect_x, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    CP_Settings_Fill(translucent_light_red);
+    dynamicBtn("Restart Level", 300, rect_y, Game_Reset, Game_Update, Game_Exit);
+    CP_Settings_Fill(translucent_light_red);
+    dynamicBtn("Exit to Main Menu", 1300, rect_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
 }
@@ -247,7 +255,7 @@ void Level_Select_Screen(void) {
     CP_Settings_Fill(orange);
     dynamicBtn("Level 2", btn_x + offset[2], 350.0f, Level_2_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Level 3", btn_x + offset[3], 470.0f, Level_1_Init, Game_Update, Game_Exit);
+    dynamicBtn("Level 3(HARD)", btn_x + offset[3], 470.0f, Level_1_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
     dynamicBtn("Level 4", btn_x + offset[4], 590.0f, Level_4_Init, Game_Update, Game_Exit);
 
