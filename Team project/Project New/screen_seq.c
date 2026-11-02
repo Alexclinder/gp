@@ -243,11 +243,11 @@ void Level_Select_Screen(void) {
 
     // Level buttons (stacked on the left)
     CP_Settings_Fill(orange);
-    dynamicBtn("Level 1", btn_x + offset[1], 230.0f, Level_1_Init, Game_Update, Game_Exit);
+    dynamicBtn("Level 1", btn_x + offset[1], 230.0f, Level_3_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
     dynamicBtn("Level 2", btn_x + offset[2], 350.0f, Level_2_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Level 3", btn_x + offset[3], 470.0f, Level_3_Init, Game_Update, Game_Exit);
+    dynamicBtn("Level 3", btn_x + offset[3], 470.0f, Level_1_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
     dynamicBtn("Level 4", btn_x + offset[4], 590.0f, Level_4_Init, Game_Update, Game_Exit);
 

@@ -493,14 +493,14 @@ void level_4th(void) {
 
 void level_selection(int level_no) {
 	switch (level_no) {
-		case level_1: 
-			level_1st();
+		case level_3: 
+			level_3rd();
 			break;
 		case level_2: 
 			level_2nd();
 			break;
-		case level_3: 
-			level_3rd();
+		case level_1: 
+			level_1st();
 			break;
 		case level_4: 
 			level_4th();

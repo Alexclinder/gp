@@ -15,6 +15,7 @@ CP_Image background;
 CP_Image backgroundtwo;
 CP_Image backgroundthree;
 CP_Image platform;
+CP_Image projectile;
 CP_Image objImg[OBJ_TYPE_COUNT];
 CP_Image objBG[OBJ_TYPE_COUNT];
 
@@ -35,6 +36,7 @@ void Game_Init(void)
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	npc1 = CP_Image_Load("Assets/Worker.png"); // Load npc 1
 	platform = CP_Image_Load("Assets/Platform.png");
+	projectile = CP_Image_Load("Assets/paperball.png");
 	objImg[OBJ_DESK] = CP_Image_Load("Assets/desk.png");
 	objBG[OBJ_DESK] = CP_Image_Load("Assets/desk_background.png");
 	objImg[OBJ_PRINTER] = CP_Image_Load("Assets/printer.png");
