@@ -23,4 +23,5 @@ void drawTextCenter(const char* text, float x, float y, float scalar);
 
 extern CP_Image mainbackground;
 extern CP_Image frame;
+extern CP_Image levelselection;
 extern CP_Font Font;

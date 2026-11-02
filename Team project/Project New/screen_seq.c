@@ -20,6 +20,7 @@
 float textSize= 50.0f;
 CP_Image mainbackground;
 CP_Image frame;
+CP_Image levelselection;
 CP_Font Font;
 
 
@@ -42,6 +43,7 @@ void Screen_Init(void)
     color_create();
 
 	mainbackground = CP_Image_Load("Assets/MainMenu.png");
+    levelselection = CP_Image_Load("Assets/LevelSelect.png");
     frame = CP_Image_Load("Assets/buttonframe.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
@@ -213,48 +215,47 @@ void Completed_Game_Screen(void) {
     dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 }
 
+static float level_anim_time = 0.0f;   // put this at the top of the file
+
 void Level_Select_Screen(void) {
-        CP_Graphics_ClearBackground(CP_Color_Create(80, 80, 80, 0));
+    CP_Graphics_ClearBackground(CP_Color_Create(80, 80, 80, 0));
+    CP_Image_Draw(levelselection, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
+    // ---------- Slide-in timing ----------
+    level_anim_time += CP_System_GetDt();
 
-        float center_x = CP_System_GetWindowWidth()/2.0f;
-        float center_y = CP_System_GetWindowHeight()/2.0f;
-        drawTextCenter("SELECT A LEVEL", center_x, center_y - 250.0f, 1.2f);
+    float duration = 0.6f;     // seconds each element takes to slide in
+    float distance = 600.0f;   // how far off-screen they start
+    float delay = 0.25f;    // gap between each element
 
-        // Level Button Positions
-        float col1_x = center_x - 250.0f;
-        float col2_x = center_x + 250.0f;
-
-        float row1_y = center_y - 80.0f;
-        float row2_y = center_y + 80.0f;
-
-
-        // Render in 2 by 2 matrix
-        /*
-        
-        btn 1 , btn 2
-        btn 3,  btn 4
-        
-        1,1 1,2
-        2,1 2,2
-        */
-        CP_Settings_Fill(orange);
-        // Level 1
-        dynamicBtn("Level 1", col1_x, row1_y, Level_1_Init, Game_Update, Game_Exit);
-        CP_Settings_Fill(orange);
-        // Level 2
-        dynamicBtn("Level 2", col2_x, row1_y, Level_2_Init, Game_Update, Game_Exit);
-        CP_Settings_Fill(orange);
-        // Level 3
-        dynamicBtn("Level 3", col1_x, row2_y, Level_3_Init, Game_Update, Game_Exit);
-        CP_Settings_Fill(orange);
-        // Level 4
-        dynamicBtn("Level 4", col2_x, row2_y, Level_4_Init, Game_Update, Game_Exit);
-
-        third_y = center_y + 220.0f;
-        float menu_btn_x = center_x;
-        CP_Settings_Fill(orange);
-        dynamicBtn("Back to Menu", menu_btn_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    // 0 = title, 1-4 = levels, 5 = back button
+    float offset[6];
+    for (int i = 0; i < 6; i++) {
+        float p = (level_anim_time - i * delay) / duration;
+        if (p < 0.0f) p = 0.0f;
+        if (p > 1.0f) p = 1.0f;
+        offset[i] = -distance * (1.0f - p) * (1.0f - p) * (1.0f - p);
     }
+    // -------------------------------------
+
+    float btn_x = 320.0f;
+
+    drawTextCenter("SELECT A LEVEL", btn_x + offset[0], 100.0f, 1.2f);
+
+    // Level buttons (stacked on the left)
+    CP_Settings_Fill(orange);
+    dynamicBtn("Level 1", btn_x + offset[1], 230.0f, Level_1_Init, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
+    dynamicBtn("Level 2", btn_x + offset[2], 350.0f, Level_2_Init, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
+    dynamicBtn("Level 3", btn_x + offset[3], 470.0f, Level_3_Init, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
+    dynamicBtn("Level 4", btn_x + offset[4], 590.0f, Level_4_Init, Game_Update, Game_Exit);
+
+    // Back to Menu (extra gap below the levels)
+    third_y = 740.0f;
+    CP_Settings_Fill(orange);
+    dynamicBtn("Back to Menu", btn_x + offset[5], third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+}
 
 void Screen_Exit(void)
 {
