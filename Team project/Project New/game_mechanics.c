@@ -17,7 +17,7 @@
 #define KICK_DIST 100.0f   /* how far a kick moves the object */
 #define KICK_TIME 0.2f     /* how long the slide takes, in seconds */
 #define AirDashDistance 100.0f // how far the player dashes when double tapping
-#define DashWindow 0.5f // how long the player has to double tap for a dash
+#define DashWindow 0.8f // how long the player has to double tap for a dash
 
 float collision_radius = 50.0f;
 float degrees;
@@ -77,13 +77,13 @@ void Air_Dash_Mechannic(void){//float Left_Area, float Right_Area) {
 	}
 
 	//Activate dash window when movement key is pressed
-	if (CP_Input_KeyTriggered(KEY_D) && velocity.x > 0) {// If the player is moving to the right and presses the D key, check for double tap
+	if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && DashWindowTiming == 0) {// If the player is moving to the right and presses the D key, check for double tap
 		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
 		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
 		DoubleTap_RightDash_Status = 1; // Set the double tap status to indicate the first tap has been detected
 		DashWindowTiming = DashWindow; // Set the dash window timing (0.5 seconds)
 	}
-	if (CP_Input_KeyTriggered(KEY_A) && velocity.x < 0) {// If the player is moving to the left and presses the A key, check for double tap
+	if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && DashWindowTiming == 0) {// If the player is moving to the left and presses the A key, check for double tap
 		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
 		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
 		DoubleTap_LeftDash_Status = 1;// Set the double tap status to indicate the first tap has been detected
