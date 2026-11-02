@@ -9,6 +9,8 @@ CP_Color translucent_light_red;
 CP_Color white;
 CP_Color translucent_white;
 CP_Color medium_light_green;
+CP_Color orange;
+CP_Color dark_blue;
 
 void color_create(void) {
 	purple = CP_Color_Create(128, 0, 128, 255);
@@ -19,5 +21,7 @@ void color_create(void) {
 	white = CP_Color_Create(255, 255, 255, 255);
 	translucent_white = CP_Color_Create(255, 255, 255, 200);
 	medium_light_green = CP_Color_Create(100, 200, 100, 255);
+	orange = CP_Color_Create(240, 105, 80, 255);
+	dark_blue = CP_Color_Create(40, 55, 105, 255);
 
 }

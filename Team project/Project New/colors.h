@@ -10,5 +10,7 @@ extern CP_Color translucent_light_red;
 extern CP_Color white;
 extern CP_Color translucent_white;
 extern CP_Color medium_light_green;
+extern CP_Color orange;
+extern CP_Color dark_blue;
 
 void color_create(void);

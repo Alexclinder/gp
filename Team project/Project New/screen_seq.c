@@ -41,7 +41,7 @@ void Screen_Init(void)
     // Use to initalize the color variables with values stored
     color_create();
 
-	mainbackground = CP_Image_Load("Assets/Mainbackground.png");
+	mainbackground = CP_Image_Load("Assets/MainMenu.png");
     frame = CP_Image_Load("Assets/buttonframe.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
@@ -54,22 +54,72 @@ void Next_level_Init(void) {
     Game_Reset();
 }
 
-/*
-CP_Graphics Clear Background needs to be at the top.
-Otherwise, it might clear buttons and text */
 void Main_Menu_Update(void) {
-    float rect_x = CP_System_GetWindowWidth() / 2.0;
+    static float anim_time = 0.0f;   // keeps its value between frames
+    float rect_x = 320.0f;
+
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
     CP_Image_Draw(mainbackground, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
     level_selected = 0;
 
+    // ---------- Slide-in timing ----------
+    anim_time += CP_System_GetDt();
+
+    float duration = 1.0f;     // seconds each element takes to slide in
+    float distance = 600.0f;   // how far off-screen they start
+
+    // Title (no delay)
+    float p = anim_time / duration;
+    if (p > 1.0f) p = 1.0f;
+    float title_offset = -distance * (1.0f - p) * (1.0f - p) * (1.0f - p);
+
+    // Start Game (0.5s delay)
+    p = (anim_time - 0.5f) / duration;
+    if (p < 0.0f) p = 0.0f;
+    if (p > 1.0f) p = 1.0f;
+    float start_offset = -distance * (1.0f - p) * (1.0f - p) * (1.0f - p);
+
+    // Exit to Desktop (0.75s delay)
+    p = (anim_time - 0.75f) / duration;
+    if (p < 0.0f) p = 0.0f;
+    if (p > 1.0f) p = 1.0f;
+    float exit_offset = -distance * (1.0f - p) * (1.0f - p) * (1.0f - p);
+    // -------------------------------------
+
+    // ---------- Title ----------
+    CP_Settings_Save();   // so these text settings don't affect your buttons
+    // CP_Font_Set(titleFont);   // uncomment if you load a bold title font
+    CP_Settings_NoStroke();
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_MIDDLE);
+
+    // "THE"
+    CP_Settings_Fill(CP_Color_Create(255, 255, 255, 255));
+    CP_Settings_TextSize(45.0f);
+    CP_Font_DrawText("THE", 125.0f + title_offset, 80.0f);
+
+    // "OFFICE"
+    CP_Settings_TextSize(95.0f);
+    CP_Font_DrawText("OFFICE", 120.0f + title_offset, 160.0f);
+
+    // "RUN"
+    CP_Settings_Fill(CP_Color_Create(255, 204, 51, 255));
+    CP_Font_DrawText("RUN", 120.0f + title_offset, 245.0f);
+
+    // Red underline
+    CP_Settings_Fill(CP_Color_Create(230, 80, 70, 255));
+    CP_Graphics_DrawRect(120.0f + title_offset, 292.0f, 340.0f, 6.0f);
+
+    CP_Settings_Restore();
+    // ---------------------------
+
     // Start Game
-	first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
-	// Exit to Desktop
-	second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-    
-    dynamicBtn("Start Game!", rect_x, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
-    Exit_dynamicBtn("Exit to Desktop", rect_x, second_y);
+    first_y = 380.0f;
+    // Exit to Desktop
+    second_y = 620.0f;
+    CP_Settings_Fill(orange);
+    dynamicBtn("Start Game!", rect_x + start_offset, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    CP_Settings_Fill(dark_blue);
+    Exit_dynamicBtn("Exit to Desktop", rect_x + exit_offset, second_y);
 }
 
 void Pause_Menu_Update(void)
@@ -83,9 +133,11 @@ void Pause_Menu_Update(void)
     second_y = CP_System_GetWindowHeight() / 2.0; 
 	// Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-    
+    CP_Settings_Fill(orange);
     dynamicBtn("Resume Game!", rect_x, first_y, Game_Init, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
@@ -102,9 +154,11 @@ void Win_Screen(void) {
     // Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     
-    
+    CP_Settings_Fill(orange);
     dynamicBtn("Next Level", rect_x, first_y, Next_level_Init, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
@@ -118,8 +172,9 @@ void Lose_Screen(void) {
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
 	// Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-
+    CP_Settings_Fill(orange);
     dynamicBtn("Restart Level", rect_x, first_y, Game_Reset, Game_Update, Game_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
@@ -133,8 +188,9 @@ void Leaderboard_Screen(void) {
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-
+    CP_Settings_Fill(orange);
     dynamicBtn("Level Select", rect_x, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
 }
@@ -149,9 +205,11 @@ void Completed_Game_Screen(void) {
     second_y = CP_System_GetWindowHeight() / 2.0;
     // Exit to Main Menu
     third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-
+    CP_Settings_Fill(orange);
     dynamicBtn("Leaderboard", rect_x, first_y, Screen_Init, Leaderboard_Screen, Screen_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Level Select", rect_x, second_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 }
 
@@ -160,7 +218,6 @@ void Level_Select_Screen(void) {
 
         float center_x = CP_System_GetWindowWidth()/2.0f;
         float center_y = CP_System_GetWindowHeight()/2.0f;
-
         drawTextCenter("SELECT A LEVEL", center_x, center_y - 250.0f, 1.2f);
 
         // Level Button Positions
@@ -180,22 +237,22 @@ void Level_Select_Screen(void) {
         1,1 1,2
         2,1 2,2
         */
-
+        CP_Settings_Fill(orange);
         // Level 1
         dynamicBtn("Level 1", col1_x, row1_y, Level_1_Init, Game_Update, Game_Exit);
-     
+        CP_Settings_Fill(orange);
         // Level 2
         dynamicBtn("Level 2", col2_x, row1_y, Level_2_Init, Game_Update, Game_Exit);
-
+        CP_Settings_Fill(orange);
         // Level 3
         dynamicBtn("Level 3", col1_x, row2_y, Level_3_Init, Game_Update, Game_Exit);
-
+        CP_Settings_Fill(orange);
         // Level 4
         dynamicBtn("Level 4", col2_x, row2_y, Level_4_Init, Game_Update, Game_Exit);
 
         third_y = center_y + 220.0f;
         float menu_btn_x = center_x;
-
+        CP_Settings_Fill(orange);
         dynamicBtn("Back to Menu", menu_btn_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
     }
 
@@ -210,7 +267,7 @@ The functions below are the elements or functionalities of each updated screen*/
 void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
 {
     CP_Settings_RectMode(CP_POSITION_CENTER);
-    CP_Settings_Fill(translucent_light_red);
+    //CP_Settings_Fill(translucent_light_red);
     CP_Graphics_DrawRect(x, y, w, h);
     drawTextCenter(text, x, y, scalar);
 }
