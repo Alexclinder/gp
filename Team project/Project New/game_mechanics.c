@@ -17,7 +17,7 @@
 #define KICK_DIST 100.0f   /* how far a kick moves the object */
 #define KICK_TIME 0.2f     /* how long the slide takes, in seconds */
 #define AirDashDistance 100.0f // how far the player dashes when double tapping
-#define DashWindow 0.2f // how long the player has to double tap for a dash
+#define DashWindow 0.5f // how long the player has to double tap for a dash
 
 float collision_radius = 50.0f;
 float degrees;
@@ -39,8 +39,7 @@ float kick_moved = 0.0f;
 
 int DoubleTap_LeftDash_Status = 0;
 int DoubleTap_RightDash_Status = 0;
-float DashWindowTimingLeft = 0.0f;
-float DashWindowTimingRight = 0.0f;
+float DashWindowTiming = 0.0f;
 
 CP_Vector position = { 100,100 };
 CP_Vector velocity = { 0, 0 };
@@ -68,45 +67,38 @@ void Air_Dash_Mechannic(void){//float Left_Area, float Right_Area) {
 	// Air dash mechanic
 
 	float dt = CP_System_GetDt();
-	DashWindowTimingLeft -= dt; // Contuously decrease the dash window timing based on the delta time
-	if (DashWindowTimingLeft <= 0) {
-		DashWindowTimingLeft = 0; // Clamp the dash window timing to 0 if it goes below 0
+
+	//window to press dash while moving
+	DashWindowTiming -= dt; // Contuously decrease the dash window timing based on the delta time
+	if (DashWindowTiming <= 0) {
+		DashWindowTiming = 0; // Clamp the dash window timing to 0 if it goes below 0
 		DoubleTap_LeftDash_Status = 0; // reset the double tap status once the dash window timing has expired
-	}
-	DashWindowTimingRight -= dt; // Contuously decrease the dash window timing based on the delta time
-	if (DashWindowTimingRight <= 0) {
-		DashWindowTimingRight = 0; // Clamp the dash window timing to 0 if it goes below 0
-		DoubleTap_RightDash_Status = 0; // reset the double tap status once the dash window timing has expired
+		DoubleTap_RightDash_Status = 0;// reset the double tap status once the dash window timing has expired
 	}
 
+	//Activate dash window when movement key is pressed
 	if (CP_Input_KeyTriggered(KEY_D) && velocity.x > 0) {// If the player is moving to the right and presses the D key, check for double tap
 		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
 		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
-		if (CP_Input_KeyTriggered(KEY_D) && DashWindowTimingRight > 0 && DoubleTap_RightDash_Status) {
-			position.x += AirDashDistance; // Dash to the right
-			DoubleTap_RightDash_Status = 0; // Reset the double tap status after dashing
-		}
-		else
-		{
-			DoubleTap_RightDash_Status = 1; // Set the double tap status to indicate the first tap has been detected
-			DashWindowTimingRight = DashWindow; // Set the dash window timing (0.5 seconds)
-		}
+		DoubleTap_RightDash_Status = 1; // Set the double tap status to indicate the first tap has been detected
+		DashWindowTiming = DashWindow; // Set the dash window timing (0.5 seconds)
 	}
-
 	if (CP_Input_KeyTriggered(KEY_A) && velocity.x < 0) {// If the player is moving to the left and presses the A key, check for double tap
 		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
 		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
-		if (CP_Input_KeyTriggered(KEY_A) && DashWindowTimingLeft > 0 && DoubleTap_LeftDash_Status) {
-			position.x -= AirDashDistance; // Dash to the left
-			DoubleTap_LeftDash_Status = 0; // Reset the double tap status after dashing
-		}
-		else
-		{
-			DoubleTap_LeftDash_Status = 1;// Set the double tap status to indicate the first tap has been detected
-			DashWindowTimingLeft = DashWindow; // Set the dash window timing (0.5 seconds)
-		}
+		DoubleTap_LeftDash_Status = 1;// Set the double tap status to indicate the first tap has been detected
+		DashWindowTiming = DashWindow; // Set the dash window timing (0.5 seconds)
 	}
-	
+
+	//Press Left Shift while moving to dash
+	if (CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && DashWindowTiming > 0 && DoubleTap_RightDash_Status) {
+		position.x += AirDashDistance; // Dash to the right
+		DoubleTap_RightDash_Status = 0; // Reset the double tap status after dashing
+	}
+	else if (CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && DashWindowTiming > 0 && DoubleTap_LeftDash_Status) {
+		position.x -= AirDashDistance; // Dash to the left
+		DoubleTap_LeftDash_Status = 0; // Reset the double tap status after dashing
+	}
 
 }
 
@@ -152,6 +144,7 @@ void HeldObject_MoveTo(float t)
 }
 
 void Character_MovementDefault(void) {
+
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
