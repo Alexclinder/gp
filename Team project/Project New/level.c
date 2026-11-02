@@ -267,13 +267,22 @@ void ingameTimer(void) {
 		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
 		CP_Font_Set(Font);
 		CP_Settings_TextSize(100);
-		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
 		CP_Settings_Fill(translucent_white);
 		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
 		char buffer[16] = { 0 };
 		sprintf_s(buffer, 16, "%.2f", Seconds);
-		CP_Font_DrawText(buffer, 0, 0);
+		CP_Font_DrawText(buffer, CP_System_GetWindowWidth()/2, 0);
+		CP_Settings_Fill(yellow);
+
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 - 75, 120.0, 50.0, 50.0);//Left Star
+		if(Seconds < 10.0)
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2, 120.0, 50.0, 50.0); // Middle Star
+		if (Seconds < 2.0)
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 75, 120.0, 50.0, 50.0); //Right Star
+
+
 
 	}
 	else if (TimeSet == 0) {
@@ -349,6 +358,7 @@ void level_1st(void) {
 			         first_level[i][4], 
 			         first_level[i][5]);
 	}
+
 	Air_Dash_Mechannic();
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
