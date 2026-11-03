@@ -7,9 +7,9 @@ typedef struct{
 } spawn;
 
 typedef enum {
-	level_3,	// 0 
+	level_1,	// 0 
 	level_2,	// 1
-	level_1,	// 2
+	level_3,	// 2
 	level_4		// 3
 } levels;
 
