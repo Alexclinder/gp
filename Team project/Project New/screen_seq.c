@@ -85,8 +85,14 @@ void Main_Menu_Update(void) {
     if (p > 1.0f) p = 1.0f;
     float start_offset = -distance * (1.0f - p) * (1.0f - p) * (1.0f - p);
 
-    // Exit to Desktop (0.75s delay)
+    // Controls (0.75s delay)
     p = (anim_time - 0.75f) / duration;
+    if (p < 0.0f) p = 0.0f;
+    if (p > 1.0f) p = 1.0f;
+    float middle_offset = -distance * (1.0f - p) * (1.0f - p) * (1.0f - p);
+
+    // Exit to Desktop (1s delay)
+    p = (anim_time - 1.0f ) / duration;
     if (p < 0.0f) p = 0.0f;
     if (p > 1.0f) p = 1.0f;
     float exit_offset = -distance * (1.0f - p) * (1.0f - p) * (1.0f - p);
@@ -119,13 +125,19 @@ void Main_Menu_Update(void) {
     // ---------------------------
 
     // Start Game
-    first_y = 380.0f;
+    first_y = 390.0f;
+    // Controls
+    second_y = first_y * 1.5f;
     // Exit to Desktop
-    second_y = 620.0f;
+    third_y = first_y * 2.0f;
+
+
     CP_Settings_Fill(orange);
     dynamicBtn("Start Game!", rect_x + start_offset, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    CP_Settings_Fill(light_sky_blue);
+    dynamicBtn("Controls", rect_x + middle_offset, second_y, Screen_Init, Controls_Screen, Screen_Exit);
     CP_Settings_Fill(dark_blue);
-    Exit_dynamicBtn("Exit to Desktop", rect_x + exit_offset, second_y);
+    Exit_dynamicBtn("Exit to Desktop", rect_x + exit_offset, third_y);
 }
 
 void Pause_Menu_Update(void)
@@ -263,6 +275,60 @@ void Level_Select_Screen(void) {
     third_y = 740.0f;
     CP_Settings_Fill(orange);
     dynamicBtn("Back to Menu", btn_x + offset[5], third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+}
+
+#define NUMBER_OF_CONTROLS 7
+
+void Controls_Screen(void) {
+    CP_Graphics_ClearBackground(light_sky_blue);
+
+    const char* controls_text[NUMBER_OF_CONTROLS] =
+    {
+        "JUMP",
+        "DOWN",
+        "LEFT",
+        "RIGHT",
+        "KICK",
+        "INTERACT",
+        "PAUSE/BACK"
+    };
+    // x, y, w, h, text, scalar
+
+    const char* control_keys[NUMBER_OF_CONTROLS] =
+    {
+        "W",
+        "S",
+        "A",
+        "D",
+        "F",
+        "SPACE",
+        "ESC"
+    };
+
+    float first_control_y = 100.0f;
+    float first_control_x = 550.0f;
+    float y_offset = 100.0f; // vertical spacing between controls
+    
+    float first_controlkey_x = first_control_x * 2.0f;
+
+    const float controls_rect_width = 300.0f;
+    const float controlskeys_rect_width = 150.0f;
+    const float control_rect_height = 70.0f;
+
+	// Draw the boxes and text for each control and corresponding key
+    for (int i = 0; i < NUMBER_OF_CONTROLS; i++) {
+		CP_Settings_Fill(translucent_light_red);
+        drawBtn(first_control_x, first_control_y + (i * y_offset), controls_rect_width, control_rect_height, controls_text[i], 1.0f);
+        CP_Settings_Fill(translucent_light_red);
+        drawBtn(first_controlkey_x, first_control_y + (i * y_offset), controlskeys_rect_width, control_rect_height, control_keys[i], 1.0f);
+    }
+
+	// Back to Menu button
+	float control_backmenu_btn_y = CP_System_GetWindowHeight() - 70.0f;
+	float control_backmenu_btn_x = CP_System_GetWindowWidth() / 2.0f;
+    CP_Settings_Fill(orange);
+	dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+
 }
 
 void Screen_Exit(void)

@@ -13,6 +13,8 @@ CP_Color orange;
 CP_Color dark_blue;
 CP_Color grey;
 CP_Color yellow;
+CP_Color blue;
+CP_Color black;
 
 void color_create(void) {
 	purple = CP_Color_Create(128, 0, 128, 255);
@@ -27,4 +29,6 @@ void color_create(void) {
 	orange = CP_Color_Create(240, 105, 80, 255);
 	dark_blue = CP_Color_Create(40, 55, 105, 255);
 	yellow = CP_Color_Create(255, 255, 0, 255);
+	blue = CP_Color_Create(0, 0, 180, 255);
+	black = CP_Color_Create(0, 0, 0, 255);
 }
