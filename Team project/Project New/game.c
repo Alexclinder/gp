@@ -30,7 +30,7 @@ void Game_Init(void)
 	g2 = CP_Image_Load("Assets/Grab2.png");
 	carry = CP_Image_Load("Assets/Carry.png");
 	background = CP_Image_Load("Assets/Background.png");
-	backgroundtwo = CP_Image_Load("Assets/Backgroundtwo.png");
+	backgroundtwo = CP_Image_Load("Assets/level2background.png");
 	backgroundthree = CP_Image_Load("Assets/level1background.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");

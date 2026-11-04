@@ -357,6 +357,14 @@ void level_1st(void) {
 }
 
 void level_2nd(void) {
+	for (int i = 0; i < 5; i++) {
+		DrawPlatform(second_level[i][0],
+			second_level[i][1],
+			second_level[i][2],
+			second_level[i][3],
+			second_level[i][4],
+			second_level[i][5]);
+	}
 	DrawBG(backgroundtwo);
 
 	if (isCarrying) Character_MovementCarry();
@@ -384,14 +392,6 @@ void level_2nd(void) {
 
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < 5; i++) {
-		DrawPlatform(second_level[i][0],
-			second_level[i][1],
-			second_level[i][2],
-			second_level[i][3],
-			second_level[i][4],
-			second_level[i][5]);
-	}
 	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
 
 	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1) {
