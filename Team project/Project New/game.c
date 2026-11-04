@@ -31,7 +31,7 @@ void Game_Init(void)
 	carry = CP_Image_Load("Assets/Carry.png");
 	background = CP_Image_Load("Assets/Background.png");
 	backgroundtwo = CP_Image_Load("Assets/Backgroundtwo.png");
-	backgroundthree = CP_Image_Load("Assets/Backgroundthree.png");
+	backgroundthree = CP_Image_Load("Assets/level1background.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	npc1 = CP_Image_Load("Assets/Worker.png"); // Load npc 1

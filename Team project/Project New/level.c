@@ -199,12 +199,12 @@ win_condition level1_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
 // LEVEL 3: Final Level
 float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
-	{ 180.0f, 800.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 440.0f, 730.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 650.0f, 650.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 850.0f, 710.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1050.0f, 620.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1370.0f, 510.0f, 250.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
+	{ 470.0f, 830.0f, 170.0f, 170, NO_ROTATION, CORNER_RADIUS },
+	{ 650.0f, 655.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 850.0f, 715.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1050.0f, 625.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1390.0f, 600.0f, 250.0f, 200, NO_ROTATION, CORNER_RADIUS },
+	{ 1550.0f, 500.0f, 100.0f, 800, NO_ROTATION, CORNER_RADIUS }
 };
 
 // Parameters is for drawing and checking win_con in level 4
@@ -302,6 +302,14 @@ void ingameTimer(void) {
 
 
 void level_1st(void) {
+	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
+		DrawPlatform(first_level[i][0],
+			first_level[i][1],
+			first_level[i][2],
+			first_level[i][3],
+			first_level[i][4],
+			first_level[i][5]);
+	}
 	DrawBG(backgroundthree);
 
 	if (isCarrying) Character_MovementCarry();
@@ -328,14 +336,6 @@ void level_1st(void) {
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
-		DrawPlatform(first_level[i][0],
-			first_level[i][1],
-			first_level[i][2],
-			first_level[i][3],
-			first_level[i][4],
-			first_level[i][5]);
-	}
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
 	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) {
