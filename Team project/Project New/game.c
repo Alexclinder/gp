@@ -16,6 +16,11 @@ void Game_Init(void)
 	g2 = CP_Image_Load("Assets/Grab2.png");
 	c = CP_Image_Load("Assets/Carry.png");
 	background = CP_Image_Load("Assets/Background.png");
+<<<<<<< Updated upstream
+=======
+	backgroundtwo = CP_Image_Load("Assets/Backgroundtwo.png");
+	backgroundthree = CP_Image_Load("Assets/level1background.png");
+>>>>>>> Stashed changes
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	status = 1;
