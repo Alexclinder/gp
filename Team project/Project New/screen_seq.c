@@ -302,7 +302,7 @@ void Controls_Screen(void) {
         "LEFT",
         "RIGHT",
         "KICK",
-        "INTERACT",
+        "PICK UP / DROP",
         "PAUSE/BACK"
     };
     // x, y, w, h, text, scalar
@@ -324,7 +324,7 @@ void Controls_Screen(void) {
     
     float first_controlkey_x = first_control_x * 2.0f;
 
-    const float controls_rect_width = 300.0f;
+    const float controls_rect_width = 400.0f;
     const float controlskeys_rect_width = 150.0f;
     const float control_rect_height = 70.0f;
 
