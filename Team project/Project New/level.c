@@ -57,19 +57,15 @@ typedef struct {
 	float dx, dy, dw, dh;
 } pressure_door_pos;
 
-typedef struct {
-	float x;
-	float y;
-	float w;
-	float h;
-	float degrees;
-	float cornerRadius;
-} win_condition;
+
 
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeCount, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0;
+
+// Might do 
+// concat player_spawns and NPC_1_spawns into a single array for easier access
 
 spawn player_spawns[LEVELS] = { 
 							   { 100.0f, 800.0f},
@@ -77,12 +73,26 @@ spawn player_spawns[LEVELS] = {
 							   { 200.0f, 600.0f},
 							   { 200.0f, 300.0f}
 							  };
+#define NUMBER_OF_NPC 2
 
-spawn NPC_1_spawns[LEVELS] = {
+// [LEVELS][NUMBER_OF_NPC]
+spawn NPC_1_spawns[LEVELS][NUMBER_OF_NPC] = {
+							{
 							   { 1030.0f, 200.0f },
+							   { 1130.0f, 300.0f }
+							},
+							{
 							   { 1250.0f, 200.0f },
+							   { 1350.0f, 100.0f }
+							},
+							{
 							   { 860.0f, 200.0f },
-							   { 200.0f, 300.0f }
+							   { 960.0f, 300.0f }
+							},
+							{
+							   { 200.0f, 300.0f },
+							   { 300.0f, 200.0f }
+							}
 							 };
 
 pressure_door_pos level3 = {.px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
@@ -94,11 +104,12 @@ k_zone level3_4b = { .kx = 1055.0f, .ky = 295.0f, .kw = 295.0f, .kh = 5.0f };
 // 2th and 3rd Building moving platform
 k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
 
-// Parameters is for drawing and checking win_con in level 1
+
+// Parameters is for drawing and checking win_con in level 3
 win_condition level3_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
 
 
-// LEVEL 1: Outside the building
+// LEVEL 3: Outside the building
 float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 1st building ----------  */
@@ -314,7 +325,7 @@ void level_1st(void) {
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
-	/*
+	
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -330,7 +341,7 @@ void level_1st(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
-	*/
+	
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
@@ -407,7 +418,7 @@ void level_3rd(void) {
 	platform_alternating_movement(850.0f, 450.0f, PLATFORM_WIDTH_3 / 3.0f,
 		RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS,
 		LEFT_BOUNDARY, RIGHT_BOUNDARY);
-	/*
+	
 	//  Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
@@ -424,7 +435,7 @@ void level_3rd(void) {
 	else if (NPC_CheckPlayerCollision() == 2) {
 		NPC_UpdateProjectiles(0);
 	}
-	*/
+	
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level3.px, level3.py, level3.pw, level3.ph,
 		level3.dx, level3.dy, level3.dw, level3.dh);
@@ -504,6 +515,9 @@ void level_4th(void) {
 
 void level_selection(int level_no) {
 	switch (level_no) {
+		case main_menu:
+			Main_Menu_Update();
+			break;
 		case level_1: 
 			level_1st();
 			break;
@@ -515,6 +529,9 @@ void level_selection(int level_no) {
 			break;
 		case level_4: 
 			level_4th();
+			break;
+		case boss_level:
+			Boss_Update();
 			break;
 	}
 }

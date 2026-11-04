@@ -7,14 +7,25 @@ typedef struct{
 } spawn;
 
 typedef enum {
-	level_1,	// 0 
-	level_2,	// 1
-	level_3,	// 2
-	level_4		// 3
+	main_menu,	// 0
+	level_1,	// 1 
+	level_2,	// 2
+	level_3,	// 3
+	level_4,	// 4
+	boss_level,	// 5
 } levels;
 
+typedef struct {
+	float x;
+	float y;
+	float w;
+	float h;
+	float degrees;
+	float cornerRadius;
+} win_condition;
+
 extern spawn player_spawns[4];
-extern spawn NPC_1_spawns[4];
+extern spawn NPC_1_spawns[4][2];
 
 extern const float first_level_objects[2][5];
 extern float first_level_objects_ingame[2][5];

@@ -29,12 +29,13 @@ CP_Font Font;
 float first_y;
 float second_y;
 float third_y;
+float fourth_y;
 
 float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
-void Level_1_Init(void) { level_selected = level_1; TimeSet = 0;ResetTime = 1;Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+void Level_1_Init(void) { level_selected = level_1; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
 void Level_2_Init(void) { level_selected = level_2; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
 void Level_3_Init(void) { level_selected = level_3; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
 void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
@@ -148,20 +149,32 @@ void Pause_Menu_Update(void)
     CP_Settings_Fill(CP_Color_Create(255, 255, 255, 255));
     CP_Settings_TextSize(100.0f);
     CP_Font_DrawText("PAUSED", 250.0f, 80.0f);
+
+    // Slice the screen into 3 sections.....
+    // ...1/3 will be for the pause menu text
+	// ...2/3 will be for the buttons layout
+	float two_third_section = CP_System_GetWindowHeight() + 700.0f;
+    float y_offset = 0.13f;
+	// 1/5 = 20% of the 2/3 section for each button
     // Resume
-    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
+    first_y = two_third_section * y_offset;
     // Restart
-    second_y = CP_System_GetWindowHeight() / 2.0; 
-	// Exit to Main Menu
-    third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
+    second_y = two_third_section * (y_offset * 2);
+	// Controls
+	third_y = two_third_section * (y_offset * 3);
+    // Exit to Main Menu
+    fourth_y = two_third_section * (y_offset * 4);
+
+
     CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Resume Game!", rect_x, first_y, Game_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Controls", rect_x, third_y, Screen_Init, Controls_Screen, Screen_Exit);
+    CP_Settings_Fill(light_sky_blue);
+    dynamicBtn("Exit to Main Menu", rect_x, fourth_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
-    
 }
 
 void Win_Screen(void) {
@@ -327,8 +340,13 @@ void Controls_Screen(void) {
 	float control_backmenu_btn_y = CP_System_GetWindowHeight() - 70.0f;
 	float control_backmenu_btn_x = CP_System_GetWindowWidth() / 2.0f;
     CP_Settings_Fill(orange);
-	dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
+    if (level_selected == main_menu) {
+        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    }
+    else {
+        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, Screen_Init, Pause_Menu_Update, Screen_Exit);
+    }
 }
 
 void Screen_Exit(void)

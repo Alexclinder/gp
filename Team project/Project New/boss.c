@@ -179,7 +179,7 @@ void Boss_Update(void)
     /* Draw background */
     CP_Graphics_ClearBackground(CP_Color_Create(0, 100, 0, 100));
     CP_Settings_ImageMode(CP_POSITION_CORNER);
-    CP_Image_Draw(bossBackground,0.0f,0.0f,(float)CP_System_GetWindowWidth(),(float)CP_System_GetWindowHeight(),255);
+    CP_Image_Draw(bossBackground, 0.0f, 0.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
 
     /* Update movement */
     Boss_PlayerMovement();
@@ -196,8 +196,17 @@ void Boss_Update(void)
         BOSS_Draw();
         Player_Animation();
     }
-}
 
+    win_condition level3_win = { 1490.0f, 530.0f, 50.0f, 100.0f, 0.0f, 10.0f };
+
+    // Added by Sin Wee for testing game state transition to leaderboard screen
+    DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
+
+    if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1) {
+        NPC_UpdateProjectiles(0);
+        CP_Engine_SetNextGameState(Screen_Init, Leaderboard_Screen, Screen_Exit);
+    }
+}
 
 
 void Boss_Exit(void)
