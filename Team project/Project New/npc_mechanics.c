@@ -146,8 +146,8 @@ void NPC_DrawProjectiles(void) {
 
 	for (int i = 0; i < MAX_PROJECTILES; i++) {
 		if (shots[i].active == 1) {
-			//CP_Graphics_DrawCircle(shots[i].Projposition.x, shots[i].Projposition.y, PROJECTILE_SIZE);
-			CP_Image_Draw(projectile, shots[i].Projposition.x-8, shots[i].Projposition.y-8, PROJECTILE_SIZE+7, PROJECTILE_SIZE+7, 255);
+			CP_Graphics_DrawCircle(shots[i].Projposition.x, shots[i].Projposition.y, PROJECTILE_SIZE);
+			//CP_Image_Draw(projectile, shots[i].Projposition.x-8, shots[i].Projposition.y-8, PROJECTILE_SIZE+7, PROJECTILE_SIZE+7, 255);
 		}
 	}
 }

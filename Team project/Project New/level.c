@@ -406,8 +406,17 @@ void level_2nd(void) {
 #define RIGHT_BOUNDARY 850.0f
 
 void level_3rd(void) {
+	// iterates thru the 4 rows and 6 col
+// Nested loop not needed as first level columns are iterated through.
+	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
+		DrawPlatform(third_level[i][0],
+			third_level[i][1],
+			third_level[i][2],
+			third_level[i][3],
+			third_level[i][4],
+			third_level[i][5]);
+	}
 	DrawBG(background);
-
 	ingameTimer();
 
 	if (isCarrying) Character_MovementCarry();
@@ -443,23 +452,9 @@ void level_3rd(void) {
 	kill_zone(level3_k.kx, level3_k.ky, level3_k.kw, level3_k.kh);
 	kill_zone(level3_4b.kx, level3_4b.ky, level3_4b.kw, level3_4b.kh);
 	kill_zone(level3_23b.kx, level3_23b.ky, level3_23b.kw, level3_23b.kh);
-
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
-
-
-
-	// iterates thru the 4 rows and 6 col
-	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
-		DrawPlatform(third_level[i][0],
-			third_level[i][1],
-			third_level[i][2],
-			third_level[i][3],
-			third_level[i][4],
-			third_level[i][5]);
-	}
 
 	Air_Dash_Mechannic();
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
