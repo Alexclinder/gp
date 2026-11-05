@@ -1,3 +1,4 @@
+
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"
@@ -6,173 +7,211 @@
 #include <math.h>
 
 
-// NPC 
-#define NPC_SIZE 100.0f
+// NPC
+#define NPC_SIZE       100.0f
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
-#define MOVE_SPEED     150.0f
+#define MOVE_SPEED    150.0f
 
 CP_Vector NPCposition = { 100, 200 };
 CP_Vector NPCvelocity = { 0, 0 };
 CP_Image npc1;
+
 int NPConGround = 0;
 int LeftOrRightState = 0;
 
-//NPC Projectile 
+
+// NPC Projectile
 #define PROJECTILE_SPEED 400.0f
 #define PROJECTILE_SIZE  15.0f
 #define SHOOT_INTERVAL   3.0f
-#define MAX_PROJECTILES  20
 
-typedef struct {
-	CP_Vector Projposition;
-	CP_Vector Projvelocity;
-	float size;
-	int active;
-} Projectile;
+CP_Vector Projposition = { 0, 0 };
+CP_Vector Projvelocity = { 0, 0 };
 
-Projectile shots[MAX_PROJECTILES] = { 0 };
+int ProjectileActive = 0;
 float shootTimer = 0.0f;
 
-void NPC_MovementDefault(void) {
 
-	float dt = CP_System_GetDt();
-	float groundY = (float)CP_System_GetWindowHeight();
-	float screenW = (float)CP_System_GetWindowWidth();
+// NPC Movement
+void NPC_MovementDefault(void)
+{
+    float dt = CP_System_GetDt();
+    float groundY = (float)CP_System_GetWindowHeight();
+    float screenW = (float)CP_System_GetWindowWidth();
 
+    // Gravity
+    NPCvelocity.y += GRAVITY * dt;
 
-	/* --- Gravity: always applied --- */
-	NPCvelocity.y += GRAVITY * dt;
-	if (NPCvelocity.y > MAX_FALL_SPEED) NPCvelocity.y = MAX_FALL_SPEED;
+    if (NPCvelocity.y > MAX_FALL_SPEED)
+    {
+        NPCvelocity.y = MAX_FALL_SPEED;
+    }
 
-	/* --- Move --- */
-	NPCposition = CP_Vector_Add(NPCposition, CP_Vector_Scale(NPCvelocity, dt));
+    // Vertical movement
+    NPCposition = CP_Vector_Add(
+        NPCposition,
+        CP_Vector_Scale(NPCvelocity, dt)
+    );
 
-	/* --- Ground check: snap to ground and stop falling --- */
-	if (NPCposition.y + NPC_SIZE >= groundY) {
-		NPCposition.y = groundY - NPC_SIZE;
-		NPCvelocity.y = 0.0f;
-		NPConGround = 1;
-	}
-	else {
-		NPConGround = 0;
-	}
+    // Ground check
+    if (NPCposition.y + NPC_SIZE >= groundY)
+    {
+        NPCposition.y = groundY - NPC_SIZE;
+        NPCvelocity.y = 0.0f;
+        NPConGround = 1;
+    }
+    else
+    {
+        NPConGround = 0;
+    }
 
-	/* --- NPC CONSTANT MOVEMENT From Left to right --- */
-	NPCvelocity.x = 0.0f;
-	if (LeftOrRightState == 0 && NPConGround == 1) {
-		NPCvelocity.x -= MOVE_SPEED;
-	}
-	if (LeftOrRightState == 1 && NPConGround == 1) {
-		NPCvelocity.x += MOVE_SPEED;
-	}
+    // Horizontal movement
+    NPCvelocity.x = 0.0f;
 
-	if (NPCposition.x < 0.0f) LeftOrRightState = 1;
-	if (NPCposition.x + NPC_SIZE > screenW)  LeftOrRightState = 0;
+    if (LeftOrRightState == 0 && NPConGround == 1)
+    {
+        NPCvelocity.x -= MOVE_SPEED;
+    }
 
-	NPCposition = CP_Vector_Add(NPCposition, CP_Vector_Scale(NPCvelocity, dt));
+    if (LeftOrRightState == 1 && NPConGround == 1)
+    {
+        NPCvelocity.x += MOVE_SPEED;
+    }
 
-	/* --- Draw --- */
+    // Change direction at screen edges
+    if (NPCposition.x < 0.0f)
+    {
+        LeftOrRightState = 1;
+    }
 
-	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(npc1, NPCposition.x, NPCposition.y, NPC_SIZE, NPC_SIZE, 255);
+    if (NPCposition.x + NPC_SIZE > screenW)
+    {
+        LeftOrRightState = 0;
+    }
 
+    // Horizontal position update
+    NPCposition = CP_Vector_Add(
+        NPCposition,
+        CP_Vector_Scale(NPCvelocity, dt)
+    );
+
+    // Draw NPC
+    CP_Settings_ImageMode(CP_POSITION_CORNER);
+    CP_Image_Draw(npc1, NPCposition.x, NPCposition.y, NPC_SIZE, NPC_SIZE, 255);
 }
 
+
+// NPC Attack
 void NPC_Attack(void)
 {
-	float dt = CP_System_GetDt();
-	shootTimer += dt;
+    float dt = CP_System_GetDt();
+    shootTimer += dt;
 
-	if (shootTimer >= SHOOT_INTERVAL)
-	{
-		for (int i = 0; i < MAX_PROJECTILES; i++)
-		{
-			if (!shots[i].active)
-			{
-				// Calculate the centre of the NPC and player
-				CP_Vector npcCenter = {
-					NPCposition.x + NPC_SIZE / 2.0f,
-					NPCposition.y + NPC_SIZE / 2.0f
-				};
+    if (shootTimer >= SHOOT_INTERVAL && ProjectileActive == 0)
+    {
+        // Calculate the centre of the NPC and player
+        CP_Vector npcCenter = {
+            NPCposition.x + NPC_SIZE / 2.0f,
+            NPCposition.y + NPC_SIZE / 2.0f
+        };
 
-				CP_Vector playerCenter = {
-					position.x + PLAYER_SIZE / 2.0f,
-					position.y + PLAYER_SIZE / 2.0f
-				};
+        CP_Vector playerCenter = {
+            position.x + PLAYER_SIZE / 2.0f,
+            position.y + PLAYER_SIZE / 2.0f
+        };
 
-				// Spawn the projectile at the NPC's centre
-				shots[i].Projposition = npcCenter;
+        // Spawn projectile at NPC centre
+        Projposition = npcCenter;
 
-				// Aim towards the actual player's centre
-				CP_Vector direction = CP_Vector_Normalize(
-					CP_Vector_Subtract(playerCenter, npcCenter)
-				);
+        // Calculate direction towards player
+        CP_Vector direction = CP_Vector_Normalize(
+            CP_Vector_Subtract(playerCenter, npcCenter)
+        );
 
-				// Set projectile velocity
-				shots[i].Projvelocity = CP_Vector_Scale(
-					direction, PROJECTILE_SPEED
-				);
+        // Set projectile velocity
+        Projvelocity = CP_Vector_Scale(direction, PROJECTILE_SPEED);
 
-				shots[i].active = 1;
-				shootTimer = 0.0f;
-				break;
-			}
-		}
-	}
+        ProjectileActive = 1;
+        shootTimer = 0.0f;
+    }
 }
 
-void NPC_UpdateProjectiles(int check) {
-	float dt = CP_System_GetDt();
-	if (check == 1) {
-		for (int i = 0; i < MAX_PROJECTILES; i++) {
-			if (shots[i].active) {
-				shots[i].Projposition = CP_Vector_Add(shots[i].Projposition, CP_Vector_Scale(shots[i].Projvelocity, dt));
 
-				//Remove projecile when it leaves the screen 
-				if (shots[i].Projposition.x < 0 || shots[i].Projposition.x > CP_System_GetDisplayWidth() || shots[i].Projposition.y < 0 || shots[i].Projposition.y > CP_System_GetWindowHeight()) {
-					shots[i].active = 0;
+// Update NPC Projectiles
+void NPC_UpdateProjectiles(int check)
+{
+    float dt = CP_System_GetDt();
 
-				}
-			}
+    if (check == 1 && ProjectileActive == 1)
+    {
+        // Move projectile
+        Projposition = CP_Vector_Add(
+            Projposition,
+            CP_Vector_Scale(Projvelocity, dt)
+        );
 
+        // Remove projectile when it leaves the screen
+        if (Projposition.x < 0 ||
+            Projposition.x > CP_System_GetWindowWidth() ||
+            Projposition.y < 0 ||
+            Projposition.y > CP_System_GetWindowHeight())
+        {
+            ProjectileActive = 0;
+        }
+    }
+    else if (check == 0)
+    {
+        // Remove projectile
+        ProjectileActive = 0;
 
-		}
-	}else if (check ==0) for (int i = 0; i< MAX_PROJECTILES; i++)shots[i].active = 0;
+        // Reset shooting timer
+        shootTimer = 0.0f;
+    }
 }
 
-void NPC_DrawProjectiles(void) {
-	CP_Settings_Fill(red);
 
-	for (int i = 0; i < MAX_PROJECTILES; i++) {
-		if (shots[i].active == 1) {
-			CP_Graphics_DrawCircle(shots[i].Projposition.x, shots[i].Projposition.y, PROJECTILE_SIZE);
-			//CP_Image_Draw(projectile, shots[i].Projposition.x-8, shots[i].Projposition.y-8, PROJECTILE_SIZE+7, PROJECTILE_SIZE+7, 255);
-		}
-	}
+// Draw NPC Projectiles
+void NPC_DrawProjectiles(void)
+{
+    if (ProjectileActive == 1)
+    {
+        CP_Settings_Fill(red);
+
+        CP_Graphics_DrawCircle(
+            Projposition.x,
+            Projposition.y,
+            PROJECTILE_SIZE
+        );
+    }
 }
 
-int NPC_CheckPlayerCollision(void) {
-	for (int i = 0; i < MAX_PROJECTILES; i++) {
-		if (shots[i].active) {
-			float dx = shots[i].Projposition.x - (position.x + PLAYER_SIZE / 2.0f);
-			float dy = shots[i].Projposition.y - (position.y + PLAYER_SIZE / 2.0f);
 
-			float distance = sqrt(dx * dx + dy * dy);
+// Check Player Collision
+int NPC_CheckPlayerCollision(void)
+{
+    if (ProjectileActive == 1)
+    {
+        float dx = Projposition.x - (position.x + PLAYER_SIZE / 2.0f);
+        float dy = Projposition.y - (position.y + PLAYER_SIZE / 2.0f);
 
-			if (distance < PLAYER_SIZE / 2.0f + PROJECTILE_SIZE / 2.0f) {
-				return 1;
-			}
-		}
-		//add if hit object
-	}
-	return 0;
+        float distance = sqrt(dx * dx + dy * dy);
+
+        if (distance < PLAYER_SIZE / 2.0f + PROJECTILE_SIZE / 2.0f)
+        {
+            ProjectileActive = 0;
+            return 1;
+        }
+    }
+
+    return 0;
 }
+
 
 // p will be assigned the address of position, to avoid pass by value
-CP_Vector *npc_p = &NPCposition;
+CP_Vector* npc_p = &NPCposition;
 
 void NPC_Starting_Pos(spawn arr[][2], int level_selected) {
-	// When the address of p is updated, value stored within position is updated.
-	*npc_p = arr[level_selected][0].pos;
+    // When the address of p is updated, value stored within position is updated.
+    *npc_p = arr[level_selected][0].pos;
 }

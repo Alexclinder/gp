@@ -326,20 +326,18 @@ void level_1st(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 	
-	//  Spawn in Enemy
+	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
-	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision()==1)
+
+	// Check for collision then end game if hit
+	if (NPC_CheckPlayerCollision() == 1)
 	{
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
-	}
-	else if (NPC_CheckPlayerCollision() == 2) {
-		NPC_UpdateProjectiles(0);
 	}
 	
 	Objects_Draw();
@@ -370,20 +368,18 @@ void level_2nd(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 
-	//  Spawn in Enemy
+	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
-	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision()==1)
+
+	// Check for collision then end game if hit
+	if (NPC_CheckPlayerCollision() == 1)
 	{
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
-	}
-	else if (NPC_CheckPlayerCollision() == 2) {
-		NPC_UpdateProjectiles(0);
 	}
 
 	Objects_Draw();
@@ -428,21 +424,18 @@ void level_3rd(void) {
 		RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS,
 		LEFT_BOUNDARY, RIGHT_BOUNDARY);
 	
-	//  Spawn in Enemy
+	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
 
-	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision()==1)
+	// Check for collision then end game if hit
+	if (NPC_CheckPlayerCollision() == 1)
 	{
 		NPC_UpdateProjectiles(0);
-		CP_Engine_SetNextGameState(Screen_Init,Lose_Screen,Screen_Exit);
+		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
-	}
-	else if (NPC_CheckPlayerCollision() == 2) {
-		NPC_UpdateProjectiles(0);
 	}
 	
 	// Produce the Pressure_Plate_Door
@@ -471,20 +464,18 @@ void level_4th(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 
-	//  Spawn in Enemy
+	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_DrawProjectiles();
-	//Check For Collision then end game if hit
-	if (NPC_CheckPlayerCollision()==1)
+
+	// Check for collision then end game if hit
+	if (NPC_CheckPlayerCollision() == 1)
 	{
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 		return;
-	}
-	else if (NPC_CheckPlayerCollision() == 2) {
-		NPC_UpdateProjectiles(0);
 	}
 
 	Objects_Draw();
