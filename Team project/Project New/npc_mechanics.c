@@ -91,10 +91,7 @@ void NPC_MovementDefault(void)
     }
 
     // Horizontal position update
-    NPCposition = CP_Vector_Add(
-        NPCposition,
-        CP_Vector_Scale(NPCvelocity, dt)
-    );
+    NPCposition = CP_Vector_Add(NPCposition,CP_Vector_Scale(NPCvelocity, dt));
 
     // Draw NPC
     CP_Settings_ImageMode(CP_POSITION_CORNER);
@@ -146,10 +143,7 @@ void NPC_UpdateProjectiles(int check)
     if (check == 1 && ProjectileActive == 1)
     {
         // Move projectile
-        Projposition = CP_Vector_Add(
-            Projposition,
-            CP_Vector_Scale(Projvelocity, dt)
-        );
+        Projposition = CP_Vector_Add(Projposition,CP_Vector_Scale(Projvelocity, dt));
 
         // Remove projectile when it leaves the screen
         if (Projposition.x < 0 ||

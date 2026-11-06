@@ -1,9 +1,11 @@
 #include "cprocessing.h"
 #include "screen_seq.h"
+#include "elevator.h"
 
 int main(void)
 {
-	CP_Engine_SetNextGameState(Screen_Init, Main_Menu_Update, Screen_Exit);
+	//CP_Engine_SetNextGameState(Screen_Init, Main_Menu_Update, Screen_Exit); 
+	CP_Engine_SetNextGameState(Elevator_Init, Elevator_Update, Elevator_Exit);
 	CP_System_SetWindowSize(1600, 900);
 	CP_Engine_Run(0);
 	return 0;
