@@ -13,7 +13,8 @@ extern CP_Vector velocity;
 extern float platform_velocity;
 extern float platform_move;
 
-void Air_Dash_Mechannic(void);
+void DashTimer(void);
+int Dash_Mechannic(void);
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
 

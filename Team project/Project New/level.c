@@ -449,7 +449,7 @@ void level_3rd(void) {
 	//Player_Animation_Checks();
 	Player_Animation();
 
-	Air_Dash_Mechannic();
+	DashTimer();
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
 
 	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1) {
