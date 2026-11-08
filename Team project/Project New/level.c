@@ -58,7 +58,6 @@ typedef struct {
 } pressure_door_pos;
 
 
-
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeCount, ResetTime;
@@ -108,6 +107,27 @@ k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
 // Parameters is for drawing and checking win_con in level 3
 win_condition level3_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
 
+void Objective_Text(void){
+	Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+	CP_Font_Set(Font);
+	CP_Settings_TextSize(50);
+	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+	CP_Settings_Fill(white);
+	switch (level_selected){
+		case 3:
+			CP_Font_DrawText("Objective: Get through the", 0.0f, 0.0f);
+			CP_Font_DrawText("Manufacturing Floor", 0.0f, 50.0f);
+			break;
+		case 2: 
+			CP_Font_DrawText("Objective: Avoid your Colleagues", 0.0f, 0.0f);
+			break;
+		case 1:
+			CP_Font_DrawText("Objective: Get into the Building", 0.0f, 0.0f);
+			break;
+		default:
+			break;
+	}
+}
 
 // LEVEL 3: Outside the building
 float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
@@ -322,6 +342,10 @@ void level_1st(void) {
 			first_level[i][5]);
 	}
 	DrawBG(backgroundthree);
+	Objective_Text();
+	ingameTimer();
+	DashTimer();
+	Dash_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -364,6 +388,10 @@ void level_2nd(void) {
 			second_level[i][5]);
 	}
 	DrawBG(backgroundtwo);
+	Objective_Text();
+	ingameTimer();
+	DashTimer();
+	Dash_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -413,7 +441,10 @@ void level_3rd(void) {
 			third_level[i][5]);
 	}
 	DrawBG(background);
+	Objective_Text();
 	ingameTimer();
+	DashTimer();
+	Dash_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -449,7 +480,7 @@ void level_3rd(void) {
 	//Player_Animation_Checks();
 	Player_Animation();
 
-	DashTimer();
+
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
 
 	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1) {

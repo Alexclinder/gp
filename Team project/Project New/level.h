@@ -47,6 +47,8 @@ extern float (*current_objects)[5];
 extern int current_obj_count;
 extern int heldObject;
 
+void Objective_Text(void);
+
 void Objects_Reset(void);
 
 int Object_Check(void);

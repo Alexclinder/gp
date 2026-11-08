@@ -12,6 +12,7 @@ extern CP_Vector position;
 extern CP_Vector velocity;
 extern float platform_velocity;
 extern float platform_move;
+extern int Dash_count;
 
 void DashTimer(void);
 int Dash_Mechannic(void);

@@ -35,12 +35,25 @@ int kickedObject = -1;
 float kick_dir = 0.0f;
 float kick_moved = 0.0f;
 
+int Dash_count = 3; // Number of dashes available
 int Dash_Status = 0;
-float DashWindowTiming = 2.0f;
+float DashWindowTiming = 0.0f;
 #define DashDistance 100.0f // how far the player dashes
-float DashCooldown = 1.5f;
+#define ShortDashDistance 50.0f // how far the player dashes
+#define DashCooldown 2.0f
 float OldPlayerPos = 0.0f; // store the player's position before dashing
 
+/********************Player & Platform**********************/
+float area_left;
+float area_right;
+float area_top;
+float area_bottom;
+
+// Player edges (position is the player's top-left corner)
+float player_left;
+float player_right;
+float player_top;
+float player_bottom;
 
 CP_Vector position = { 100,100 };
 CP_Vector velocity = { 0, 0 };
@@ -74,26 +87,41 @@ void DashTimer(void) {
 }
 
 //Lewin - Dash Mechanic
-int Dash_Mechannic(float Distance){
-	// Air dash mechanic
+int Dash_Mechannic(void){
+	// dash mechanic
+
+	//show how many teleports the player has left
+	CP_Settings_Fill(white);
+	switch (Dash_count) {
+		case 3:
+			CP_Graphics_DrawRectAdvanced(1520.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+		case 2:
+			CP_Graphics_DrawRectAdvanced(1550.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+		case 1:
+			CP_Graphics_DrawRectAdvanced(1580.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+		break;
+	}
 
 	//Activate dash window when movement key is pressed
-	if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)){// If the player is moving to the right and presses the D key, and 
-			position.x += DashDistance;
+	if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0){// If the player is moving to the right and presses the LeftShift key,
+		for (OldPlayerPos = position.x; (OldPlayerPos + DashDistance) > position.x; position.x += ShortDashDistance)
 			DashWindowTiming = 0;
 			Dash_Status = 0;
+			Dash_count--;
 			return 1;
 	}
-	if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT))  {// If the player is moving to the left and presses the A key, check for double tap
+	if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0)  {// If the player is moving to the left and presses the A key, check for double tap
 		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
 		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
-			position.x -= DashDistance;
+		for (OldPlayerPos = position.x; (OldPlayerPos - DashDistance) < position.x ;position.x -= ShortDashDistance)
 			DashWindowTiming = 0;
 			Dash_Status = 0;
+			Dash_count--;
 			return 1;
 	}
 	return 0;
 }
+
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
 {
@@ -317,16 +345,16 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	// Standing on the floor or a platform -> cling time refills
 	if (onGround) wall_timer = 0.0f;
 
-	float area_left = area_center_x - area_width / 2;
-	float area_right = area_center_x + area_width / 2;
-	float area_top = area_center_y - area_height / 2;
-	float area_bottom = area_center_y + area_height / 2;
+	 area_left = area_center_x - area_width / 2;
+	 area_right = area_center_x + area_width / 2;
+	 area_top = area_center_y - area_height / 2;
+	 area_bottom = area_center_y + area_height / 2;
 
 	// Player edges (position is the player's top-left corner)
-	float player_left = position.x;
-	float player_right = position.x + PLAYER_SIZE;
-	float player_top = position.y;
-	float player_bottom = position.y + PLAYER_SIZE;
+	 player_left = position.x;
+	 player_right = position.x + PLAYER_SIZE;
+	 player_top = position.y;
+	 player_bottom = position.y + PLAYER_SIZE;
 
 	// How far the player has gone into the platform from each side
 	float overlap_top = player_bottom - area_top;
@@ -369,17 +397,21 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		side = 4;
 	}
 	
+
 	
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
+		
 		// Touching a new wall -> fresh 3 seconds
 		if (area_center_x != cling_wall_x || area_center_y != cling_wall_y)
 		{
 			wall_timer = 0.0f;
 			cling_wall_x = area_center_x;
 			cling_wall_y = area_center_y;
+
 		}
+
 
 		if (wall_timer < WALL_CLING_TIME)
 		{
@@ -393,10 +425,10 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			if (CP_Input_KeyDown(KEY_W)) position.y -= CLIMB_SPEED * dt;
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
 		}
+
+		return side;
 	}
-	
-	Dash_Mechannic(DashDistance);
-	return side;
+
 	
 }
 
@@ -447,6 +479,7 @@ void DrawPlatform(float x, float y, float w, float h,
 	//CP_Settings_ImageMode(CP_POSITION_CORNER);
 
 	collision_check(x, y, w, h);
+
 }
 
 // dt is declared in default player movement

@@ -50,6 +50,7 @@ void Game_Init(void)
 
 void Game_Reset(void)
 {
+	Dash_count = 3;
 	onGround = 0;
 	Objects_Reset();
 	isCarrying = 0;
