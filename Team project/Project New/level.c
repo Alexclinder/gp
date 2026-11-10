@@ -351,6 +351,7 @@ void level_1st(void) {
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_CheckShieldCollision();
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -386,7 +387,7 @@ void level_2nd(void) {
 			second_level[i][4],
 			second_level[i][5]);
 	}
-	DrawBG(backgroundthree);
+	DrawBG(backgroundtwo);
 	Objective_Text();
 	ingameTimer();
 	DashTimer();
@@ -402,6 +403,7 @@ void level_2nd(void) {
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_CheckShieldCollision();
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -463,6 +465,7 @@ void level_3rd(void) {
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
 	NPC_CheckShieldCollision();
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -507,6 +510,7 @@ void level_4th(void) {
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit

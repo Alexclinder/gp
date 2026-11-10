@@ -19,7 +19,7 @@ CP_Image npc1;
 
 int NPConGround = 0;
 int LeftOrRightState = 0;
-int ProjReflected = 0;
+int NPCalive = 1;            // ADDED: 0 = NPC has been hit and is gone
 
 
 // NPC Projectile
@@ -31,12 +31,15 @@ CP_Vector Projposition = { 0, 0 };
 CP_Vector Projvelocity = { 0, 0 };
 
 int ProjectileActive = 0;
+int ProjReflected = 0;       // ADDED: 1 = projectile was parried, can't hurt player
 float shootTimer = 0.0f;
 
 
 // NPC Movement
 void NPC_MovementDefault(void)
 {
+    if (NPCalive == 0) return;      // ADDED: no movement, no drawing
+
     float dt = CP_System_GetDt();
     float groundY = (float)CP_System_GetWindowHeight();
     float screenW = (float)CP_System_GetWindowWidth();
@@ -106,6 +109,8 @@ void NPC_MovementDefault(void)
 // NPC Attack
 void NPC_Attack(void)
 {
+    if (NPCalive == 0) return;      // ADDED: dead NPCs don't shoot
+
     float dt = CP_System_GetDt();
     shootTimer += dt;
 
@@ -134,7 +139,7 @@ void NPC_Attack(void)
         Projvelocity = CP_Vector_Scale(direction, PROJECTILE_SPEED);
 
         ProjectileActive = 1;
-        ProjReflected = 0;
+        ProjReflected = 0;          // ADDED: new shot is dangerous again
         shootTimer = 0.0f;
     }
 }
@@ -192,7 +197,7 @@ void NPC_DrawProjectiles(void)
 // Check Player Collision
 int NPC_CheckPlayerCollision(void)
 {
-    if (ProjectileActive == 1 && ProjReflected == 0)
+    if (ProjectileActive == 1 && ProjReflected == 0)   // ADDED: && ProjReflected == 0
     {
         float dx = Projposition.x - (position.x + PLAYER_SIZE / 2.0f);
         float dy = Projposition.y - (position.y + PLAYER_SIZE / 2.0f);
@@ -209,6 +214,9 @@ int NPC_CheckPlayerCollision(void)
     return 0;
 }
 
+
+// ADDED: Check Shield Collision
+// Returns 1 = reflected, 2 = blocked, 0 = no hit
 int NPC_CheckShieldCollision(void)
 {
     if (ProjectileActive == 0 || shieldActive == 0 || ProjReflected == 1)
@@ -241,10 +249,36 @@ int NPC_CheckShieldCollision(void)
     return 0;
 }
 
+
+// ADDED: Reflected projectile hits the NPC -> NPC disappears
+int NPC_CheckReflectedHit(void)
+{
+    if (NPCalive == 0 || ProjectileActive == 0 || ProjReflected == 0)
+        return 0;
+
+    CP_Vector npcCenter = {
+        NPCposition.x + NPC_SIZE / 2.0f,
+        NPCposition.y + NPC_SIZE / 2.0f
+    };
+
+    float distance = CP_Vector_Distance(Projposition, npcCenter);
+
+    if (distance < NPC_SIZE / 2.0f + PROJECTILE_SIZE / 2.0f)
+    {
+        NPCalive = 0;           // NPC disappears
+        ProjectileActive = 0;   // projectile disappears too
+        return 1;
+    }
+
+    return 0;
+}
+
+
 // p will be assigned the address of position, to avoid pass by value
 CP_Vector* npc_p = &NPCposition;
 
 void NPC_Starting_Pos(spawn arr[][2], int level_selected) {
     // When the address of p is updated, value stored within position is updated.
     *npc_p = arr[level_selected][0].pos;
+    NPCalive = 1;               // ADDED: NPC is alive again on level start
 }
