@@ -68,3 +68,6 @@ void platform_alternating_movement(float x, float y, float w, float h,
 extern int* score;
 
 void game_score(void);
+
+extern int reflect_score;
+extern int npc_score;

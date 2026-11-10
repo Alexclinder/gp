@@ -6,6 +6,7 @@
 #include "colors.h"
 #include <stdio.h>
 #include <math.h>
+#include "npc_mechanics.h"
 
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     500.0f
@@ -837,14 +838,29 @@ void platform_alternating_movement(float x, float y, float w, float h,
 // this function will be used to store the 
 // *score = 0;
 
+// player_score will be used to store inside json if i got time....T_T
+// Ask sin wee if dont knowwwww
 int player_score = 0;
 *score = &player_score;
+
+int reflect_score = 0;
+int npc_score = 0;
 
 void game_score(void) {
 	// Add 500 if player has dash
 	if (Dash_Status) {
 		*score += 500;
 	}
+	// lock score 
+	if (NPC_reflected && reflect_score==0) {
+		*score += 100;
+		reflect_score = 1;
+	}
+	if (NPC_ded && npc_score == 0) {
+		*score += 300;
+		npc_score = 1;
+	}
+	
 
 }
 	// player_score is set to 0 first

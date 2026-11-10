@@ -63,6 +63,11 @@ void Game_Reset(void)
 	Player_Starting_Pos(player_spawns,level_selected);
 	NPC_Starting_Pos(NPC_1_spawns, level_selected);
 
+	// Unlocked scoring 
+	int npc_score = 0;
+	int reflect_score = 0;
+
+
 }
 
 

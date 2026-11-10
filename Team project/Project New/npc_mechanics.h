@@ -14,3 +14,8 @@ int NPC_CheckReflectedHit(void);     // ADDED
 void NPC_Starting_Pos(spawn arr[], int level_selected);
 
 extern int NPCalive;
+extern int ProjReflected;
+
+// score is locked to prevent inf loop
+extern int NPC_ded;
+extern int NPC_reflected;

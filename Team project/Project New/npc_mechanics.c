@@ -34,6 +34,9 @@ int ProjectileActive = 0;
 int ProjReflected = 0;       // ADDED: 1 = projectile was parried, can't hurt player
 float shootTimer = 0.0f;
 
+// score is locked to prevent inf loop
+int NPC_ded = 0;
+int NPC_reflected = 0;
 
 // NPC Movement
 void NPC_MovementDefault(void)
@@ -236,6 +239,9 @@ int NPC_CheckShieldCollision(void)
             // Within the 1 second window: send it back the way it came
             Projvelocity = CP_Vector_Negate(Projvelocity);
             ProjReflected = 1;
+            NPC_reflected = (ProjReflected) ? 1 : 0;
+            // if reflected, unlock reflected scoring to get 100 points
+            reflect_score = 0;
             return 1;
         }
         else
@@ -266,10 +272,14 @@ int NPC_CheckReflectedHit(void)
     if (distance < NPC_SIZE / 2.0f + PROJECTILE_SIZE / 2.0f)
     {
         NPCalive = 0;           // NPC disappears
+        NPC_ded = (!NPCalive) ? 1 : 0;
+        // unlock npc_score on subsequent kills
+        npc_score = 0;
         ProjectileActive = 0;   // projectile disappears too
         return 1;
     }
 
+   
     return 0;
 }
 
