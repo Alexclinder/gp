@@ -31,6 +31,8 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define LEVEL3_FOURTH_BUILDING_WIDTH 2.0f
 
 #define LEVEL1_STATIC_PLATFORMS 29
+#define LEVEL2_STATIC_PLATFORMS 29
+#define LEVEL4_STATIC_PLATFORMS 29
 
 #define LEVELS 6
 
@@ -209,7 +211,7 @@ win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER
 
 
 // LEVEL 2: Entering the building
-float second_level[6][PARAMETERS] = {
+float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 0.0f, 250.0f, 630.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 600.0f, 10.0f, 50.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 500.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
@@ -327,7 +329,7 @@ void ingameTimer(void) {
 
 
 void level_1st(void) {
-	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
+	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
 		DrawPlatform(first_level[i][0],
 			first_level[i][1],
 			first_level[i][2],
@@ -379,7 +381,7 @@ void level_1st(void) {
 }
 
 void level_2nd(void) {
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i <	LEVEL2_STATIC_PLATFORMS; i++) {
 		DrawPlatform(second_level[i][0],
 			second_level[i][1],
 			second_level[i][2],
@@ -525,7 +527,7 @@ void level_4th(void) {
 	Player_Animation();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < LEVEL4_STATIC_PLATFORMS; i++) {
 		DrawPlatform(fourth_level[i][0],
 			fourth_level[i][1],
 			fourth_level[i][2],
@@ -633,9 +635,9 @@ void Objects_Draw(void) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
 	int plat_count = LEVEL1_STATIC_PLATFORMS;
-	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
+	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
-	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
 
 	for (int i = 0; i < current_obj_count; i++) {
 		int type = (int)current_objects[i][OBJ_TYPE];
@@ -680,9 +682,9 @@ int Object_HitCheck(float cx, float cy, float radius, int self) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
 	int plat_count = LEVEL1_STATIC_PLATFORMS;
-	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
+	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
-	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
 
 	for (int p = 0; p < plat_count; p++) {
 		if (sphere_aabb_intersection(cx, cy, radius,
