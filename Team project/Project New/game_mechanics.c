@@ -712,7 +712,7 @@ void Player_Starting_Pos(spawn arr[], int level_selected) {
 }
 
 int unlocked_gate_score = 0;
-int pressed = 0;
+int pressed;
 
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 	float door_x, float door_y, float door_width, float door_height) {
@@ -720,6 +720,7 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 	// if characteer or object intersects the pressure plate, the door will open.
 
 	{
+		pressed = 0;
 		
 		float plate_left = pres_x - pres_width / 2.0f;
 		float plate_right = pres_x + pres_width / 2.0f;
@@ -756,17 +757,19 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 			}
 		}
 
-		if (pressed)
+		if (pressed) {
 			CP_Settings_Fill(medium_light_green);
-		else
+		}
+		else {
+			
 			CP_Settings_Fill(light_green);
-
+		}
 		CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
 
 
 		if (!pressed)
 		{	
-
+			
 			CP_Settings_Fill(purple);
 			CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
 
@@ -872,6 +875,7 @@ void game_score(void) {
 	if (pressed && unlocked_gate_score == 0) {
 		*score += 750;
 		unlocked_gate_score = 1;
+		
 	}
 
 	

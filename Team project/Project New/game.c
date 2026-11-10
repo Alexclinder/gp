@@ -64,11 +64,10 @@ void Game_Reset(void)
 	NPC_Starting_Pos(NPC_1_spawns, level_selected);
 
 	// Unlocked scoring 
-	int npc_score = 0;
-	int reflect_score = 0;
+	npc_score = 0;
+	reflect_score = 0;
 	// only awarded once per level and unlocked only when restarted
-	int unlocked_gate_score = 0;
-
+	unlocked_gate_score = 0;
 
 }
 
