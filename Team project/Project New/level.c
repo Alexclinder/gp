@@ -110,6 +110,7 @@ void Objective_Text(void){
 	float score_offset_y = 50.0f;
 	float score_offset_x = 250.0f;
 	float text_size = 1.0f;
+	game_score();
 
 	char buffer[16] = { 0 };
 	sprintf_s(buffer, 16, "%3d", *score);

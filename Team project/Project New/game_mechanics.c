@@ -91,41 +91,47 @@ void DashTimer(void) {
 }
 
 //Lewin - Dash Mechanic
-int Dash_Mechannic(void){
+int Dash_Mechannic(void) {
 	// dash mechanic
 
 	//show how many teleports the player has left
 	CP_Settings_Fill(white);
 	switch (Dash_count) {
-		case 3:
-			CP_Graphics_DrawRectAdvanced(1520.0, 30.0, 20.0, 20.0, 45.0, 30.0);
-		case 2:
-			CP_Graphics_DrawRectAdvanced(1550.0, 30.0, 20.0, 20.0, 45.0, 30.0);
-		case 1:
-			CP_Graphics_DrawRectAdvanced(1580.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+	case 3:
+		CP_Graphics_DrawRectAdvanced(1520.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+	case 2:
+		CP_Graphics_DrawRectAdvanced(1550.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+	case 1:
+		CP_Graphics_DrawRectAdvanced(1580.0, 30.0, 20.0, 20.0, 45.0, 30.0);
 		break;
 	}
 
 	//Activate dash window when movement key is pressed
-	if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0){// If the player is moving to the right and presses the LeftShift key,
-		for (OldPlayerPos = position.x; (OldPlayerPos + DashDistance) > position.x; position.x += ShortDashDistance)
-			DashWindowTiming = 0;
-			Dash_Status = 0;
-			Dash_count--;
-			return 1;
+	if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0) {// If the player is moving to the right and presses the LeftShift key,
+		for (OldPlayerPos = position.x; (OldPlayerPos + DashDistance) > position.x; position.x += ShortDashDistance) {}
+		DashWindowTiming = 0;
+		Dash_Status = 1;
+		Dash_count--;
+		return 1;
 	}
-	if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0)  {// If the player is moving to the left and presses the A key, check for double tap
+	else {
+		Dash_Status = 0;
+	}
+	if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0) {// If the player is moving to the left and presses the A key, check for double tap
 		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
 		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
-		for (OldPlayerPos = position.x; (OldPlayerPos - DashDistance) < position.x ;position.x -= ShortDashDistance)
-			DashWindowTiming = 0;
-			Dash_Status = 0;
-			Dash_count--;
-			return 1;
+		for (OldPlayerPos = position.x; (OldPlayerPos - DashDistance) < position.x;position.x -= ShortDashDistance) {}
+		DashWindowTiming = 0;
+		Dash_Status = 1;
+		Dash_count--;
+		return 1;
+	}
+	else {
+		Dash_Status = 0;
 	}
 	return 0;
-}
 
+}
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
 {
@@ -823,18 +829,22 @@ void platform_alternating_movement(float x, float y, float w, float h,
 }
 
 
-// function pointer score to update player score based on actions
-// call this function to other relevant functions for points updates
 // this function will be used to store the 
 // *score = 0;
 
-int player_score = 2;
+int player_score = 0;
 *score = &player_score;
 
+void game_score(void) {
+	// Add 500 if player has dash
+	if (Dash_Status) {
+		*score += 500;
+	}
 
+}
 	// player_score is set to 0 first
 
-	// If teleport has been used, -500
+	// If teleport has been used, +500 
 	// If completed milestone objectives (level dependent)- do last since levels 1,2 & 4 not completed 
 	// If deflected projectiles, +100
 	// If kill enemies, +300
