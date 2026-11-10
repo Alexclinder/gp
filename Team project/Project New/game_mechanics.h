@@ -29,8 +29,8 @@ void Draw_ClingBar(void);
 void Shield_Draw(void);
 void Shield_Update(void);
 
-void DashTimer(void);
-int Dash_Mechannic(void);
+void TeleportTimer(void);
+int Teleport_Mechannic(void);
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
 

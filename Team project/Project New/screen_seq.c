@@ -181,6 +181,16 @@ void Win_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
+    CP_Font_Set(Font);
+    CP_Settings_TextSize(50);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
+    CP_Settings_Fill(black);
+    char buffer[50] = { 0 };
+    sprintf_s(buffer, 50, "Time: %.2f", Time);
+
+    CP_Font_DrawText("Well Done", CP_System_GetWindowWidth() / 2.0, 100.0f);
+    CP_Font_DrawText(buffer, CP_System_GetWindowWidth() / 2.0, 150.0f);
+
     // Next Level
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Restart

@@ -81,7 +81,7 @@ int onGround = 0;
 int toggleGrab = 0;
 
 
-void DashTimer(void) {
+void TeleportTimer(void) {
 	float dt = CP_System_GetDt();
 	//Cooldown before pressing to dash again
 	DashWindowTiming += dt; // Contuously increase the dash window timing based on the delta time
@@ -91,11 +91,16 @@ void DashTimer(void) {
 }
 
 //Lewin - Dash Mechanic
-int Dash_Mechannic(void) {
+int Teleport_Mechannic(void){
 	// dash mechanic
-
-	//show how many teleports the player has left
 	CP_Settings_Fill(white);
+	CP_Font_Set(Font);
+	CP_Settings_TextSize(50);
+	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_RIGHT, CP_TEXT_ALIGN_V_TOP);
+	CP_Font_DrawText("Teleport Charges", 1500.0f, 0.0f);
+	//show how many teleports the player has left
+	
+
 	switch (Dash_count) {
 	case 3:
 		CP_Graphics_DrawRectAdvanced(1520.0, 30.0, 20.0, 20.0, 45.0, 30.0);
