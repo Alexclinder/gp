@@ -24,8 +24,8 @@ typedef struct {
 	float cornerRadius;
 } win_condition;
 
-extern spawn player_spawns[4];
-extern spawn NPC_1_spawns[4][2];
+extern spawn player_spawns[6];
+extern spawn NPC_1_spawns[6];
 
 extern const float first_level_objects[2][5];
 extern float first_level_objects_ingame[2][5];

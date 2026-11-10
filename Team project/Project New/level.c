@@ -32,7 +32,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 
 #define LEVEL1_STATIC_PLATFORMS 29
 
-#define LEVELS 4
+#define LEVELS 6
 
 // Platform Parameters
 #define PLATFORM_WIDTH_3 120.0f
@@ -67,31 +67,25 @@ float PauseingameTime = 0.0,differenceTime = 0.0;
 // concat player_spawns and NPC_1_spawns into a single array for easier access
 
 spawn player_spawns[LEVELS] = { 
-							   { 100.0f, 800.0f},
-							   { 100.0f, 100.0f},
-							   { 200.0f, 600.0f},
-							   { 200.0f, 300.0f}
+							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
+							   { 1000.0f, 800.0f }, // level 1 - let player start on bottom right screen
+							   { 1000.0f, 800.0f }, // level 2 - player spawn bottom right screen
+							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
+							   { 1200.0f, 800.0f }, // level 4 - player spawn bottom right screen
+							   { 1600.0f, 800.0f }  // boss level  
 							  };
 #define NUMBER_OF_NPC 2
 
 // [LEVELS][NUMBER_OF_NPC]
-spawn NPC_1_spawns[LEVELS][NUMBER_OF_NPC] = {
-							{
-							   { 1030.0f, 200.0f },
-							   { 1130.0f, 300.0f }
-							},
-							{
-							   { 1250.0f, 200.0f },
-							   { 1350.0f, 100.0f }
-							},
-							{
-							   { 860.0f, 200.0f },
-							   { 960.0f, 300.0f }
-							},
-							{
-							   { 200.0f, 300.0f },
-							   { 300.0f, 200.0f }
-							}
+spawn NPC_1_spawns[LEVELS] = {
+			
+							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
+							   { 1250.0f, 200.0f }, // level 1
+							   { 860.0f, 200.0f }, // level 2
+							   { 200.0f, 300.0f }, // level 3
+							   { 300.0f, 200.0f }, // level 4
+							   { 300.0f, 200.0f }, // boss level
+							
 							 };
 
 pressure_door_pos level3 = {.px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
