@@ -64,3 +64,7 @@ void platform_alternating_movement(float x, float y, float w, float h,
 	float left_boundary, float right_boundary);
 
 
+
+extern int* score;
+
+

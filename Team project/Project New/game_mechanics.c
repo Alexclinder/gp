@@ -821,3 +821,22 @@ void platform_alternating_movement(float x, float y, float w, float h,
 	// draw stuff
 	DrawPlatform(updated_x, y, w, h, degrees, cornerRadius);
 }
+
+
+// function pointer score to update player score based on actions
+// call this function to other relevant functions for points updates
+// this function will be used to store the 
+// *score = 0;
+
+int player_score = 2;
+*score = &player_score;
+
+
+	// player_score is set to 0 first
+
+	// If teleport has been used, -500
+	// If completed milestone objectives (level dependent)- do last since levels 1,2 & 4 not completed 
+	// If deflected projectiles, +100
+	// If kill enemies, +300
+
+

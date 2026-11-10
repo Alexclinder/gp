@@ -367,9 +367,28 @@ void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
 
 void drawTextCenter(const char* text, float x, float y, float scalar)
 {
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
     CP_Settings_TextSize(textSize * scalar);
     CP_Settings_Fill(white);
     CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
+    CP_Font_DrawText(text, x, y);
+}
+
+void drawTextTopLeft(const char* text, float x, float y, float scalar)
+{
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    CP_Settings_TextSize(textSize * scalar);
+    CP_Settings_Fill(white);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+    CP_Font_DrawText(text, x, y);
+}
+
+void drawScoreTopLeft(const int* text, float x, float y, float scalar)
+{
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    CP_Settings_TextSize(textSize * scalar);
+    CP_Settings_Fill(white);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
     CP_Font_DrawText(text, x, y);
 }
 

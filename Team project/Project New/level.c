@@ -104,24 +104,40 @@ k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
 win_condition level3_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
 
 void Objective_Text(void){
-	Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
-	CP_Font_Set(Font);
-	CP_Settings_TextSize(50);
-	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
-	CP_Settings_Fill(white);
+
+	float top_left_x = 0.0f;
+	float top_left_y = top_left_x;
+	float score_offset_y = 50.0f;
+	float score_offset_x = 250.0f;
+	float text_size = 1.0f;
+
+	char buffer[16] = { 0 };
+	sprintf_s(buffer, 16, "%3d", *score);
+
+	// Font Size is 100.0f by default
+
+	// display *score that will persists through all levels
 	switch (level_selected){
-		case 3:
-			CP_Font_DrawText("Objective: Get through the", 0.0f, 0.0f);
-			CP_Font_DrawText("Manufacturing Floor", 0.0f, 50.0f);
+		case level_3:
+			drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
+			drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y+50.0f, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
 			break;
-		case 2: 
-			CP_Font_DrawText("Objective: Avoid your Colleagues", 0.0f, 0.0f);
+		case level_2: 
+			drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
 			break;
-		case 1:
-			CP_Font_DrawText("Objective: Get into the Building", 0.0f, 0.0f);
+		case level_1:
+			drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
 			break;
 		default:
 			break;
+
+
 	}
 }
 
