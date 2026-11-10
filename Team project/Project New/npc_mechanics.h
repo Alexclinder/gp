@@ -19,3 +19,4 @@ extern int ProjReflected;
 // score is locked to prevent inf loop
 extern int NPC_ded;
 extern int NPC_reflected;
+extern int unlocked_gate_score;

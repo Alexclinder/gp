@@ -60,6 +60,8 @@ float player_right;
 float player_top;
 float player_bottom;
 
+
+
 CP_Vector position = { 100,100 };
 CP_Vector velocity = { 0, 0 };
 
@@ -709,14 +711,16 @@ void Player_Starting_Pos(spawn arr[], int level_selected) {
 	*p = arr[level_selected].pos;
 }
 
+int unlocked_gate_score = 0;
+int pressed = 0;
+
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 	float door_x, float door_y, float door_width, float door_height) {
 
 	// if characteer or object intersects the pressure plate, the door will open.
 
 	{
-		int pressed = 0;
-
+		
 		float plate_left = pres_x - pres_width / 2.0f;
 		float plate_right = pres_x + pres_width / 2.0f;
 		float plate_top = pres_y - pres_height / 2.0f;
@@ -761,7 +765,8 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 
 
 		if (!pressed)
-		{
+		{	
+
 			CP_Settings_Fill(purple);
 			CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
 
@@ -847,19 +852,29 @@ int reflect_score = 0;
 int npc_score = 0;
 
 void game_score(void) {
-	// Add 500 if player has dash
+	// award player for 200 if used abilities
 	if (Dash_Status) {
-		*score += 500;
+		*score += 200;
 	}
-	// lock score 
+	// award 100 if reflect projectiles
 	if (NPC_reflected && reflect_score==0) {
 		*score += 100;
 		reflect_score = 1;
 	}
+
+	// award 300 points if kill npc
 	if (NPC_ded && npc_score == 0) {
 		*score += 300;
 		npc_score = 1;
 	}
+	
+	// award 750 if completed milestone objectives (or opened the door)
+	if (pressed && unlocked_gate_score == 0) {
+		*score += 750;
+		unlocked_gate_score = 1;
+	}
+
+	
 	
 
 }

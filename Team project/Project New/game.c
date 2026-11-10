@@ -66,6 +66,8 @@ void Game_Reset(void)
 	// Unlocked scoring 
 	int npc_score = 0;
 	int reflect_score = 0;
+	// only awarded once per level and unlocked only when restarted
+	int unlocked_gate_score = 0;
 
 
 }
