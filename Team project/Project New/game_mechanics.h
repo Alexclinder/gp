@@ -1,6 +1,13 @@
 #pragma once
 
 #define PLAYER_SIZE 50.f
+#define SHIELD_SIZE (PLAYER_SIZE * 1.6f)  // diameter of the circle
+#define SHIELD_DURATION    1.0f                  // total time shield exists
+#define SHIELD_PARRY_TIME  0.5f                  // reflect window
+
+extern int   shieldActive;
+extern float shieldTimer;
+
 extern int isCarrying;
 extern int pickingUp;
 extern int dropping;
@@ -13,6 +20,14 @@ extern CP_Vector velocity;
 extern float platform_velocity;
 extern float platform_move;
 extern int Dash_count;
+extern int   is_clinging;
+extern int   cling_side;
+extern float wall_timer; 
+
+void Draw_ClingBar(void);
+
+void Shield_Draw(void);
+void Shield_Update(void);
 
 void DashTimer(void);
 int Dash_Mechannic(void);

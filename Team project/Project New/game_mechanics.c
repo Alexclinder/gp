@@ -23,6 +23,8 @@ float cornerRadius;
 float animationTimer = 0.0f;
 int win = 0;
 int wall_climb = 1;
+int is_clinging = 0;
+int cling_side = 0;
 float carry_timer = 0.0f;
 float cling_wall_x = -1.0f;
 float cling_wall_y = -1.0f;
@@ -34,6 +36,8 @@ float fromX, fromY, toX, toY;
 int kickedObject = -1;
 float kick_dir = 0.0f;
 float kick_moved = 0.0f;
+int   shieldActive = 0;
+float shieldTimer = 0.0f;
 
 int Dash_count = 3; // Number of dashes available
 int Dash_Status = 0;
@@ -164,11 +168,61 @@ void HeldObject_MoveTo(float t)
 	current_objects[heldObject][1] = fromY + (toY - fromY) * t;
 }
 
+void Shield_Draw(void) {
+	if (!shieldActive) return;
+
+	if (shieldTimer <= SHIELD_PARRY_TIME)
+		CP_Settings_Fill(CP_Color_Create(255, 215, 0, 120));   // gold = will reflect
+	else
+		CP_Settings_Fill(CP_Color_Create(100, 180, 255, 120)); // blue = block only
+
+	CP_Graphics_DrawCircle(position.x + PLAYER_SIZE / 2.0f,
+		position.y + PLAYER_SIZE / 2.0f,
+		SHIELD_SIZE);
+}
+
+void Shield_Update(void) {
+	float dt = CP_System_GetDt();
+
+	/* --- Right click: summon shield (can't recast while one is up) --- */
+	if (CP_Input_MouseTriggered(MOUSE_BUTTON_RIGHT) && !shieldActive) {
+		shieldActive = 1;
+		shieldTimer = 0.0f;
+	}
+
+	/* --- Shield timer: disappears after SHIELD_DURATION --- */
+	if (shieldActive) {
+		shieldTimer += dt;
+		if (shieldTimer >= SHIELD_DURATION) {
+			shieldActive = 0;
+			shieldTimer = 0.0f;
+		}
+	}
+}
+
+
 void Character_MovementDefault(void) {
 
+	int   shieldActive = 0;
+	float shieldTimer = 0.0f;
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
+
+	/* --- Right click: summon shield (can't recast while one is up) --- */
+	if (CP_Input_MouseReleased(MOUSE_BUTTON_RIGHT) && !shieldActive) {
+		shieldActive = 1;
+		shieldTimer = 0.0f;
+	}
+
+	/* --- Shield timer: disappears after SHIELD_DURATION --- */
+	if (shieldActive) {
+		shieldTimer += dt;
+		if (shieldTimer >= SHIELD_DURATION) {
+			shieldActive = 0;
+			shieldTimer = 0.0f;
+		}
+	}
 
 	/* --- Space: pick up (grounded + touching an object, not mid-kick) --- */
 	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && kickedObject == -1 && onGround && (heldObject = Object_Check()) != -1) {
@@ -345,16 +399,16 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	// Standing on the floor or a platform -> cling time refills
 	if (onGround) wall_timer = 0.0f;
 
-	 area_left = area_center_x - area_width / 2;
-	 area_right = area_center_x + area_width / 2;
-	 area_top = area_center_y - area_height / 2;
-	 area_bottom = area_center_y + area_height / 2;
+	area_left = area_center_x - area_width / 2;
+	area_right = area_center_x + area_width / 2;
+	area_top = area_center_y - area_height / 2;
+	area_bottom = area_center_y + area_height / 2;
 
 	// Player edges (position is the player's top-left corner)
-	 player_left = position.x;
-	 player_right = position.x + PLAYER_SIZE;
-	 player_top = position.y;
-	 player_bottom = position.y + PLAYER_SIZE;
+	player_left = position.x;
+	player_right = position.x + PLAYER_SIZE;
+	player_top = position.y;
+	player_bottom = position.y + PLAYER_SIZE;
 
 	// How far the player has gone into the platform from each side
 	float overlap_top = player_bottom - area_top;
@@ -362,7 +416,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	float overlap_left = player_right - area_left;
 	float overlap_right = area_right - player_left;
 	int side;
-	
+
 	if (player_right <= area_left || player_left >= area_right || player_bottom < area_top || player_top >= area_bottom)
 	{
 		return 0;
@@ -396,13 +450,13 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		position.x = area_right;
 		side = 4;
 	}
-	
 
-	
+
+
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
-		
+
 		// Touching a new wall -> fresh 3 seconds
 		if (area_center_x != cling_wall_x || area_center_y != cling_wall_y)
 		{
@@ -424,12 +478,51 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			// Climb up / down the wall
 			if (CP_Input_KeyDown(KEY_W)) position.y -= CLIMB_SPEED * dt;
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
+
+			is_clinging = 1;      // ADDED: tell level.c to draw the bar
+			cling_side = side;    // ADDED: which side the wall is on
 		}
 
 		return side;
 	}
 
-	
+}
+
+
+#define CLING_BAR_W    8.0f   // bar thickness
+#define CLING_BAR_GAP  5.0f   // space between player and bar
+
+void Draw_ClingBar(void)
+{
+	if (!is_clinging) return;
+
+	float remaining = 1.0f - (wall_timer / WALL_CLING_TIME);   // 1 = full, 0 = empty
+	if (remaining < 0.0f) remaining = 0.0f;
+	float barH = PLAYER_SIZE * remaining;
+
+	// Bar goes on the side away from the wall
+	// side 3 = wall is on the player's right -> bar on the left
+	float barX = (cling_side == 3) ? position.x - CLING_BAR_GAP - CLING_BAR_W
+		: position.x + PLAYER_SIZE + CLING_BAR_GAP;
+
+	CP_Settings_Save();
+	CP_Settings_RectMode(CP_POSITION_CORNER);
+	CP_Settings_NoStroke();
+
+	// Empty background, full player height
+	CP_Settings_Fill(CP_Color_Create(60, 60, 60, 180));
+	CP_Graphics_DrawRect(barX, position.y, CLING_BAR_W, PLAYER_SIZE);
+
+	// Remaining endurance: drains from top to bottom
+	if (remaining > 0.25f)
+		CP_Settings_Fill(CP_Color_Create(80, 220, 100, 255));  // green
+	else
+		CP_Settings_Fill(CP_Color_Create(230, 60, 60, 255));   // red when almost out
+	CP_Graphics_DrawRect(barX, position.y + (PLAYER_SIZE - barH), CLING_BAR_W, barH);
+
+	CP_Settings_Restore();
+
+	is_clinging = 0;   // collision_check sets it again next frame if still clinging
 }
 
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h)

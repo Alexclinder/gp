@@ -19,6 +19,7 @@ CP_Image npc1;
 
 int NPConGround = 0;
 int LeftOrRightState = 0;
+int ProjReflected = 0;
 
 
 // NPC Projectile
@@ -133,6 +134,7 @@ void NPC_Attack(void)
         Projvelocity = CP_Vector_Scale(direction, PROJECTILE_SPEED);
 
         ProjectileActive = 1;
+        ProjReflected = 0;
         shootTimer = 0.0f;
     }
 }
@@ -190,7 +192,7 @@ void NPC_DrawProjectiles(void)
 // Check Player Collision
 int NPC_CheckPlayerCollision(void)
 {
-    if (ProjectileActive == 1)
+    if (ProjectileActive == 1 && ProjReflected == 0)
     {
         float dx = Projposition.x - (position.x + PLAYER_SIZE / 2.0f);
         float dy = Projposition.y - (position.y + PLAYER_SIZE / 2.0f);
@@ -207,6 +209,37 @@ int NPC_CheckPlayerCollision(void)
     return 0;
 }
 
+int NPC_CheckShieldCollision(void)
+{
+    if (ProjectileActive == 0 || shieldActive == 0 || ProjReflected == 1)
+        return 0;
+
+    CP_Vector shieldCenter = {
+        position.x + PLAYER_SIZE / 2.0f,
+        position.y + PLAYER_SIZE / 2.0f
+    };
+
+    float distance = CP_Vector_Distance(Projposition, shieldCenter);
+
+    if (distance < SHIELD_SIZE / 2.0f + PROJECTILE_SIZE / 2.0f)
+    {
+        if (shieldTimer <= SHIELD_PARRY_TIME)
+        {
+            // Within the 1 second window: send it back the way it came
+            Projvelocity = CP_Vector_Negate(Projvelocity);
+            ProjReflected = 1;
+            return 1;
+        }
+        else
+        {
+            // Too late: shield absorbs it
+            ProjectileActive = 0;
+            return 2;
+        }
+    }
+
+    return 0;
+}
 
 // p will be assigned the address of position, to avoid pass by value
 CP_Vector* npc_p = &NPCposition;

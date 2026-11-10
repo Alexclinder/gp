@@ -8,5 +8,6 @@ void NPC_DrawProjectiles(void);
 
 // Check Collision between player and Projectile 
 int NPC_CheckPlayerCollision(void);
+int NPC_CheckShieldCollision(void);
 
 void NPC_Starting_Pos(spawn arr[], int level_selected);

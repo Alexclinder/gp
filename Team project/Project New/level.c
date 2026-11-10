@@ -350,10 +350,13 @@ void level_1st(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 	
+	Shield_Update();
+
 	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -367,6 +370,8 @@ void level_1st(void) {
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
+	Draw_ClingBar();
+	Shield_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
@@ -387,7 +392,7 @@ void level_2nd(void) {
 			second_level[i][4],
 			second_level[i][5]);
 	}
-	DrawBG(backgroundtwo);
+	DrawBG(backgroundthree);
 	Objective_Text();
 	ingameTimer();
 	DashTimer();
@@ -396,10 +401,13 @@ void level_2nd(void) {
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 
+	Shield_Update();
+
 	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -413,10 +421,11 @@ void level_2nd(void) {
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
-
+	Draw_ClingBar();
+	Shield_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
+	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
 	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1) {
 		NPC_UpdateProjectiles(0);
@@ -459,6 +468,7 @@ void level_3rd(void) {
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -469,6 +479,8 @@ void level_3rd(void) {
 		return;
 	}
 	
+	Shield_Update();
+
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level3.px, level3.py, level3.pw, level3.ph,
 		level3.dx, level3.dy, level3.dw, level3.dh);
@@ -479,6 +491,8 @@ void level_3rd(void) {
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
+	Draw_ClingBar();
+	Shield_Draw();
 
 
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
