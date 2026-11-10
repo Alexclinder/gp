@@ -63,7 +63,7 @@ typedef struct {
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeCount, ResetTime;
-float PauseingameTime = 0.0,differenceTime = 0.0;
+float PauseingameTime = 0.0,differenceTime = 0.0, Time;
 
 // Might do 
 // concat player_spawns and NPC_1_spawns into a single array for easier access
@@ -310,7 +310,7 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
-void ingameTimer(void) {
+float ingameTimer(void) {
 
 
 	if (TimeSet == 1) {
@@ -349,6 +349,7 @@ void ingameTimer(void) {
 		PauseingameTime = 0.0;
 		ResetTime = 0;
 	}
+	return Seconds;
 }
 
 
@@ -363,9 +364,9 @@ void level_1st(void) {
 			first_level[i][5]);
 	}
 	Objective_Text();
-	ingameTimer();
-	DashTimer();
-	Dash_Mechannic();
+	Time = ingameTimer();
+	TeleportTimer();
+	Teleport_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -416,8 +417,8 @@ void level_2nd(void) {
 	DrawBG(backgroundtwo);
 	Objective_Text();
 	ingameTimer();
-	DashTimer();
-	Dash_Mechannic();
+	TeleportTimer();
+	Teleport_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -474,8 +475,8 @@ void level_3rd(void) {
 	DrawBG(background);
 	Objective_Text();
 	ingameTimer();
-	DashTimer();
-	Dash_Mechannic();
+	TeleportTimer();
+	Teleport_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
