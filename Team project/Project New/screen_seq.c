@@ -35,10 +35,10 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
-void Level_1_Init(void) { level_selected = level_1; TimeSet = 0;ResetTime = 1; Dash_count = 3;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
-void Level_2_Init(void) { level_selected = level_2; TimeSet = 0;ResetTime = 1; Dash_count = 3; Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_3_Init(void) { level_selected = level_3; TimeSet = 0;ResetTime = 1; Dash_count = 3;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;ResetTime = 1; Dash_count = 3;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_1_Init(void) { level_selected = level_1; TimeSet = 0;ResetTime = 1; Dash_count = 3;  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+void Level_2_Init(void) { level_selected = level_2; TimeSet = 0;ResetTime = 1; Dash_count = 3; Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_3_Init(void) { level_selected = level_3; TimeSet = 0;ResetTime = 1; Dash_count = 3;  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;ResetTime = 1; Dash_count = 3;  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
 
 void Screen_Init(void)
 {
@@ -188,14 +188,13 @@ void Win_Screen(void) {
     // move the actual score value to the right of Score:
     drawTextCenter(score_buf, rect_x + 100.0f, 200.0f, 1.0f);
     */
-
-
+  
     CP_Font_Set(Font);
     CP_Settings_TextSize(50);
     CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
     CP_Settings_Fill(black);
-    char buffer[50] = { 0 };
-    sprintf_s(buffer, 50, "Time: %.2f", Time);
+    char buffer[16] = { 0 };
+    sprintf_s(buffer, 16, "Time: %.2f", Time);
 
     CP_Font_DrawText("Well Done", rect_x, 100.0f);
     CP_Font_DrawText(buffer, rect_x, 150.0f);
