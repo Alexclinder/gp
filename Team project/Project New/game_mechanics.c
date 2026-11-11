@@ -336,7 +336,7 @@ void Character_MovementCarry(void)
 	float screenW = (float)CP_System_GetWindowWidth();
 
 	/* --- G: drop (grounded only) --- */
-	if (CP_Input_KeyTriggered(KEY_G) && !dropping && onGround) {
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !dropping && onGround) {
 		float w = current_objects[heldObject][OBJ_W];
 		float h = current_objects[heldObject][OBJ_H];
 		dropping = 1;
