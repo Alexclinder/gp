@@ -19,8 +19,6 @@ CP_Image projectile;
 CP_Image objImg[OBJ_TYPE_COUNT];
 CP_Image objBG[OBJ_TYPE_COUNT];
 
-//NPC
-CP_Image npc1;
 
 // For Resume Game Btn
 void Game_Init(void)

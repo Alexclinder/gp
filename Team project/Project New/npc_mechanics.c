@@ -15,6 +15,7 @@
 
 CP_Vector NPCposition = { 100, 200 };
 CP_Vector NPCvelocity = { 0, 0 };
+//NPC
 CP_Image npc1;
 
 int NPConGround = 0;

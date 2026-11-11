@@ -8,6 +8,7 @@
 extern int   shieldActive;
 extern float shieldTimer;
 
+extern CP_Image npc1;
 extern int isCarrying;
 extern int pickingUp;
 extern int dropping;

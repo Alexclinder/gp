@@ -233,7 +233,14 @@ float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 600.0f, 10.0f, 50.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 500.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 800.0f, 360.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1240.0f, 350.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1000.0f, 100.0f, 600.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1000.0f, 0.0f, 1000.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 200.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1000.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1300.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 400.0f, 15.0f, 150.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 1500.0f, 260.0f, 220.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
 };
 
@@ -289,7 +296,7 @@ float first_level_objects_ingame[2][5];
 // { x, y, w, h, type }
 const float second_level_objects[2][5] = {
 	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
-	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
+	{ 270.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
 };
 
 // Object coords in game for level 2 (carrying and dropping change these)
@@ -407,6 +414,7 @@ void level_1st(void) {
 }
 
 void level_2nd(void) {
+	DrawBG(backgroundtwo);
 	for (int i = 0; i <	LEVEL2_STATIC_PLATFORMS; i++) {
 		DrawPlatform(second_level[i][0],
 			second_level[i][1],
@@ -415,7 +423,6 @@ void level_2nd(void) {
 			second_level[i][4],
 			second_level[i][5]);
 	}
-	DrawBG(backgroundtwo);
 	Objective_Text();
 	ingameTimer();
 	TeleportTimer();
