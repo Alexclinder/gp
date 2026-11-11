@@ -48,7 +48,7 @@ void Game_Init(void)
 
 void Game_Reset(void)
 {
-	Dash_count = 3;
+	Teleport_count = 3;
 	onGround = 0;
 	Objects_Reset();
 	isCarrying = 0;
@@ -57,7 +57,7 @@ void Game_Reset(void)
 	player_action = 1;
 	TimeSet = 0;
 	ResetTime = 1;
-	PauseTimeCount = 0;
+	PauseTimeStatus = 0;
 	Player_Starting_Pos(player_spawns,level_selected);
 	NPC_Starting_Pos(NPC_1_spawns, level_selected);
 

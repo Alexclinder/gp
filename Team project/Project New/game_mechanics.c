@@ -40,13 +40,11 @@ float kick_moved = 0.0f;
 int   shieldActive = 0;
 float shieldTimer = 0.0f;
 
-int Dash_count = 3; // Number of dashes available
-int Dash_Status = 0;
-float DashWindowTiming = 0.0f;
-#define DashDistance 100.0f // how far the player dashes
-#define ShortDashDistance 50.0f // how far the player dashes
-#define DashCooldown 2.0f
-float OldPlayerPos = 0.0f; // store the player's position before dashing
+int Teleport_count = 3; // Number of Teleportes available
+int Teleport_Status = 1;
+float TeleportWindowTiming = 0.1f;
+#define TeleportDistance 100.0f // how far the player Teleportes
+#define TeleportCooldown 2.0f
 
 /********************Player & Platform**********************/
 float area_left;
@@ -83,59 +81,70 @@ int player_action = STANDING;
 int onGround = 0;
 int toggleGrab = 0;
 
+struct TeleportCountCoordinates {
+	float XLeft;
+	float XMiddle;
+	float Xright;
+	float y;
+} TeleportCountCoordinates;
+
 
 void TeleportTimer(void) {
 	float dt = CP_System_GetDt();
-	//Cooldown before pressing to dash again
-	DashWindowTiming += dt; // Contuously increase the dash window timing based on the delta time
-	if (DashWindowTiming >= DashCooldown) {
-		Dash_Status = 1; // reset the Dash status once the dash cooldown is reset
+	//Cooldown before pressing to Teleport again
+	TeleportWindowTiming += dt; // Contuously increase the Teleport window timing based on the delta time
+	if (TeleportWindowTiming >= TeleportCooldown) {
+		Teleport_Status = 1; // reset the Teleport status once the Teleport cooldown is reset
 	}
 }
+void Teleport_Activated(void) {
+	TeleportWindowTiming = 0;
+	Teleport_Status = 0;
+	Teleport_count--;
+}
 
-//Lewin - Dash Mechanic
+//Lewin - Teleport Mechanic
 int Teleport_Mechannic(void){
-	// dash mechanic
-	CP_Settings_Fill(white);
-	CP_Font_Set(Font);
-	CP_Settings_TextSize(50);
-	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_RIGHT, CP_TEXT_ALIGN_V_TOP);
-	CP_Font_DrawText("Teleport Charges", 1500.0f, 0.0f);
-	//show how many teleports the player has left
-	
+	TeleportCountCoordinates.XLeft = 1520.0;
+	TeleportCountCoordinates.XMiddle = 1550.0;
+	TeleportCountCoordinates.Xright = 1580.0;
+	TeleportCountCoordinates.y = 40.0;
 
-	switch (Dash_count) {
+
+	// Teleport mechanic
+	CP_Settings_Fill(medium_light_green);
+	CP_Font_Set(Font);
+	CP_Settings_TextSize(25);
+	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_RIGHT, CP_TEXT_ALIGN_V_TOP);
+	//CP_Font_DrawText("Teleport Charges", 1500.0f, 0.0f);
+	//show how many teleports the player has left
+
+
+	switch (Teleport_count) {
 	case 3:
-		CP_Graphics_DrawRectAdvanced(1520.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.XLeft, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 2:
-		CP_Graphics_DrawRectAdvanced(1550.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.XMiddle, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 1:
-		CP_Graphics_DrawRectAdvanced(1580.0, 30.0, 20.0, 20.0, 45.0, 30.0);
+		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
+		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.Xright, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 		break;
 	}
 
-	//Activate dash window when movement key is pressed
-	if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0) {// If the player is moving to the right and presses the LeftShift key,
-		for (OldPlayerPos = position.x; (OldPlayerPos + DashDistance) > position.x; position.x += ShortDashDistance) {}
-		DashWindowTiming = 0;
-		Dash_Status = 1;
-		Dash_count--;
-		return 1;
-	}
-	else {
-		Dash_Status = 0;
-	}
-	if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Dash_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && Dash_count > 0) {// If the player is moving to the left and presses the A key, check for double tap
-		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
-		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
-		for (OldPlayerPos = position.x; (OldPlayerPos - DashDistance) < position.x;position.x -= ShortDashDistance) {}
-		DashWindowTiming = 0;
-		Dash_Status = 1;
-		Dash_count--;
-		return 1;
-	}
-	else {
-		Dash_Status = 0;
+	//Activate Teleport window when movement key is pressed
+	if (Teleport_count > 0) {
+		if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the right and presses the LeftShift key,
+			position.x += TeleportDistance;
+			Teleport_Activated();
+			return 1;
+		}
+		if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the left and presses the A key, check for double tap
+			//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
+			//Held Down it returns false, so the player will have to release the key and press it again to trigger the Teleport mechanic.
+			position.x -= TeleportDistance;
+			Teleport_Activated();
+			return 1;
+		}
 	}
 	return 0;
 
@@ -856,7 +865,7 @@ int npc_score = 0;
 
 void game_score(void) {
 	// award player for 200 if used abilities
-	if (Dash_Status) {
+	if (TeleportWindowTiming == 0) {
 		*score += 200;
 	}
 	// award 100 if reflect projectiles

@@ -20,7 +20,7 @@ extern CP_Vector position;
 extern CP_Vector velocity;
 extern float platform_velocity;
 extern float platform_move;
-extern int Dash_count;
+extern int Teleport_count;
 extern int   is_clinging;
 extern int   cling_side;
 extern float wall_timer; 

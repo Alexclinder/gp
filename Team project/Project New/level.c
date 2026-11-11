@@ -63,8 +63,8 @@ typedef struct {
 
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
-int TimeSet,PauseTimeCount, ResetTime;
-float PauseingameTime = 0.0,differenceTime = 0.0, Time;
+int TimeSet,PauseTimeStatus, ResetTime;
+float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
 
 
 // Might do 
@@ -322,13 +322,16 @@ int heldObject = -1;
 float ingameTimer(void) {
 
 
-	if (TimeSet == 1) {
+	if (TimeSet == 1) {// If Timer has been set, then we can start counting time
 		//differenceTime = Seconds - PauseingameTime;
 		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
 		CP_Font_Set(Font);
 		CP_Settings_TextSize(100);
 		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
 		CP_Settings_Fill(translucent_white);
+		//Seconds variable is used to store the time that will be displayed on the screen. It is calculated by subtracting 
+		// the Zeroing_Time from the current time and adding the PauseingameTime. 
+		// This ensures that the timer continues from where it left off after a pause.
 		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
 		char buffer[16] = { 0 };
@@ -336,28 +339,31 @@ float ingameTimer(void) {
 		CP_Font_DrawText(buffer, CP_System_GetWindowWidth()/2, 0);
 		CP_Settings_Fill(yellow);
 
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 - 75, 120.0, 50.0, 50.0);//Left Star
-		if(Seconds < 10.0)
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2, 120.0, 50.0, 50.0); // Middle Star
-		if (Seconds < 2.0)
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 75, 120.0, 50.0, 50.0); //Right Star
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
+		if(Seconds < 20.0)
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
+		if (Seconds < 10.0)
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
 
 
 
 	}
 	else if (TimeSet == 0) {
-		Zeroing_Time= CP_System_GetSeconds();
+		Zeroing_Time = CP_System_GetSeconds(); 
+		//Zeroing_Time is set to the current time when the timer is first initialized. 
+		//This serves as a reference point for calculating elapsed time.
 		TimeSet = 1;
 
 	}
-	if (PauseTimeCount == 1) {
-		PauseingameTime = Seconds;
-			PauseTimeCount = 0;
+	if (PauseTimeStatus == 1) {
+		PauseingameTime = Seconds;// Store the time when the game is paused
+		PauseTimeStatus = 0;// Reset the pause state so that the timer can continue counting when the game is resumed
 	}
 	if (ResetTime == 1) {
-		PauseingameTime = 0.0;
-		ResetTime = 0;
+		PauseingameTime = 0.0;// Clear the pause time when the game is reset/New level is loaded
+		ResetTime = 0;// Reset the reset state so that the status of the timer can be properly managed when the game is reset or a new level is loaded
 	}
+	WinScreenTime = Seconds;
 	return Seconds;
 }
 
@@ -374,7 +380,7 @@ void level_1st(void) {
 	}
 	ProjectileActive = 0;
 	Objective_Text();
-	Time = ingameTimer();
+	ingameTimer();
 	TeleportTimer();
 	Teleport_Mechannic();
 
@@ -426,7 +432,7 @@ void level_2nd(void) {
 			second_level[i][5]);
 	}
 	Objective_Text();
-	Time = ingameTimer();
+	ingameTimer();
 	TeleportTimer();
 	Teleport_Mechannic();
 
@@ -484,7 +490,7 @@ void level_3rd(void) {
 	}
 	DrawBG(background);
 	Objective_Text();
-	Time = ingameTimer();
+	ingameTimer();
 	TeleportTimer();
 	Teleport_Mechannic();
 
