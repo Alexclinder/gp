@@ -68,7 +68,7 @@ void Game_Reset(void)
 	reflect_score = 0;
 	// only awarded once per level and unlocked only when restarted
 	unlocked_gate_score = 0;
-
+	pressed = 0;
 }
 
 
@@ -100,6 +100,8 @@ void Game_Next_Level(void) {
 		isCarrying = 0;
 		pickingUp = 0;
 		dropping = 0;
+		pressed = 0;
+		
 	}
 }
 

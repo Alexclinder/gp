@@ -71,7 +71,7 @@ float PauseingameTime = 0.0,differenceTime = 0.0, Time;
 spawn player_spawns[LEVELS] = { 
 							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
 							   { 1000.0f, 800.0f }, // level 1 - let player start on bottom right screen
-							   { 1000.0f, 800.0f }, // level 2 - player spawn bottom right screen
+							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
 							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
 							   { 1200.0f, 800.0f }, // level 4 - player spawn bottom right screen
 							   { 1600.0f, 800.0f }  // boss level  
@@ -83,7 +83,7 @@ spawn NPC_1_spawns[LEVELS] = {
 			
 							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
 							   { 1250.0f, 200.0f }, // level 1
-							   { 860.0f, 200.0f }, // level 2
+							   { 100.0f, 100.0f }, // level 2
 							   { 200.0f, 300.0f }, // level 3
 							   { 300.0f, 200.0f }, // level 4
 							   { 300.0f, 200.0f }, // boss level
@@ -449,7 +449,7 @@ void level_2nd(void) {
 	Shield_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
-	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
+	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
 
 	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1) {
 		NPC_UpdateProjectiles(0);

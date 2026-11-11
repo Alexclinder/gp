@@ -71,3 +71,4 @@ void game_score(void);
 
 extern int reflect_score;
 extern int npc_score;
+extern int pressed;

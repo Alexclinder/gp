@@ -181,6 +181,15 @@ void Win_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
+
+    /*
+    char score_buf[100] = { 0 };
+    sprintf_s(score_buf, 100, "Score: %3d", score);
+    // move the actual score value to the right of Score:
+    drawTextCenter(score_buf, rect_x + 100.0f, 200.0f, 1.0f);
+    */
+
+
     CP_Font_Set(Font);
     CP_Settings_TextSize(50);
     CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
@@ -188,15 +197,15 @@ void Win_Screen(void) {
     char buffer[50] = { 0 };
     sprintf_s(buffer, 50, "Time: %.2f", Time);
 
-    CP_Font_DrawText("Well Done", CP_System_GetWindowWidth() / 2.0, 100.0f);
-    CP_Font_DrawText(buffer, CP_System_GetWindowWidth() / 2.0, 150.0f);
+    CP_Font_DrawText("Well Done", rect_x, 100.0f);
+    CP_Font_DrawText(buffer, rect_x, 150.0f);
 
     // Next Level
-    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
+    first_y = CP_System_GetWindowHeight() / 2.0 - 120.0f;
     // Restart
-    second_y = CP_System_GetWindowHeight() / 2.0;
+    second_y = CP_System_GetWindowHeight() / 2.0 - 30.0f;
     // Exit to Main Menu
-    third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
+    third_y = CP_System_GetWindowHeight() / 2.0 + 120.0f;
     
     CP_Settings_Fill(orange);
     dynamicBtn("Next Level", rect_x, first_y, Next_level_Init, Game_Update, Game_Exit);
@@ -205,7 +214,6 @@ void Win_Screen(void) {
     CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
-    
 }
 
 void Lose_Screen(void) {
