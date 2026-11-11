@@ -100,6 +100,8 @@ void Game_Next_Level(void) {
 		pickingUp = 0;
 		dropping = 0;
 		pressed = 0;
+		NPC_ded = 0;
+		NPC_reflected = 0;
 		ProjectileActive = 0;
 		
 	}

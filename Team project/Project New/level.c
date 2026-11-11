@@ -115,7 +115,7 @@ void Objective_Text(void){
 	game_score();
 
 	char buffer[16] = { 0 };
-	sprintf_s(buffer, 16, "%3d", *score);
+	sprintf_s(buffer, 16, "%d", *score);
 
 	// Font Size is 100.0f by default
 
