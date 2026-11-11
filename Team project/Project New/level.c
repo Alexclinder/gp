@@ -34,7 +34,8 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define LEVEL2_STATIC_PLATFORMS 29
 #define LEVEL4_STATIC_PLATFORMS 29
 
-#define LEVELS 6
+// compile time constant 
+enum {LEVELS = 6};
 
 // Platform Parameters
 #define PLATFORM_WIDTH_3 120.0f
@@ -64,6 +65,7 @@ int level_selected = level_1;
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeCount, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, Time;
+
 
 // Might do 
 // concat player_spawns and NPC_1_spawns into a single array for easier access
@@ -370,6 +372,7 @@ void level_1st(void) {
 			first_level[i][4],
 			first_level[i][5]);
 	}
+	ProjectileActive = 0;
 	Objective_Text();
 	Time = ingameTimer();
 	TeleportTimer();
@@ -423,7 +426,7 @@ void level_2nd(void) {
 			second_level[i][5]);
 	}
 	Objective_Text();
-	ingameTimer();
+	Time = ingameTimer();
 	TeleportTimer();
 	Teleport_Mechannic();
 
@@ -481,7 +484,7 @@ void level_3rd(void) {
 	}
 	DrawBG(background);
 	Objective_Text();
-	ingameTimer();
+	Time = ingameTimer();
 	TeleportTimer();
 	Teleport_Mechannic();
 

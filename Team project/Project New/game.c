@@ -67,6 +67,7 @@ void Game_Reset(void)
 	// only awarded once per level and unlocked only when restarted
 	unlocked_gate_score = 0;
 	pressed = 0;
+	ProjectileActive = 0;
 }
 
 
@@ -99,6 +100,7 @@ void Game_Next_Level(void) {
 		pickingUp = 0;
 		dropping = 0;
 		pressed = 0;
+		ProjectileActive = 0;
 		
 	}
 }
