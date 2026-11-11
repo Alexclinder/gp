@@ -13,6 +13,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "npc_mechanics.h"
 #include "colors.h"
 #include "boss.h"
+#include "sounds.h"
 
 
 #define LEVEL3_STATIC_PLATFORMS 29

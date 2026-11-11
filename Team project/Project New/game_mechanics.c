@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "npc_mechanics.h"
+#include "sounds.h"
 
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     500.0f
@@ -98,6 +99,7 @@ void TeleportTimer(void) {
 	}
 }
 void Teleport_Activated(void) {
+	CP_Sound_Play(teleportSound);
 	TeleportWindowTiming = 0;
 	Teleport_Status = 0;
 	Teleport_count--;

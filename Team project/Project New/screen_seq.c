@@ -15,6 +15,7 @@
 #include "level.h"
 #include "npc_mechanics.h"
 #include "colors.h"
+#include "sounds.h"
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
@@ -48,6 +49,7 @@ void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Ga
 
 void Screen_Init(void)
 {
+	LoadSounds();
     // Use to initalize the color variables with values stored
     color_create();
 

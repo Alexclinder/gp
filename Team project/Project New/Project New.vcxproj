@@ -114,6 +114,7 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
     <ClCompile Include="main.c" />
     <ClCompile Include="npc_mechanics.c" />
     <ClCompile Include="screen_seq.c" />
+    <ClCompile Include="sounds.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boss.h" />
@@ -123,6 +124,7 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
     <ClInclude Include="level.h" />
     <ClInclude Include="npc_mechanics.h" />
     <ClInclude Include="screen_seq.h" />
+    <ClInclude Include="sounds.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
