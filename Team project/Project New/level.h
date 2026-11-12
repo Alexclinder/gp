@@ -71,7 +71,15 @@ void DrawExit(float x, float y, float w, float h, float degrees, float cornerRad
 
 void DrawBG(CP_Image BG);
 
+int Treasure(float x, float y, int treasure_id);
+
+extern int Trea_score;
+extern int Trea;
 extern int TimeSet;
 extern int PauseTimeStatus;
 extern int ResetTime;
 extern float WinScreenTime;
+
+#define MAX_TREASURES 2
+
+extern int treasure_collected[MAX_TREASURES];

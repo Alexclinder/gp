@@ -393,6 +393,16 @@ void level_1st(void) {
 	TeleportTimer();
 	Teleport_Mechannic();
 
+	if (Treasure(410.0f, 150.0f, 0))
+	{
+		*score += 500;
+	}
+
+	if (Treasure(800.0f, 300.0f, 1))
+	{
+		*score += 500;
+	}
+
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 	
@@ -771,6 +781,51 @@ int Object_HitCheck(float cx, float cy, float radius, int self) {
 	}
 
 	if (cy + radius >= (float)CP_System_GetWindowHeight()) return 3;
+
+	return 0;
+}
+
+int Trea_score = 0;
+int Trea;
+
+extern int treasure_collected[MAX_TREASURES] = {0,0};
+
+int Treasure(float x, float y, int treasure_id)
+{
+	float trea_w = 20.0f;
+	float trea_h = 20.0f;
+
+	// Check whether treasure has already been collected
+	if (treasure_collected[treasure_id] == 1)
+	{
+		return 0;
+	}
+
+
+	CP_Settings_Fill(orange);
+	CP_Graphics_DrawRect(x, y, trea_w, trea_h);
+
+	float trea_left = x - trea_w / 2.0f;
+	float trea_right = x + trea_w / 2.0f;
+	float trea_top = y - trea_h / 2.0f;
+	float trea_bottom = y + trea_h / 2.0f;
+
+
+	float player_left = position.x;
+	float player_right = position.x + PLAYER_SIZE;
+	float player_top = position.y;
+	float player_bottom = position.y + PLAYER_SIZE;
+
+
+	if (player_right > trea_left &&
+		player_left < trea_right &&
+		player_bottom > trea_top &&
+		player_top < trea_bottom)
+	{
+		treasure_collected[treasure_id] = 1;
+
+		return 1; // Treasure collected this frame
+	}
 
 	return 0;
 }

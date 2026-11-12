@@ -68,6 +68,11 @@ void Game_Reset(void)
 	unlocked_gate_score = 0;
 	pressed = 0;
 	ProjectileActive = 0;
+	Trea_score = 0;
+
+	for (int i = 0; i < MAX_TREASURES; i++) {
+		treasure_collected[i] = 0;
+	}
 }
 
 
@@ -103,7 +108,11 @@ void Game_Next_Level(void) {
 		NPC_ded = 0;
 		NPC_reflected = 0;
 		ProjectileActive = 0;
-		
+		Trea_score = 0;
+
+		for (int i = 0; i < MAX_TREASURES; i++) {
+			treasure_collected[i] = 0;
+		}
 	}
 }
 
