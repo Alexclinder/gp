@@ -1,6 +1,14 @@
 #pragma once
 
 #define PLAYER_SIZE 50.f
+#define SHIELD_SIZE (PLAYER_SIZE * 1.6f)  // diameter of the circle
+#define SHIELD_DURATION    1.0f                  // total time shield exists
+#define SHIELD_PARRY_TIME  0.5f                  // reflect window
+
+extern int   shieldActive;
+extern float shieldTimer;
+
+extern CP_Image npc1;
 extern int isCarrying;
 extern int pickingUp;
 extern int dropping;
@@ -12,8 +20,18 @@ extern CP_Vector position;
 extern CP_Vector velocity;
 extern float platform_velocity;
 extern float platform_move;
+extern int Teleport_count;
+extern int   is_clinging;
+extern int   cling_side;
+extern float wall_timer; 
 
-void Air_Dash_Mechannic(void);
+void Draw_ClingBar(void);
+
+void Shield_Draw(void);
+void Shield_Update(void);
+
+void TeleportTimer(void);
+int Teleport_Mechannic(void);
 
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
 
@@ -47,3 +65,11 @@ void platform_alternating_movement(float x, float y, float w, float h,
 	float left_boundary, float right_boundary);
 
 
+
+extern int* score;
+
+void game_score(void);
+
+extern int reflect_score;
+extern int npc_score;
+extern int pressed;

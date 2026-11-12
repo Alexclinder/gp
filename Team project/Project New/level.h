@@ -1,6 +1,7 @@
 #pragma once
 
 extern level_selected;
+extern float killZoneX;
 // Needed for Game_Reset() reassign back to 0
 typedef struct{
 	CP_Vector pos;
@@ -24,8 +25,8 @@ typedef struct {
 	float cornerRadius;
 } win_condition;
 
-extern spawn player_spawns[4];
-extern spawn NPC_1_spawns[4][2];
+extern spawn player_spawns[6];
+extern spawn NPC_1_spawns[6];
 
 extern const float first_level_objects[2][5];
 extern float first_level_objects_ingame[2][5];
@@ -46,6 +47,8 @@ enum { DESK, PRINTER };
 extern float (*current_objects)[5];
 extern int current_obj_count;
 extern int heldObject;
+
+void Objective_Text(void);
 
 void Objects_Reset(void);
 
@@ -70,5 +73,6 @@ void DrawExit(float x, float y, float w, float h, float degrees, float cornerRad
 void DrawBG(CP_Image BG);
 
 extern int TimeSet;
-extern int PauseTimeCount;
+extern int PauseTimeStatus;
 extern int ResetTime;
+extern float WinScreenTime;

@@ -19,8 +19,6 @@ CP_Image projectile;
 CP_Image objImg[OBJ_TYPE_COUNT];
 CP_Image objBG[OBJ_TYPE_COUNT];
 
-//NPC
-CP_Image npc1;
 
 // For Resume Game Btn
 void Game_Init(void)
@@ -50,6 +48,7 @@ void Game_Init(void)
 
 void Game_Reset(void)
 {
+	Teleport_count = 3;
 	onGround = 0;
 	Objects_Reset();
 	isCarrying = 0;
@@ -58,10 +57,18 @@ void Game_Reset(void)
 	player_action = 1;
 	TimeSet = 0;
 	ResetTime = 1;
-	PauseTimeCount = 0;
+	PauseTimeStatus = 0;
 	Player_Starting_Pos(player_spawns,level_selected);
 	NPC_Starting_Pos(NPC_1_spawns, level_selected);
 
+	// Unlocked scoring 
+	npc_score = 0;
+	reflect_score = 0;
+	// only awarded once per level and unlocked only when restarted
+	unlocked_gate_score = 0;
+	pressed = 0;
+	ProjectileActive = 0;
+	killZoneX = 0.0f;
 }
 
 
@@ -93,6 +100,11 @@ void Game_Next_Level(void) {
 		isCarrying = 0;
 		pickingUp = 0;
 		dropping = 0;
+		pressed = 0;
+		NPC_ded = 0;
+		NPC_reflected = 0;
+		ProjectileActive = 0;
+		
 	}
 }
 

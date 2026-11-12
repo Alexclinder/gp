@@ -15,6 +15,7 @@
 #include "level.h"
 #include "npc_mechanics.h"
 #include "colors.h"
+#include "sounds.h"
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
@@ -35,13 +36,20 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
-void Level_1_Init(void) { level_selected = level_1; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_2_Init(void) { level_selected = level_2; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_3_Init(void) { level_selected = level_3; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
-void Level_4_Init(void) { level_selected = level_4; TimeSet = 0;ResetTime = 1;  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void ResetALLTimers_Status(void) {
+    TimeSet = 0;
+    ResetTime = 1; 
+    Teleport_count = 3;
+}
+
+void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
+void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected);}
 
 void Screen_Init(void)
 {
+	LoadSounds();
     // Use to initalize the color variables with values stored
     color_create();
 
@@ -52,7 +60,7 @@ void Screen_Init(void)
     pausemenu = CP_Image_Load("Assets/pause.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
-    PauseTimeCount = 1;
+    PauseTimeStatus = 1;
 }
 
 void Next_level_Init(void) {
@@ -181,12 +189,27 @@ void Win_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
+    char score_buf[16] = { 0 };
+    sprintf_s(score_buf, 16, "Score: %3d", *score);
+    // move the actual score value to the right of Score:
+    drawTextCenter(score_buf, rect_x + 100.0f, 200.0f, 1.0f);
+     
+    CP_Font_Set(Font);
+    CP_Settings_TextSize(50);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
+    CP_Settings_Fill(black);
+    char buffer[16] = { 0 };
+    sprintf_s(buffer, 16, "Time: %.2f", WinScreenTime);
+
+    CP_Font_DrawText("Well Done", rect_x, 100.0f);
+    CP_Font_DrawText(buffer, rect_x, 150.0f);
+
     // Next Level
-    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
+    first_y = CP_System_GetWindowHeight() / 2.0 - 120.0f;
     // Restart
-    second_y = CP_System_GetWindowHeight() / 2.0;
+    second_y = CP_System_GetWindowHeight() / 2.0 - 30.0f;
     // Exit to Main Menu
-    third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
+    third_y = CP_System_GetWindowHeight() / 2.0 + 120.0f;
     
     CP_Settings_Fill(orange);
     dynamicBtn("Next Level", rect_x, first_y, Next_level_Init, Game_Update, Game_Exit);
@@ -195,7 +218,6 @@ void Win_Screen(void) {
     CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
-    
 }
 
 void Lose_Screen(void) {
@@ -290,7 +312,7 @@ void Level_Select_Screen(void) {
     dynamicBtn("Back to Menu", btn_x + offset[5], third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 }
 
-#define NUMBER_OF_CONTROLS 7
+enum { NUMBER_OF_CONTROLS = 7 };
 
 void Controls_Screen(void) {
     CP_Graphics_ClearBackground(light_sky_blue);
@@ -367,9 +389,28 @@ void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
 
 void drawTextCenter(const char* text, float x, float y, float scalar)
 {
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
     CP_Settings_TextSize(textSize * scalar);
     CP_Settings_Fill(white);
     CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
+    CP_Font_DrawText(text, x, y);
+}
+
+void drawTextTopLeft(const char* text, float x, float y, float scalar)
+{
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    CP_Settings_TextSize(textSize * scalar);
+    CP_Settings_Fill(white);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+    CP_Font_DrawText(text, x, y);
+}
+
+void drawScoreTopLeft(const int* text, float x, float y, float scalar)
+{
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    CP_Settings_TextSize(textSize * scalar);
+    CP_Settings_Fill(white);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
     CP_Font_DrawText(text, x, y);
 }
 

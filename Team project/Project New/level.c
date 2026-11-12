@@ -13,6 +13,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "npc_mechanics.h"
 #include "colors.h"
 #include "boss.h"
+#include "sounds.h"
 
 
 #define LEVEL3_STATIC_PLATFORMS 29
@@ -31,8 +32,11 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define LEVEL3_FOURTH_BUILDING_WIDTH 2.0f
 
 #define LEVEL1_STATIC_PLATFORMS 29
+#define LEVEL2_STATIC_PLATFORMS 29
+#define LEVEL4_STATIC_PLATFORMS 29
 
-#define LEVELS 4
+// compile time constant 
+enum {LEVELS = 6};
 
 // Platform Parameters
 #define PLATFORM_WIDTH_3 120.0f
@@ -48,6 +52,10 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define DOOR_WIDTH 10.0f
 #define DOOR_HEIGHT 80.0f
 
+float killZoneX = 0.0f;     // start at the left
+const float killZoneEndX = 1700.0f;  // last position
+const float killZoneSpeed = 50.0f;   // pixels per second
+
 typedef struct {
 	float kx, ky, kw, kh;
 } k_zone;
@@ -58,41 +66,36 @@ typedef struct {
 } pressure_door_pos;
 
 
-
 int level_selected = level_1;
 float Seconds, Zeroing_Time;
-int TimeSet,PauseTimeCount, ResetTime;
-float PauseingameTime = 0.0,differenceTime = 0.0;
+int TimeSet,PauseTimeStatus, ResetTime;
+float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
+
+
 
 // Might do 
 // concat player_spawns and NPC_1_spawns into a single array for easier access
 
 spawn player_spawns[LEVELS] = { 
-							   { 100.0f, 800.0f},
-							   { 100.0f, 100.0f},
-							   { 200.0f, 600.0f},
-							   { 200.0f, 300.0f}
+							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
+							   { 1000.0f, 800.0f }, // level 1 - let player start on bottom right screen
+							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
+							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
+							   { 100.0f, 100.0f }, // level 4 
+							   { 1600.0f, 800.0f }  // boss level  
 							  };
 #define NUMBER_OF_NPC 2
 
 // [LEVELS][NUMBER_OF_NPC]
-spawn NPC_1_spawns[LEVELS][NUMBER_OF_NPC] = {
-							{
-							   { 1030.0f, 200.0f },
-							   { 1130.0f, 300.0f }
-							},
-							{
-							   { 1250.0f, 200.0f },
-							   { 1350.0f, 100.0f }
-							},
-							{
-							   { 860.0f, 200.0f },
-							   { 960.0f, 300.0f }
-							},
-							{
-							   { 200.0f, 300.0f },
-							   { 300.0f, 200.0f }
-							}
+spawn NPC_1_spawns[LEVELS] = {
+			
+							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
+							   { 1250.0f, 200.0f }, // level 1
+							   { 100.0f, 100.0f }, // level 2
+							   { 200.0f, 300.0f }, // level 3
+							   { 300.0f, 200.0f }, // level 4
+							   { 300.0f, 200.0f }, // boss level
+							
 							 };
 
 pressure_door_pos level3 = {.px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
@@ -108,6 +111,44 @@ k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
 // Parameters is for drawing and checking win_con in level 3
 win_condition level3_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
 
+void Objective_Text(void){
+
+	float top_left_x = 0.0f;
+	float top_left_y = top_left_x;
+	float score_offset_y = 50.0f;
+	float score_offset_x = 250.0f;
+	float text_size = 1.0f;
+	game_score();
+
+	char buffer[16] = { 0 };
+	sprintf_s(buffer, 16, "%d", *score);
+
+	// Font Size is 100.0f by default
+
+	// display *score that will persists through all levels
+	switch (level_selected){
+		case level_3:
+			drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
+			drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y+50.0f, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			break;
+		case level_2: 
+			drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			break;
+		case level_1:
+			drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			break;
+		default:
+			break;
+
+
+	}
+}
 
 // LEVEL 3: Outside the building
 float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
@@ -185,23 +226,30 @@ float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
 	// Stair Platform
 	{ 1350.0f, 520.0f,  PLATFORM_WIDTH_3 / 3.0f, RECT_HORIZ_H * 1.5f, NO_ROTATION, CORNER_RADIUS },
 
-
-	
-	
 };
 
 // Parameters is for drawing and checking win_con in level 2
 win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER_RADIUS };
 
+k_zone level2_floor = { .kx = 500.0f, .ky = 900.0f, .kw = 2500.0f, .kh = 10.0f };
+
+pressure_door_pos level2 = { .px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1460.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT };
 
 // LEVEL 2: Entering the building
-float second_level[6][PARAMETERS] = {
+float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 0.0f, 250.0f, 630.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 600.0f, 10.0f, 50.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 500.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 800.0f, 360.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1240.0f, 350.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1500.0f, 260.0f, 220.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
+	{ 1000.0f, 250.0f, 600.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 200.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1000.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1300.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 400.0f, 15.0f, 150.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 1540.0f, 260.0f, 220.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
 };
 
 // Parameters is for drawing and checking win_con in level 3
@@ -210,26 +258,36 @@ win_condition level1_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
 // LEVEL 3: Final Level
 float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
-	{ 470.0f, 830.0f, 170.0f, 170, NO_ROTATION, CORNER_RADIUS },
+	{ 470.0f, 830.0f, 180.0f, 170, NO_ROTATION, CORNER_RADIUS },
 	{ 650.0f, 658.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 850.0f, 718.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1050.0f, 628.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1390.0f, 600.0f, 250.0f, 200, NO_ROTATION, CORNER_RADIUS },
-	{ 1550.0f, 500.0f, 100.0f, 800, NO_ROTATION, CORNER_RADIUS }
+	{ 1550.0f, 500.0f, 100.0f, 800, NO_ROTATION, CORNER_RADIUS },
+	{ 400.0f, 530.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 550.0f, 400.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 400.0f, 300.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 400.0f, 390.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 550.0f, 300.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 450.0f, 200.0f, 100.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 850.0f, 200.0f, 500.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 850.0f, 350.0f, 500.0f, 15.0f, NO_ROTATION, CORNER_RADIUS }
 };
 
 // Parameters is for drawing and checking win_con in level 4
-win_condition level4_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
+win_condition level4_win = { 1500, 130, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
 
-// LEVEL 4: Infinite level??? lol
-float fourth_level[6][PARAMETERS] = {
-	{ 160.0f, 800.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 390.0f, 720.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 580.0f, 640.0f, 130.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 780.0f, 560.0f, 130.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1000.0f, 470.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1370.0f, 350.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
+// LEVEL 4
+float fourth_level[LEVEL4_STATIC_PLATFORMS][PARAMETERS] = { 
+	{ 150.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 550.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 950.0f, 230.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 950.0f, 750.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 800.0f, 35.0f, 1800.0f, 100.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 140.0f, 120.0f, 120.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 500.0f, 400.0f, 600.0f, NO_ROTATION, CORNER_RADIUS }
+	
 };
 
 // Object start coords for level 1 (const so the level start never changes)
@@ -248,7 +306,7 @@ float first_level_objects_ingame[2][5];
 // { x, y, w, h, type }
 const float second_level_objects[2][5] = {
 	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
-	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
+	{ 270.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
 };
 
 // Object coords in game for level 2 (carrying and dropping change these)
@@ -270,16 +328,19 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
-void ingameTimer(void) {
+float ingameTimer(void) {
 
 
-	if (TimeSet == 1) {
+	if (TimeSet == 1) {// If Timer has been set, then we can start counting time
 		//differenceTime = Seconds - PauseingameTime;
 		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
 		CP_Font_Set(Font);
 		CP_Settings_TextSize(100);
 		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
 		CP_Settings_Fill(translucent_white);
+		//Seconds variable is used to store the time that will be displayed on the screen. It is calculated by subtracting 
+		// the Zeroing_Time from the current time and adding the PauseingameTime. 
+		// This ensures that the timer continues from where it left off after a pause.
 		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
 		char buffer[16] = { 0 };
@@ -287,33 +348,38 @@ void ingameTimer(void) {
 		CP_Font_DrawText(buffer, CP_System_GetWindowWidth()/2, 0);
 		CP_Settings_Fill(yellow);
 
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 - 75, 120.0, 50.0, 50.0);//Left Star
-		if(Seconds < 10.0)
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2, 120.0, 50.0, 50.0); // Middle Star
-		if (Seconds < 2.0)
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 75, 120.0, 50.0, 50.0); //Right Star
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
+		if(Seconds < 20.0)
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
+		if (Seconds < 10.0)
+		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
 
 
 
 	}
 	else if (TimeSet == 0) {
-		Zeroing_Time= CP_System_GetSeconds();
+		Zeroing_Time = CP_System_GetSeconds(); 
+		//Zeroing_Time is set to the current time when the timer is first initialized. 
+		//This serves as a reference point for calculating elapsed time.
 		TimeSet = 1;
 
 	}
-	if (PauseTimeCount == 1) {
-		PauseingameTime = Seconds;
-			PauseTimeCount = 0;
+	if (PauseTimeStatus == 1) {
+		PauseingameTime = Seconds;// Store the time when the game is paused
+		PauseTimeStatus = 0;// Reset the pause state so that the timer can continue counting when the game is resumed
 	}
 	if (ResetTime == 1) {
-		PauseingameTime = 0.0;
-		ResetTime = 0;
+		PauseingameTime = 0.0;// Clear the pause time when the game is reset/New level is loaded
+		ResetTime = 0;// Reset the reset state so that the status of the timer can be properly managed when the game is reset or a new level is loaded
 	}
+	WinScreenTime = Seconds;
+	return Seconds;
 }
 
 
 void level_1st(void) {
-	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
+	DrawBG(backgroundthree);
+	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
 		DrawPlatform(first_level[i][0],
 			first_level[i][1],
 			first_level[i][2],
@@ -321,15 +387,23 @@ void level_1st(void) {
 			first_level[i][4],
 			first_level[i][5]);
 	}
-	DrawBG(backgroundthree);
+	ProjectileActive = 0;
+	Objective_Text();
+	ingameTimer();
+	TeleportTimer();
+	Teleport_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 	
+	Shield_Update();
+
 	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -343,6 +417,8 @@ void level_1st(void) {
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
+	Draw_ClingBar();
+	Shield_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
@@ -355,7 +431,8 @@ void level_1st(void) {
 }
 
 void level_2nd(void) {
-	for (int i = 0; i < 5; i++) {
+	DrawBG(backgroundtwo);
+	for (int i = 0; i <	LEVEL2_STATIC_PLATFORMS; i++) {
 		DrawPlatform(second_level[i][0],
 			second_level[i][1],
 			second_level[i][2],
@@ -363,15 +440,25 @@ void level_2nd(void) {
 			second_level[i][4],
 			second_level[i][5]);
 	}
-	DrawBG(backgroundtwo);
+	kill_zone(level2_floor.kx, level2_floor.ky, level2_floor.kw, level2_floor.kh);
+
+
+	Objective_Text();
+	ingameTimer();
+	TeleportTimer();
+	Teleport_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
+	Shield_Update();
 
 	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -385,7 +472,8 @@ void level_2nd(void) {
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
-
+	Draw_ClingBar();
+	Shield_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
@@ -413,7 +501,10 @@ void level_3rd(void) {
 			third_level[i][5]);
 	}
 	DrawBG(background);
+	Objective_Text();
 	ingameTimer();
+	TeleportTimer();
+	Teleport_Mechannic();
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -428,6 +519,8 @@ void level_3rd(void) {
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -438,6 +531,8 @@ void level_3rd(void) {
 		return;
 	}
 	
+	Shield_Update();
+
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level3.px, level3.py, level3.pw, level3.ph,
 		level3.dx, level3.dy, level3.dw, level3.dh);
@@ -448,8 +543,10 @@ void level_3rd(void) {
 	Objects_Draw();
 	//Player_Animation_Checks();
 	Player_Animation();
+	Draw_ClingBar();
+	Shield_Draw();
 
-	Air_Dash_Mechannic();
+
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
 
 	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1) {
@@ -460,14 +557,36 @@ void level_3rd(void) {
 
 void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
+	// iterates thru the 4 rows and 6 col
+// Nested loop not needed as first level columns are iterated through.
 
+	float dt = CP_System_GetDt();
+	killZoneX += killZoneSpeed * dt;
+
+	if (killZoneX > killZoneEndX)
+		killZoneX = killZoneEndX;   // stop at endpoint
+
+	kill_zone(killZoneX - 500.0f, 500.0f, 1000.0f, 900.0f);
+
+	for (int i = 0; i < LEVEL4_STATIC_PLATFORMS; i++) {
+		DrawPlatform(fourth_level[i][0],
+			fourth_level[i][1],
+			fourth_level[i][2],
+			fourth_level[i][3],
+			fourth_level[i][4],
+			fourth_level[i][5]);
+	}
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
+	Shield_Update();
 
 	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
+	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
 	// Check for collision then end game if hit
@@ -479,17 +598,11 @@ void level_4th(void) {
 	}
 
 	Objects_Draw();
+	//Player_Animation_Checks();
 	Player_Animation();
-	// iterates thru the 4 rows and 6 col
-	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < 6; i++) {
-		DrawPlatform(fourth_level[i][0],
-			fourth_level[i][1],
-			fourth_level[i][2],
-			fourth_level[i][3],
-			fourth_level[i][4],
-			fourth_level[i][5]);
-	}
+	Draw_ClingBar();
+	Shield_Draw();
+
 	DrawExit(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius);
 
 	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
@@ -590,9 +703,9 @@ void Objects_Draw(void) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
 	int plat_count = LEVEL1_STATIC_PLATFORMS;
-	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
+	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
-	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
 
 	for (int i = 0; i < current_obj_count; i++) {
 		int type = (int)current_objects[i][OBJ_TYPE];
@@ -637,9 +750,9 @@ int Object_HitCheck(float cx, float cy, float radius, int self) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
 	int plat_count = LEVEL1_STATIC_PLATFORMS;
-	if (level_selected == level_2) { plats = second_level; plat_count = 5; }
+	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
 	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
-	if (level_selected == level_4) { plats = fourth_level; plat_count = 6; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
 
 	for (int p = 0; p < plat_count; p++) {
 		if (sphere_aabb_intersection(cx, cy, radius,

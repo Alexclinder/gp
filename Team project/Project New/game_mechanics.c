@@ -6,6 +6,8 @@
 #include "colors.h"
 #include <stdio.h>
 #include <math.h>
+#include "npc_mechanics.h"
+#include "sounds.h"
 
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     500.0f
@@ -16,8 +18,6 @@
 #define GRAB_FRAME_TIME    0.15f
 #define KICK_DIST 100.0f   /* how far a kick moves the object */
 #define KICK_TIME 0.2f     /* how long the slide takes, in seconds */
-#define AirDashDistance 100.0f // how far the player dashes when double tapping
-#define DashWindow 0.8f // how long the player has to double tap for a dash
 
 float collision_radius = 50.0f;
 float degrees;
@@ -25,6 +25,8 @@ float cornerRadius;
 float animationTimer = 0.0f;
 int win = 0;
 int wall_climb = 1;
+int is_clinging = 0;
+int cling_side = 0;
 float carry_timer = 0.0f;
 float cling_wall_x = -1.0f;
 float cling_wall_y = -1.0f;
@@ -36,10 +38,28 @@ float fromX, fromY, toX, toY;
 int kickedObject = -1;
 float kick_dir = 0.0f;
 float kick_moved = 0.0f;
+int   shieldActive = 0;
+float shieldTimer = 0.0f;
 
-int DoubleTap_LeftDash_Status = 0;
-int DoubleTap_RightDash_Status = 0;
-float DashWindowTiming = 0.0f;
+int Teleport_count = 3; // Number of Teleportes available
+int Teleport_Status = 1;
+float TeleportWindowTiming = 0.1f;
+#define TeleportDistance 100.0f // how far the player Teleportes
+#define TeleportCooldown 2.0f
+
+/********************Player & Platform**********************/
+float area_left;
+float area_right;
+float area_top;
+float area_bottom;
+
+// Player edges (position is the player's top-left corner)
+float player_left;
+float player_right;
+float player_top;
+float player_bottom;
+
+
 
 CP_Vector position = { 100,100 };
 CP_Vector velocity = { 0, 0 };
@@ -62,43 +82,73 @@ int player_action = STANDING;
 int onGround = 0;
 int toggleGrab = 0;
 
-//Lewin - Air Dash Mechanic
-void Air_Dash_Mechannic(void){//float Left_Area, float Right_Area) {
-	// Air dash mechanic
+struct TeleportCountCoordinates {
+	float XLeft;
+	float XMiddle;
+	float Xright;
+	float y;
+} TeleportCountCoordinates;
 
+
+void TeleportTimer(void) {
 	float dt = CP_System_GetDt();
+	//Cooldown before pressing to Teleport again
+	TeleportWindowTiming += dt; // Contuously increase the Teleport window timing based on the delta time
+	if (TeleportWindowTiming >= TeleportCooldown) {
+		Teleport_Status = 1; // reset the Teleport status once the Teleport cooldown is reset
+	}
+}
+void Teleport_Activated(void) {
+	CP_Sound_Play(teleportSound);
+	TeleportWindowTiming = 0;
+	Teleport_Status = 0;
+	Teleport_count--;
+}
 
-	//window to press dash while moving
-	DashWindowTiming -= dt; // Contuously decrease the dash window timing based on the delta time
-	if (DashWindowTiming <= 0) {
-		DashWindowTiming = 0; // Clamp the dash window timing to 0 if it goes below 0
-		DoubleTap_LeftDash_Status = 0; // reset the double tap status once the dash window timing has expired
-		DoubleTap_RightDash_Status = 0;// reset the double tap status once the dash window timing has expired
+//Lewin - Teleport Mechanic
+int Teleport_Mechannic(void){
+	TeleportCountCoordinates.XLeft = 1520.0;
+	TeleportCountCoordinates.XMiddle = 1550.0;
+	TeleportCountCoordinates.Xright = 1580.0;
+	TeleportCountCoordinates.y = 40.0;
+
+
+	// Teleport mechanic
+	CP_Settings_Fill(medium_light_green);
+	CP_Font_Set(Font);
+	CP_Settings_TextSize(25);
+	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_RIGHT, CP_TEXT_ALIGN_V_TOP);
+	//CP_Font_DrawText("Teleport Charges", 1500.0f, 0.0f);
+	//show how many teleports the player has left
+
+
+	switch (Teleport_count) {
+	case 3:
+		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.XLeft, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
+	case 2:
+		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.XMiddle, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
+	case 1:
+		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
+		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.Xright, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
+		break;
 	}
 
-	//Activate dash window when movement key is pressed
-	if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && DashWindowTiming == 0) {// If the player is moving to the right and presses the D key, check for double tap
-		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
-		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
-		DoubleTap_RightDash_Status = 1; // Set the double tap status to indicate the first tap has been detected
-		DashWindowTiming = DashWindow; // Set the dash window timing (0.5 seconds)
+	//Activate Teleport window when movement key is pressed
+	if (Teleport_count > 0) {
+		if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the right and presses the LeftShift key,
+			position.x += TeleportDistance;
+			Teleport_Activated();
+			return 1;
+		}
+		if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the left and presses the A key, check for double tap
+			//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
+			//Held Down it returns false, so the player will have to release the key and press it again to trigger the Teleport mechanic.
+			position.x -= TeleportDistance;
+			Teleport_Activated();
+			return 1;
+		}
 	}
-	if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && DashWindowTiming == 0) {// If the player is moving to the left and presses the A key, check for double tap
-		//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
-		//Held Down it returns false, so the player will have to release the key and press it again to trigger the dash mechanic.
-		DoubleTap_LeftDash_Status = 1;// Set the double tap status to indicate the first tap has been detected
-		DashWindowTiming = DashWindow; // Set the dash window timing (0.5 seconds)
-	}
-
-	//Press Left Shift while moving to dash
-	if (CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && DashWindowTiming > 0 && DoubleTap_RightDash_Status) {
-		position.x += AirDashDistance; // Dash to the right
-		DoubleTap_RightDash_Status = 0; // Reset the double tap status after dashing
-	}
-	else if (CP_Input_KeyTriggered(KEY_LEFT_SHIFT) && DashWindowTiming > 0 && DoubleTap_LeftDash_Status) {
-		position.x -= AirDashDistance; // Dash to the left
-		DoubleTap_LeftDash_Status = 0; // Reset the double tap status after dashing
-	}
+	return 0;
 
 }
 
@@ -143,11 +193,61 @@ void HeldObject_MoveTo(float t)
 	current_objects[heldObject][1] = fromY + (toY - fromY) * t;
 }
 
+void Shield_Draw(void) {
+	if (!shieldActive) return;
+
+	if (shieldTimer <= SHIELD_PARRY_TIME)
+		CP_Settings_Fill(CP_Color_Create(255, 215, 0, 120));   // gold = will reflect
+	else
+		CP_Settings_Fill(CP_Color_Create(100, 180, 255, 120)); // blue = block only
+
+	CP_Graphics_DrawCircle(position.x + PLAYER_SIZE / 2.0f,
+		position.y + PLAYER_SIZE / 2.0f,
+		SHIELD_SIZE);
+}
+
+void Shield_Update(void) {
+	float dt = CP_System_GetDt();
+
+	/* --- Right click: summon shield (can't recast while one is up) --- */
+	if (CP_Input_MouseTriggered(MOUSE_BUTTON_RIGHT) && !shieldActive) {
+		shieldActive = 1;
+		shieldTimer = 0.0f;
+	}
+
+	/* --- Shield timer: disappears after SHIELD_DURATION --- */
+	if (shieldActive) {
+		shieldTimer += dt;
+		if (shieldTimer >= SHIELD_DURATION) {
+			shieldActive = 0;
+			shieldTimer = 0.0f;
+		}
+	}
+}
+
+
 void Character_MovementDefault(void) {
 
+	int   shieldActive = 0;
+	float shieldTimer = 0.0f;
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
+
+	/* --- Right click: summon shield (can't recast while one is up) --- */
+	if (CP_Input_MouseReleased(MOUSE_BUTTON_RIGHT) && !shieldActive) {
+		shieldActive = 1;
+		shieldTimer = 0.0f;
+	}
+
+	/* --- Shield timer: disappears after SHIELD_DURATION --- */
+	if (shieldActive) {
+		shieldTimer += dt;
+		if (shieldTimer >= SHIELD_DURATION) {
+			shieldActive = 0;
+			shieldTimer = 0.0f;
+		}
+	}
 
 	/* --- Space: pick up (grounded + touching an object, not mid-kick) --- */
 	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && kickedObject == -1 && onGround && (heldObject = Object_Check()) != -1) {
@@ -247,7 +347,7 @@ void Character_MovementCarry(void)
 	float screenW = (float)CP_System_GetWindowWidth();
 
 	/* --- G: drop (grounded only) --- */
-	if (CP_Input_KeyTriggered(KEY_G) && !dropping && onGround) {
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !dropping && onGround) {
 		float w = current_objects[heldObject][OBJ_W];
 		float h = current_objects[heldObject][OBJ_H];
 		dropping = 1;
@@ -324,16 +424,16 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	// Standing on the floor or a platform -> cling time refills
 	if (onGround) wall_timer = 0.0f;
 
-	float area_left = area_center_x - area_width / 2;
-	float area_right = area_center_x + area_width / 2;
-	float area_top = area_center_y - area_height / 2;
-	float area_bottom = area_center_y + area_height / 2;
+	area_left = area_center_x - area_width / 2;
+	area_right = area_center_x + area_width / 2;
+	area_top = area_center_y - area_height / 2;
+	area_bottom = area_center_y + area_height / 2;
 
 	// Player edges (position is the player's top-left corner)
-	float player_left = position.x;
-	float player_right = position.x + PLAYER_SIZE;
-	float player_top = position.y;
-	float player_bottom = position.y + PLAYER_SIZE;
+	player_left = position.x;
+	player_right = position.x + PLAYER_SIZE;
+	player_top = position.y;
+	player_bottom = position.y + PLAYER_SIZE;
 
 	// How far the player has gone into the platform from each side
 	float overlap_top = player_bottom - area_top;
@@ -341,7 +441,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	float overlap_left = player_right - area_left;
 	float overlap_right = area_right - player_left;
 	int side;
-	
+
 	if (player_right <= area_left || player_left >= area_right || player_bottom < area_top || player_top >= area_bottom)
 	{
 		return 0;
@@ -375,18 +475,22 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		position.x = area_right;
 		side = 4;
 	}
-	
-	
+
+
+
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
+
 		// Touching a new wall -> fresh 3 seconds
 		if (area_center_x != cling_wall_x || area_center_y != cling_wall_y)
 		{
 			wall_timer = 0.0f;
 			cling_wall_x = area_center_x;
 			cling_wall_y = area_center_y;
+
 		}
+
 
 		if (wall_timer < WALL_CLING_TIME)
 		{
@@ -399,10 +503,51 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			// Climb up / down the wall
 			if (CP_Input_KeyDown(KEY_W)) position.y -= CLIMB_SPEED * dt;
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
+
+			is_clinging = 1;      // ADDED: tell level.c to draw the bar
+			cling_side = side;    // ADDED: which side the wall is on
 		}
+
+		return side;
 	}
-	return side;
-	
+
+}
+
+
+#define CLING_BAR_W    8.0f   // bar thickness
+#define CLING_BAR_GAP  5.0f   // space between player and bar
+
+void Draw_ClingBar(void)
+{
+	if (!is_clinging) return;
+
+	float remaining = 1.0f - (wall_timer / WALL_CLING_TIME);   // 1 = full, 0 = empty
+	if (remaining < 0.0f) remaining = 0.0f;
+	float barH = PLAYER_SIZE * remaining;
+
+	// Bar goes on the side away from the wall
+	// side 3 = wall is on the player's right -> bar on the left
+	float barX = (cling_side == 3) ? position.x - CLING_BAR_GAP - CLING_BAR_W
+		: position.x + PLAYER_SIZE + CLING_BAR_GAP;
+
+	CP_Settings_Save();
+	CP_Settings_RectMode(CP_POSITION_CORNER);
+	CP_Settings_NoStroke();
+
+	// Empty background, full player height
+	CP_Settings_Fill(CP_Color_Create(60, 60, 60, 180));
+	CP_Graphics_DrawRect(barX, position.y, CLING_BAR_W, PLAYER_SIZE);
+
+	// Remaining endurance: drains from top to bottom
+	if (remaining > 0.25f)
+		CP_Settings_Fill(CP_Color_Create(80, 220, 100, 255));  // green
+	else
+		CP_Settings_Fill(CP_Color_Create(230, 60, 60, 255));   // red when almost out
+	CP_Graphics_DrawRect(barX, position.y + (PLAYER_SIZE - barH), CLING_BAR_W, barH);
+
+	CP_Settings_Restore();
+
+	is_clinging = 0;   // collision_check sets it again next frame if still clinging
 }
 
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h)
@@ -452,6 +597,7 @@ void DrawPlatform(float x, float y, float w, float h,
 	//CP_Settings_ImageMode(CP_POSITION_CORNER);
 
 	collision_check(x, y, w, h);
+
 }
 
 // dt is declared in default player movement
@@ -576,14 +722,17 @@ void Player_Starting_Pos(spawn arr[], int level_selected) {
 	*p = arr[level_selected].pos;
 }
 
+int unlocked_gate_score = 0;
+int pressed;
+
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 	float door_x, float door_y, float door_width, float door_height) {
 
 	// if characteer or object intersects the pressure plate, the door will open.
 
 	{
-		int pressed = 0;
-
+		pressed = 0;
+		
 		float plate_left = pres_x - pres_width / 2.0f;
 		float plate_right = pres_x + pres_width / 2.0f;
 		float plate_top = pres_y - pres_height / 2.0f;
@@ -619,16 +768,19 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 			}
 		}
 
-		if (pressed)
+		if (pressed) {
 			CP_Settings_Fill(medium_light_green);
-		else
+		}
+		else {
+			
 			CP_Settings_Fill(light_green);
-
+		}
 		CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
 
 
 		if (!pressed)
-		{
+		{	
+			
 			CP_Settings_Fill(purple);
 			CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
 
@@ -700,3 +852,52 @@ void platform_alternating_movement(float x, float y, float w, float h,
 	// draw stuff
 	DrawPlatform(updated_x, y, w, h, degrees, cornerRadius);
 }
+
+
+// this function will be used to store the 
+// *score = 0;
+
+// player_score will be used to store inside json if i got time....T_T
+// Ask sin wee if dont knowwwww
+int player_score = 0;
+*score = &player_score;
+
+int reflect_score = 0;
+int npc_score = 0;
+
+void game_score(void) {
+	// award player for 200 if used abilities
+	if (TeleportWindowTiming == 0) {
+		*score += 200;
+	}
+	// award 100 if reflect projectiles
+	if (NPC_reflected && reflect_score==0) {
+		*score += 100;
+		reflect_score = 1;
+	}
+
+	// award 300 points if kill npc
+	if (NPC_ded && npc_score == 0) {
+		*score += 300;
+		npc_score = 1;
+	}
+	
+	// award 750 if completed milestone objectives (or opened the door)
+	if (pressed && unlocked_gate_score == 0) {
+		*score += 750;
+		unlocked_gate_score = 1;
+		
+	}
+
+	
+	
+
+}
+	// player_score is set to 0 first
+
+	// If teleport has been used, +500 
+	// If completed milestone objectives (level dependent)- do last since levels 1,2 & 4 not completed 
+	// If deflected projectiles, +100
+	// If kill enemies, +300
+
+
