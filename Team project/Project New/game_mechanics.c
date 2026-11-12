@@ -8,6 +8,7 @@
 #include <math.h>
 #include "npc_mechanics.h"
 #include "sounds.h"
+#include "scoring.h"
 
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     500.0f
@@ -97,12 +98,14 @@ void TeleportTimer(void) {
 	if (TeleportWindowTiming >= TeleportCooldown) {
 		Teleport_Status = 1; // reset the Teleport status once the Teleport cooldown is reset
 	}
+
 }
 void Teleport_Activated(void) {
 	CP_Sound_Play(teleportSound);
 	TeleportWindowTiming = 0;
 	Teleport_Status = 0;
 	Teleport_count--;
+	score_teleport_used();
 }
 
 //Lewin - Teleport Mechanic
@@ -852,54 +855,6 @@ void platform_alternating_movement(float x, float y, float w, float h,
 	// draw stuff
 	DrawPlatform(updated_x, y, w, h, degrees, cornerRadius);
 }
-
-
-// this function will be used to store the 
-// *score = 0;
-
-// player_score will be used to store inside json if i got time....T_T
-// Ask sin wee if dont knowwwww
-int player_score = 0;
-*score = &player_score;
-
-int reflect_score = 0;
-int npc_score = 0;
-
-void game_score(void) {
-	// award player for 200 if used abilities
-	if (TeleportWindowTiming == 0) {
-		*score += 200;
-	}
-	// award 100 if reflect projectiles
-	if (NPC_reflected && reflect_score==0) {
-		*score += 100;
-		reflect_score = 1;
-	}
-
-	// award 300 points if kill npc
-	if (NPC_ded && npc_score == 0) {
-		*score += 300;
-		npc_score = 1;
-	}
-	
-	// award 750 if completed milestone objectives (or opened the door)
-	if (pressed && unlocked_gate_score == 0) {
-		*score += 750;
-		unlocked_gate_score = 1;
-		
-	}
-
-
-	
-	
-
-}
-	// player_score is set to 0 first
-
-	// If teleport has been used, +500 
-	// If completed milestone objectives (level dependent)- do last since levels 1,2 & 4 not completed 
-	// If deflected projectiles, +100
-	// If kill enemies, +300
 
 
 float kill_velocity = -100.0f;

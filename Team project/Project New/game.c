@@ -5,6 +5,7 @@
 #include "game.h"
 #include "npc_mechanics.h"
 #include "colors.h"
+#include "scoring.h"
 
 CP_Image jump;
 CP_Image g1;
@@ -49,6 +50,8 @@ void Game_Init(void)
 void Game_Reset(void)
 {
 	Teleport_count = 3;
+	Teleport_Status = 1;
+	TeleportWindowTiming = 0.1f;
 	onGround = 0;
 	Objects_Reset();
 	isCarrying = 0;
@@ -69,6 +72,7 @@ void Game_Reset(void)
 	pressed = 0;
 	ProjectileActive = 0;
 	Trea_score = 0;
+	score_reset();
 
 	for (int i = 0; i < MAX_TREASURES; i++) {
 		treasure_collected[i] = 0;
@@ -86,6 +90,7 @@ void Game_Update(void)
 
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 		}
+		
 
 
 		// if player loses, go to Lose screen
@@ -102,19 +107,6 @@ void Game_Next_Level(void) {
 	else {
 		level_selected++;
 		Game_Reset();
-		Objects_Reset();
-		isCarrying = 0;
-		pickingUp = 0;
-		dropping = 0;
-		pressed = 0;
-		NPC_ded = 0;
-		NPC_reflected = 0;
-		ProjectileActive = 0;
-		Trea_score = 0;
-
-		for (int i = 0; i < MAX_TREASURES; i++) {
-			treasure_collected[i] = 0;
-		}
 	}
 }
 

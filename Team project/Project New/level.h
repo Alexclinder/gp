@@ -80,7 +80,13 @@ extern int TimeSet;
 extern int PauseTimeStatus;
 extern int ResetTime;
 extern float WinScreenTime;
+extern float Seconds;
 
 #define MAX_TREASURES 2
 
 extern int treasure_collected[MAX_TREASURES];
+
+extern int middle_star;
+extern int right_star;
+
+extern int timer_score;

@@ -16,6 +16,7 @@
 #include "npc_mechanics.h"
 #include "colors.h"
 #include "sounds.h"
+#include "scoring.h"
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;

@@ -14,7 +14,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "colors.h"
 #include "boss.h"
 #include "sounds.h"
-
+#include "scoring.h"
 
 #define LEVEL3_STATIC_PLATFORMS 29
 #define LEVEL3_SEC_BUILDING 580.0f
@@ -52,6 +52,8 @@ enum {LEVELS = 6};
 #define DOOR_WIDTH 10.0f
 #define DOOR_HEIGHT 80.0f
 
+
+
 float killZoneX = 0.0f;     // start at the left
 const float killZoneEndX = 1700.0f;  // last position
 const float killZoneSpeed = 50.0f;   // pixels per second
@@ -71,7 +73,8 @@ float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
 
-
+int right_star = 0;
+int middle_star = 0;
 
 // Might do 
 // concat player_spawns and NPC_1_spawns into a single array for easier access
@@ -132,7 +135,7 @@ void Objective_Text(void){
 			drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y+50.0f, text_size);
 			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
 			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
-			CP_Settings_Fill(black);
+			break;
 			
 		case level_2: 
 			drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
@@ -258,7 +261,7 @@ float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 // Parameters is for drawing and checking win_con in level 3
 win_condition level1_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
-// LEVEL 3: Final Level
+// LEVEL 1
 float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 470.0f, 830.0f, 180.0f, 170, NO_ROTATION, CORNER_RADIUS },
 	{ 650.0f, 658.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
@@ -330,9 +333,10 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
+
+
 float ingameTimer(void) {
-
-
+	
 	if (TimeSet == 1) {// If Timer has been set, then we can start counting time
 		//differenceTime = Seconds - PauseingameTime;
 		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
@@ -351,12 +355,15 @@ float ingameTimer(void) {
 		CP_Settings_Fill(yellow);
 
 		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
-		if(Seconds < 20.0)
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
-		if (Seconds < 10.0)
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
+		if (Seconds < 20.0) {
+			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
 
-
+		}
+		if (Seconds < 10.0) {
+			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
+			// variable right_star is to lock the increment count after increment once
+		}
+	
 
 	}
 	else if (TimeSet == 0) {
@@ -443,6 +450,7 @@ void level_1st(void) {
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
 	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) {
+		score_complete_level();
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 	}
@@ -498,6 +506,9 @@ void level_2nd(void) {
 	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
 
 	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1) {
+
+		score_complete_level();
+
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 	}
@@ -519,11 +530,23 @@ void level_3rd(void) {
 			third_level[i][4],
 			third_level[i][5]);
 	}
+
 	DrawBG(background);
 	Objective_Text();
 	ingameTimer();
 	TeleportTimer();
 	Teleport_Mechannic();
+
+	// on tiny platform directly ontop of longest killzone
+	if (Treasure(1050.0f, 680.0f, 0))
+	{
+		*score += 500;
+	}
+
+	if (Treasure(1550.0f, 850.0f, 1))
+	{
+		*score += 500;
+	}
 
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
@@ -569,6 +592,9 @@ void level_3rd(void) {
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
 
 	if (CheckWinCondition(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius) == 1) {
+
+		score_complete_level();
+
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 	}
@@ -797,7 +823,7 @@ int Object_HitCheck(float cx, float cy, float radius, int self) {
 int Trea_score = 0;
 int Trea;
 
-extern int treasure_collected[MAX_TREASURES] = {0,0};
+int treasure_collected[MAX_TREASURES] = {0,0};
 
 int Treasure(float x, float y, int treasure_id)
 {
@@ -838,3 +864,4 @@ int Treasure(float x, float y, int treasure_id)
 
 	return 0;
 }
+

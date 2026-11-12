@@ -66,11 +66,8 @@ void platform_alternating_movement(float x, float y, float w, float h,
 
 void kill_zone_alternating_movement(float x, float y, float w, float h, float left_boundary, float right_boundary);
 
-
-extern int* score;
-
-void game_score(void);
-
-extern int reflect_score;
-extern int npc_score;
 extern int pressed;
+
+extern int unlocked_gate_score;
+extern float TeleportWindowTiming;
+extern int Teleport_Status;

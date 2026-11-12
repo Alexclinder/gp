@@ -5,6 +5,7 @@
 #include "level.h"
 #include "colors.h"
 #include <math.h>
+#include "scoring.h"
 
 
 // NPC
@@ -288,8 +289,8 @@ int NPC_CheckReflectedHit(void)
 // p will be assigned the address of position, to avoid pass by value
 CP_Vector* npc_p = &NPCposition;
 
-void NPC_Starting_Pos(spawn arr[][2], int level_selected) {
+void NPC_Starting_Pos(spawn arr[], int level_selected) {
     // When the address of p is updated, value stored within position is updated.
-    *npc_p = arr[level_selected][0].pos;
+    *npc_p = arr[level_selected].pos;
     NPCalive = 1;               // ADDED: NPC is alive again on level start
 }

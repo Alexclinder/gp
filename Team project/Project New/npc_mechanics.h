@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cprocessing.h"
+#include "level.h"
 
 void NPC_MovementDefault(void);
 void NPC_Attack(void);
