@@ -52,6 +52,10 @@ enum {LEVELS = 6};
 #define DOOR_WIDTH 10.0f
 #define DOOR_HEIGHT 80.0f
 
+float killZoneX = 0.0f;     // start at the left
+const float killZoneEndX = 1700.0f;  // last position
+const float killZoneSpeed = 50.0f;   // pixels per second
+
 typedef struct {
 	float kx, ky, kw, kh;
 } k_zone;
@@ -68,6 +72,7 @@ int TimeSet,PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
 
 
+
 // Might do 
 // concat player_spawns and NPC_1_spawns into a single array for easier access
 
@@ -76,7 +81,7 @@ spawn player_spawns[LEVELS] = {
 							   { 1000.0f, 800.0f }, // level 1 - let player start on bottom right screen
 							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
 							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
-							   { 1200.0f, 800.0f }, // level 4 - player spawn bottom right screen
+							   { 100.0f, 100.0f }, // level 4 
 							   { 1600.0f, 800.0f }  // boss level  
 							  };
 #define NUMBER_OF_NPC 2
@@ -270,17 +275,19 @@ float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
 };
 
 // Parameters is for drawing and checking win_con in level 4
-win_condition level4_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
+win_condition level4_win = { 1500, 130, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
 
-// LEVEL 4: Infinite level??? lol
-float fourth_level[6][PARAMETERS] = {
-	{ 160.0f, 800.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 390.0f, 720.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 580.0f, 640.0f, 130.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 780.0f, 560.0f, 130.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1000.0f, 470.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1370.0f, 350.0f, 300.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
+// LEVEL 4
+float fourth_level[LEVEL4_STATIC_PLATFORMS][PARAMETERS] = { 
+	{ 150.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 550.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 950.0f, 230.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 950.0f, 750.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 800.0f, 35.0f, 1800.0f, 100.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 140.0f, 120.0f, 120.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 500.0f, 400.0f, 600.0f, NO_ROTATION, CORNER_RADIUS }
+	
 };
 
 // Object start coords for level 1 (const so the level start never changes)
@@ -550,14 +557,35 @@ void level_3rd(void) {
 
 void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
+	// iterates thru the 4 rows and 6 col
+// Nested loop not needed as first level columns are iterated through.
 
+	float dt = CP_System_GetDt();
+	killZoneX += killZoneSpeed * dt;
+
+	if (killZoneX > killZoneEndX)
+		killZoneX = killZoneEndX;   // stop at endpoint
+
+	kill_zone(killZoneX - 500.0f, 500.0f, 1000.0f, 900.0f);
+
+	for (int i = 0; i < LEVEL4_STATIC_PLATFORMS; i++) {
+		DrawPlatform(fourth_level[i][0],
+			fourth_level[i][1],
+			fourth_level[i][2],
+			fourth_level[i][3],
+			fourth_level[i][4],
+			fourth_level[i][5]);
+	}
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
+
+	Shield_Update();
 
 	// Spawn in Enemy
 	NPC_MovementDefault();
 	NPC_Attack();
 	NPC_UpdateProjectiles(1);
+	NPC_CheckShieldCollision();
 	NPC_CheckReflectedHit();
 	NPC_DrawProjectiles();
 
@@ -570,17 +598,11 @@ void level_4th(void) {
 	}
 
 	Objects_Draw();
+	//Player_Animation_Checks();
 	Player_Animation();
-	// iterates thru the 4 rows and 6 col
-	// Nested loop not needed as first level columns are iterated through.
-	for (int i = 0; i < LEVEL4_STATIC_PLATFORMS; i++) {
-		DrawPlatform(fourth_level[i][0],
-			fourth_level[i][1],
-			fourth_level[i][2],
-			fourth_level[i][3],
-			fourth_level[i][4],
-			fourth_level[i][5]);
-	}
+	Draw_ClingBar();
+	Shield_Draw();
+
 	DrawExit(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius);
 
 	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
