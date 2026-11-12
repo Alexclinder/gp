@@ -136,7 +136,7 @@ void Objective_Text(void){
 	float top_left_x = 0.0f;
 	float top_left_y = top_left_x;
 	float score_offset_y = 50.0f;
-	float score_offset_x = 250.0f;
+	float score_offset_x = 150.0f;
 	float text_size = 1.0f;
 	game_score();
 
@@ -149,8 +149,8 @@ void Objective_Text(void){
 	switch (level_selected){
 		case level_4:
 			drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size);
-			//drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
-			//drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
 			break;
 		case level_3:
 			drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
@@ -678,8 +678,9 @@ void level_4th(void) {
 	DrawExit(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius);
 
 	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
+		score_complete_level();
 		NPC_UpdateProjectiles(0);
-		//CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+		// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 		CP_Engine_SetNextGameState(Elevator_Init, Elevator_Update, Elevator_Exit);    // Move to boss lvl after lvl 4
 	}
 }
