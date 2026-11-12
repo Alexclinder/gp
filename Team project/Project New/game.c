@@ -68,6 +68,7 @@ void Game_Reset(void)
 	unlocked_gate_score = 0;
 	pressed = 0;
 	ProjectileActive = 0;
+	killZoneX = 0.0f;
 }
 
 
