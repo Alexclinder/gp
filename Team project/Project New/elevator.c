@@ -16,6 +16,11 @@
 #define GAP_MAX     75       /* must stay under jump height (~83px) */
 #define SHIFT_MAX   250      /* max sideways shift between platforms */
 
+//Player Health
+#define PLAYER_MAX_HEALTH 100.0f
+#define BOSS_DAMAGETOPLAYER 100.0f
+float playerHealth = PLAYER_MAX_HEALTH;
+
 typedef struct {
     float x, y, w;           /* world coords, top-left */
 } Plat;
@@ -78,6 +83,24 @@ static void Plats_Cull(void)
     plat_count = n;
 }
 
+void DrawPlayerHealth(void)
+{
+    float x = position.x + PLAYER_SIZE / 2.0f - 80.0f / 2.0f;   // centred over the player (bar width 80)
+    float y = position.y - 18.0f;                               // 12 px above the player's head
+
+    float frac = CP_Math_ClampFloat(playerHealth / PLAYER_MAX_HEALTH, 0.0f, 1.0f);
+
+    CP_Settings_RectMode(CP_POSITION_CORNER);
+
+    // empty/background part
+    CP_Settings_Fill(CP_Color_Create(60, 60, 60, 255));
+    CP_Graphics_DrawRect(x, y, 80.0f, 10.0f);
+
+    // filled part
+    CP_Settings_Fill(CP_Color_Create(50, 205, 50, 255));
+    CP_Graphics_DrawRect(x, y, 80.0f * frac, 10.0f);
+}
+
 void Elevator_Init(void)
 {
     float screenH = (float)CP_System_GetWindowHeight();
@@ -120,6 +143,9 @@ void Elevator_Update(void)
         DrawPlatform(plats[i].x + plats[i].w / 2.0f + 600, plats[i].y - camY + PLAT_H / 2.0f, plats[i].w, PLAT_H, 0.0f, 0.0f);
         DrawPlatform(plats[i].x + plats[i].w / 2.0f - 600, plats[i].y - camY + PLAT_H / 2.0f, plats[i].w, PLAT_H, 0.0f, 0.0f);
     }
+
+    //Draw Player health Bar
+    DrawPlayerHealth();
 
 
     Objective_Text();
