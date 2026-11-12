@@ -58,9 +58,9 @@ void game_score(void) {
 	void time_score(void) {
 		if (timer_bonus_awarded == 0) {
 
-			if (Seconds < 10.0f)
+			if (Seconds < 25.0f)
 				*score += 1000;
-			else if (Seconds < 20.0f)
+			else if (Seconds < 35.0f)
 				*score += 500;
 
 			timer_bonus_awarded = 1;
@@ -91,6 +91,7 @@ void game_score(void) {
 		time_score();
 
 		// Transfer level score to cumulative score
+		// *score updates the value in address of level_score
 		player_score += level_score;
 
 		level_score_locked = 1;

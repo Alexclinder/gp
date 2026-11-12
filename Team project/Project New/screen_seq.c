@@ -193,7 +193,7 @@ void Win_Screen(void) {
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
     char score_buf[16] = { 0 };
-    sprintf_s(score_buf, 16, "Score: %3d", *score);
+    sprintf_s(score_buf, 16, "Score: %d", *score);
     // move the actual score value to the right of Score:
     drawTextCenter(score_buf, rect_x, 300.0f, 1.0f);
      
@@ -206,6 +206,11 @@ void Win_Screen(void) {
 
     CP_Font_DrawText("Well Done", rect_x, 100.0f);
     CP_Font_DrawText(buffer, rect_x, 150.0f);
+    // For testing
+    char total_score_buf[32] = { 0 };
+    sprintf_s(total_score_buf, 32, "Total Score: %d", player_score);
+
+    CP_Font_DrawText(total_score_buf, rect_x, 200.0f);
 
     // Next Level
     first_y = CP_System_GetWindowHeight() / 2.0;

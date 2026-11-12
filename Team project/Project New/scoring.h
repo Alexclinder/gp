@@ -15,6 +15,7 @@ void score_teleport_used(void);
 extern int reflect_score;
 extern int npc_score;
 
+extern int player_score;
 
 extern int timer_bonus_awarded;
 extern int level_score_locked;
