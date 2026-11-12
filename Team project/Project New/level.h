@@ -25,6 +25,13 @@ typedef struct {
 	float cornerRadius;
 } win_condition;
 
+extern struct LevelTimer {
+	float level1_time;
+	float level2_time;
+	float level3_time;
+}Level_Timer;
+
+
 extern spawn player_spawns[6];
 extern spawn NPC_1_spawns[6];
 
@@ -47,6 +54,8 @@ enum { DESK, PRINTER };
 extern float (*current_objects)[5];
 extern int current_obj_count;
 extern int heldObject;
+
+void SaveTime(float time);
 
 void Objective_Text(void);
 

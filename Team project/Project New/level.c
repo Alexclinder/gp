@@ -70,8 +70,25 @@ int level_selected = level_1;
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
+struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f };
 
-
+void SaveTime(float time) {
+	switch (level_selected) {
+		case level_1:
+			// Save time for level 1
+			Level_Timer.level1_time = time;
+			break;
+		case level_2:
+			// Save time for level 2
+			Level_Timer.level2_time = time;
+			break;
+		case level_3:
+			// Save time for level 3
+			Level_Timer.level3_time = time;
+			break;
+	}
+}
+	
 
 // Might do 
 // concat player_spawns and NPC_1_spawns into a single array for easier access
@@ -127,13 +144,17 @@ void Objective_Text(void){
 
 	// display *score that will persists through all levels
 	switch (level_selected){
+		case level_4:
+			drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size);
+			//drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+			//drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			break;
 		case level_3:
 			drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
 			drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y+50.0f, text_size);
 			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
 			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
-			CP_Settings_Fill(black);
-			
+			break;
 		case level_2: 
 			drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
 			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
@@ -330,6 +351,10 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
+void LeaderboardScore_Time(int score, float time) {
+	// Implementation for updating leaderboard with score and time
+}
+
 float ingameTimer(void) {
 
 
@@ -345,15 +370,16 @@ float ingameTimer(void) {
 		// This ensures that the timer continues from where it left off after a pause.
 		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
+		SaveTime(Seconds);//Save the current time to the Level_Timer struct for the current level, Time stored in the struct is displayed leaderboard
 		char buffer[16] = { 0 };
 		sprintf_s(buffer, 16, "%.2f", Seconds);
 		CP_Font_DrawText(buffer, CP_System_GetWindowWidth()/2, 0);
 		CP_Settings_Fill(yellow);
 
 		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
-		if(Seconds < 20.0)
+		if(Seconds < 40.0)
 		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
-		if (Seconds < 10.0)
+		if (Seconds < 20.0)
 		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
 
 
@@ -578,7 +604,8 @@ void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
 	// iterates thru the 4 rows and 6 col
 // Nested loop not needed as first level columns are iterated through.
-
+	
+	
 	float dt = CP_System_GetDt();
 	killZoneX += killZoneSpeed * dt;
 
@@ -595,6 +622,7 @@ void level_4th(void) {
 			fourth_level[i][4],
 			fourth_level[i][5]);
 	}
+	Objective_Text();
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 
