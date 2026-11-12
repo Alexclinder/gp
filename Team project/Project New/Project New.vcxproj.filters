@@ -43,6 +43,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scoring.c">
+    <ClCompile Include="elevator.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demonBoss.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,5 +78,13 @@
     <ClInclude Include="scoring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="demonBoss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="elevator.h">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

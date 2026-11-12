@@ -108,6 +108,8 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
   <ItemGroup>
     <ClCompile Include="boss.c" />
     <ClCompile Include="colors.c" />
+    <ClCompile Include="demonBoss.c" />
+    <ClCompile Include="elevator.c" />
     <ClCompile Include="game_mechanics.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="level.c" />
@@ -120,6 +122,7 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
   <ItemGroup>
     <ClInclude Include="boss.h" />
     <ClInclude Include="colors.h" />
+    <ClInclude Include="demonBoss.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="game_mechanics.h" />
     <ClInclude Include="level.h" />
@@ -127,6 +130,9 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
     <ClInclude Include="scoring.h" />
     <ClInclude Include="screen_seq.h" />
     <ClInclude Include="sounds.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="elevator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -45,7 +45,7 @@ float shieldTimer = 0.0f;
 int Teleport_count = 3; // Number of Teleportes available
 int Teleport_Status = 1;
 float TeleportWindowTiming = 0.1f;
-#define TeleportDistance 100.0f // how far the player Teleportes
+#define TeleportDistance 85.0f // how far the player Teleportes
 #define TeleportCooldown 2.0f
 
 /********************Player & Platform**********************/

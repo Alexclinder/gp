@@ -12,9 +12,10 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "screen_seq.h"
 #include "npc_mechanics.h"
 #include "colors.h"
-#include "boss.h"
 #include "sounds.h"
 #include "scoring.h"
+#include "elevator.h"
+
 
 #define LEVEL3_STATIC_PLATFORMS 29
 #define LEVEL3_SEC_BUILDING 580.0f
@@ -72,9 +73,25 @@ int level_selected = level_1;
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
+struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f };
 
-int right_star = 0;
-int middle_star = 0;
+void SaveTime(float time) {
+	switch (level_selected) {
+		case level_1:
+			// Save time for level 1
+			Level_Timer.level1_time = time;
+			break;
+		case level_2:
+			// Save time for level 2
+			Level_Timer.level2_time = time;
+			break;
+		case level_3:
+			// Save time for level 3
+			Level_Timer.level3_time = time;
+			break;
+	}
+}
+	
 
 // Might do 
 // concat player_spawns and NPC_1_spawns into a single array for easier access
@@ -130,6 +147,11 @@ void Objective_Text(void){
 
 	// display *score that will persists through all levels
 	switch (level_selected){
+		case level_4:
+			drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size);
+			//drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+			//drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			break;
 		case level_3:
 			drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
 			drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y+50.0f, text_size);
@@ -333,7 +355,9 @@ float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
 int heldObject = -1;
 
-
+void LeaderboardScore_Time(int score, float time) {
+	// Implementation for updating leaderboard with score and time
+}
 
 float ingameTimer(void) {
 	
@@ -349,6 +373,7 @@ float ingameTimer(void) {
 		// This ensures that the timer continues from where it left off after a pause.
 		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
+		SaveTime(Seconds);//Save the current time to the Level_Timer struct for the current level, Time stored in the struct is displayed leaderboard
 		char buffer[16] = { 0 };
 		sprintf_s(buffer, 16, "%.2f", Seconds);
 		CP_Font_DrawText(buffer, CP_System_GetWindowWidth()/2, 0);
@@ -604,7 +629,8 @@ void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
 	// iterates thru the 4 rows and 6 col
 // Nested loop not needed as first level columns are iterated through.
-
+	
+	
 	float dt = CP_System_GetDt();
 	killZoneX += killZoneSpeed * dt;
 
@@ -621,6 +647,7 @@ void level_4th(void) {
 			fourth_level[i][4],
 			fourth_level[i][5]);
 	}
+	Objective_Text();
 	if (isCarrying) Character_MovementCarry();
 	else Character_MovementDefault();
 
@@ -653,7 +680,7 @@ void level_4th(void) {
 	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
 		NPC_UpdateProjectiles(0);
 		//CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
-		CP_Engine_SetNextGameState(Boss_Init, Boss_Update, Boss_Exit);     // Move to boss lvl after lvl 4
+		CP_Engine_SetNextGameState(Elevator_Init, Elevator_Update, Elevator_Exit);    // Move to boss lvl after lvl 4
 	}
 }
 
@@ -675,7 +702,7 @@ void level_selection(int level_no) {
 			level_4th();
 			break;
 		case boss_level:
-			Boss_Update();
+			Elevator_Update();
 			break;
 	}
 }

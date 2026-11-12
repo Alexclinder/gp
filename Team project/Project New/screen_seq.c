@@ -27,7 +27,6 @@ CP_Image defeat;
 CP_Image pausemenu;
 CP_Font Font;
 
-
 float first_y;
 float second_y;
 float third_y;
@@ -148,6 +147,9 @@ void Main_Menu_Update(void) {
     dynamicBtn("Controls", rect_x + middle_offset, second_y, Screen_Init, Controls_Screen, Screen_Exit);
     CP_Settings_Fill(dark_blue);
     Exit_dynamicBtn("Exit to Desktop", rect_x + exit_offset, third_y);
+
+    CP_Settings_Fill(dark_blue);
+	dynamicBtn("Leaderboard", 1400.0, 745.0, Screen_Init, Leaderboard_Screen, Screen_Exit);//Temporary Leaderboard button for testing purposes Removed if not needed
 }
 
 void Pause_Menu_Update(void)
@@ -242,14 +244,37 @@ void Leaderboard_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 140, 200, 0));
 
+
+    CP_Settings_TextSize(textSize);
+    //Level 1 Leaderboard Time 
+    CP_Font_DrawTextBox("Level 1 \nScore & Time", rect_x - 100.0f, 200.0, 400.0);
+    char Level1_Time[16] = { 0 };
+    sprintf_s(Level1_Time, 16, "Time: %.2f", Level_Timer.level1_time);
+    CP_Font_DrawText(Level1_Time, rect_x + 100.0f, 300.0);
+    //Level 2 Leaderboard Time
+    CP_Font_DrawTextBox("Level 2 \nScore & Time", rect_x + 300.0f, 200.0, 400.0);
+    char Level2_Time[16] = { 0 };
+    sprintf_s(Level2_Time, 16, "Time: %.2f", Level_Timer.level2_time);
+    CP_Font_DrawText(Level2_Time, rect_x + 500.0f, 300.0);
+    //Level 3 Leaderboard Time
+    CP_Font_DrawTextBox("Level 3 \nScore & Time", rect_x - 100.0f, 600.0, 400.0);
+    char Level3_Time[16] = { 0 };
+    sprintf_s(Level3_Time, 16, "Time: %.2f", Level_Timer.level3_time);
+    CP_Font_DrawText(Level3_Time, rect_x + 100.0f, 700.0);
+    //Level 4 Leaderboard Time
+    CP_Font_DrawTextBox("Level 4 \nScore & Time", rect_x + 300.0f, 600.0, 400.0);
+
     // Restart Level
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     CP_Settings_Fill(orange);
-    dynamicBtn("Level Select", rect_x, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Level Select", rect_x-500.0f, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Exit to Main Menu", rect_x, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x - 500.0f, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+
+    
+
 
 }
 

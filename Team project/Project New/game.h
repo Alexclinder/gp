@@ -11,6 +11,8 @@ extern CP_Image backgroundtwo;
 extern CP_Image backgroundthree;
 extern CP_Image platform;
 extern CP_Image npc1;
+extern CP_Image bossBG;
+extern CP_Image demonBoss;
 extern CP_Image projectile;
 enum { OBJ_DESK, OBJ_PRINTER, OBJ_TYPE_COUNT };
 
