@@ -902,3 +902,34 @@ void game_score(void) {
 	// If kill enemies, +300
 
 
+float kill_velocity = -100.0f;
+float kill_move = 0.0f;
+
+void kill_zone_alternating_movement(float x, float y, float w, float h, float left_boundary, float right_boundary)
+{
+	float dt = CP_System_GetDt();
+
+	// Move the kill zone
+	kill_move += kill_velocity * dt;
+
+	float updated_x = x + kill_move;
+
+	// Reverse at left boundary
+	if (updated_x <= left_boundary)
+	{
+		updated_x = left_boundary;
+		kill_move = updated_x - x;
+		kill_velocity = 100.0f;
+	}
+
+	// Reverse at right boundary
+	else if (updated_x >= right_boundary)
+	{
+		updated_x = right_boundary;
+		kill_move = updated_x - x;
+		kill_velocity = -100.0f;
+	}
+
+	// Draw and check collision at updated position
+	kill_zone(updated_x, y, w, h);
+}

@@ -132,16 +132,19 @@ void Objective_Text(void){
 			drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y+50.0f, text_size);
 			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
 			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
-			break;
+			CP_Settings_Fill(black);
+			
 		case level_2: 
 			drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
 			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
 			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			
 			break;
 		case level_1:
 			drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size);
 			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
 			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			
 			break;
 		default:
 			break;
@@ -254,7 +257,6 @@ float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 
 // Parameters is for drawing and checking win_con in level 3
 win_condition level1_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
-
 
 // LEVEL 3: Final Level
 float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
@@ -376,6 +378,8 @@ float ingameTimer(void) {
 	return Seconds;
 }
 
+k_zone level1_kwall = { .kx = 500.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
+k_zone level1_kwall2 = { .kx = 900.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 
 void level_1st(void) {
 	DrawBG(backgroundthree);
@@ -407,6 +411,11 @@ void level_1st(void) {
 	else Character_MovementDefault();
 	
 	Shield_Update();
+
+	// level 1 kill boundary 
+
+	kill_zone_alternating_movement(level1_kwall.kx, level1_kwall.ky, level1_kwall.kw, level1_kwall.kh, 500.0f, 800.0f);
+	kill_zone_alternating_movement(level1_kwall2.kx, level1_kwall2.ky, level1_kwall2.kw, level1_kwall2.kh, 900.0f, 1100.0f);
 
 	// Spawn in Enemy
 	NPC_MovementDefault();

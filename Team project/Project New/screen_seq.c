@@ -192,7 +192,7 @@ void Win_Screen(void) {
     char score_buf[16] = { 0 };
     sprintf_s(score_buf, 16, "Score: %3d", *score);
     // move the actual score value to the right of Score:
-    drawTextCenter(score_buf, rect_x + 100.0f, 200.0f, 1.0f);
+    drawTextCenter(score_buf, rect_x, 300.0f, 1.0f);
      
     CP_Font_Set(Font);
     CP_Settings_TextSize(50);
@@ -205,11 +205,11 @@ void Win_Screen(void) {
     CP_Font_DrawText(buffer, rect_x, 150.0f);
 
     // Next Level
-    first_y = CP_System_GetWindowHeight() / 2.0 - 120.0f;
+    first_y = CP_System_GetWindowHeight() / 2.0;
     // Restart
-    second_y = CP_System_GetWindowHeight() / 2.0 - 30.0f;
+    second_y = CP_System_GetWindowHeight() / 2.0 +150.0f;
     // Exit to Main Menu
-    third_y = CP_System_GetWindowHeight() / 2.0 + 120.0f;
+    third_y = CP_System_GetWindowHeight() / 2.0 + 300.0f;
     
     CP_Settings_Fill(orange);
     dynamicBtn("Next Level", rect_x, first_y, Next_level_Init, Game_Update, Game_Exit);
