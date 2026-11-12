@@ -1,130 +1,187 @@
 #include <stdio.h>
 #include <math.h>
 #include "cprocessing.h"
+#include "game.h"
+#include "game_mechanics.h"
+#include "level.h"
+#include "colors.h"
+#include "npc_mechanics.h"
+#include "screen_seq.h"
+#include "boss.h"
 
-#define TILE_SIZE 64
-#define MAP_ROWS  15
-#define MAP_COLS  26
+#define PLAT_H      24.0f
+#define MAX_PLATS   32
+#define SCROLL_Y    350.0f   /* player never goes above this on screen */
+#define GAP_MIN     75
+#define GAP_MAX     75       /* must stay under jump height (~83px) */
+#define SHIFT_MAX   250      /* max sideways shift between platforms */
 
-/* '#' = solid tile, '.' = empty */
-static const char map[MAP_ROWS][MAP_COLS + 1] = {
-    "..........#...............",
-    "..........................",
-    "..........................",
-    "..........................",
-    "..........#####...........",
-    "..........................",
-    "....#####.................",
-    "..........................",
-    "...............####.......",
-    "..........###.............",
-    "........#.................",
-    "........#.........@.......",
-    "........#.................",
-    "........#.................",
-    "##########################"
-};
+typedef struct {
+    float x, y, w;           /* world coords, top-left */
+} Plat;
 
-void Platformer_Draw(void) {
-    for (int r = 0; r < MAP_ROWS; r++) {
-        for (int c = 0; c < MAP_COLS; c++) {
-            if (map[r][c] == '#') {
-                CP_Settings_Fill(CP_Color_Create(80, 80, 80, 255));
-                CP_Graphics_DrawRect((float)(c * TILE_SIZE), (float)(r * TILE_SIZE), (float)TILE_SIZE, (float)TILE_SIZE);
-            }
-            if (map[r][c] == '@') {
-                CP_Settings_Fill(CP_Color_Create(0, 80, 80, 255));
-                CP_Graphics_DrawRect((float)(c * TILE_SIZE), (float)(r * TILE_SIZE), (float)TILE_SIZE, (float)TILE_SIZE);
-            }
+static Plat  plats[MAX_PLATS];
+static int   plat_count = 0;
+static float camY = 0.0f;   /* gets more negative as you climb */
+static float topY = 0.0f;   /* world y of the highest platform so far */
+static float lastX = 700.0f;
+
+
+static int platformDirection = 1;
+static void Plats_Generate(void)
+{
+    float screenW = (float)CP_System_GetWindowWidth();
+    float screenH = (float)CP_System_GetWindowHeight();
+
+    while (topY > camY - screenH && plat_count < MAX_PLATS) {
+        float w, x;
+
+        topY -= (float)CP_Random_RangeInt(GAP_MIN, GAP_MAX);
+        w = (float)(CP_Random_RangeInt(2, 5) * 64);
+
+        /* Generate platform on the opposite side */
+        if (platformDirection == 1) {
+            x = lastX + SHIFT_MAX;
+            platformDirection = -1;
         }
+        else {
+            x = lastX - SHIFT_MAX - w;
+            platformDirection = 1;
+        }
+
+        /* Keep platform inside the screen */
+        if (x < 0.0f)
+            x = 0.0f;
+
+        if (x + w > screenW)
+            x = screenW - w;
+
+        lastX = x + w / 2.0f;
+
+        plats[plat_count].x = x;
+        plats[plat_count].y = topY;
+        plats[plat_count].w = w;
+
+        plat_count++;
     }
 }
 
-#define PLAYER_SIZE    48.0f
-#define MOVE_SPEED     300.0f
-#define JUMP_SPEED     500.0f
-#define GRAVITY        1500.0f
-#define MAX_FALL_SPEED 1200.0f
+static void Plats_Cull(void)
+{
+    float screenH = (float)CP_System_GetWindowHeight();
+    int n = 0;
 
-typedef struct Body {
-    CP_Vector pos, vel;
-    float size;
-    int onGround;
-} Body;
-
-static Body player;
-
-/* Outside the map: solid on the left, right and bottom, empty above */
-static int Tile_IsSolid(int c, int r) {
-    if (c < 0 || c >= MAP_COLS) return 1;
-    if (r < 0) return 0;
-    if (r >= MAP_ROWS) return 1;
-    return map[r][c] == '#';
-}
-
-/* Does the body's box overlap any solid tile? */
-static int Body_HitsSolid(const Body* b) {
-    int left = (int)floorf(b->pos.x / TILE_SIZE);
-    int right = (int)floorf((b->pos.x + b->size - 0.01f) / TILE_SIZE);
-    int top = (int)floorf(b->pos.y / TILE_SIZE);
-    int bottom = (int)floorf((b->pos.y + b->size - 0.01f) / TILE_SIZE);
-    for (int r = top; r <= bottom; r++)
-        for (int c = left; c <= right; c++)
-            if (Tile_IsSolid(c, r)) return 1;
-    return 0;
-}
-
-static void Body_Step(Body* b, float moveDir, int wantJump, float dt) {
-    b->vel.x = moveDir * MOVE_SPEED;
-    if (wantJump && b->onGround) { b->vel.y = -JUMP_SPEED; b->onGround = 0; }
-    b->vel.y += GRAVITY * dt;
-    if (b->vel.y > MAX_FALL_SPEED) b->vel.y = MAX_FALL_SPEED;
-
-    /* X axis */
-    b->pos.x += b->vel.x * dt;
-    if (Body_HitsSolid(b)) {
-        b->pos.x -= b->vel.x * dt;
-        b->vel.x = 0.0f;
+    for (int i = 0; i < plat_count; i++) {
+        if (plats[i].y - camY < screenH + 100.0f)
+            plats[n++] = plats[i];
     }
-
-    /* Y axis */
-    b->pos.y += b->vel.y * dt;
-    b->onGround = 0;
-    if (Body_HitsSolid(b)) {
-        if (b->vel.y > 0.0f) b->onGround = 1;
-        b->pos.y -= b->vel.y * dt;
-        b->vel.y = 0.0f;
-    }
+    plat_count = n;
 }
 
 void Elevator_Init(void)
 {
-    player.pos = CP_Vector_Set(100.0f, 500.0f);
-    player.vel = CP_Vector_Set(0.0f, 0.0f);
-    player.size = PLAYER_SIZE;
-    player.onGround = 0;
+    color_create();
+    g1 = CP_Image_Load("Assets/Grab1.png");
+    g2 = CP_Image_Load("Assets/Grab2.png");
+    carry = CP_Image_Load("Assets/Carry.png");
+    background = CP_Image_Load("Assets/level3background.png");
+    backgroundtwo = CP_Image_Load("Assets/level2background.png");
+    backgroundthree = CP_Image_Load("Assets/level1background.png");
+    bossBG = CP_Image_Load("Assets/bossBG.png");
+    demonBoss = CP_Image_Load("Assets/DemonBoss.png");
+    jump = CP_Image_Load("Assets/Jumping.png");
+    Zilong = CP_Image_Load("Assets/Main_Character.png");
+    npc1 = CP_Image_Load("Assets/Worker.png");
+    platform = CP_Image_Load("Assets/Platform.png");
+    projectile = CP_Image_Load("Assets/paperball.png");
+    objImg[OBJ_DESK] = CP_Image_Load("Assets/desk.png");
+    objBG[OBJ_DESK] = CP_Image_Load("Assets/desk_background.png");
+    objImg[OBJ_PRINTER] = CP_Image_Load("Assets/printer.png");
+    objBG[OBJ_PRINTER] = CP_Image_Load("Assets/printer_background.png");
+    Objects_Reset();
+
+    CP_System_SetFrameRate(120.0f);
+    TimeSet = 0;
+
+    float screenH = (float)CP_System_GetWindowHeight();
+
+    /* reset generation state */
+    camY = 0.0f;
+    topY = screenH ;      /* first platform sits just above the floor */
+    // lastX = 100.0f;
+    plat_count = 0;
+
+    position = CP_Vector_Set(100.0f, screenH - PLAYER_SIZE);
+    velocity = CP_Vector_Set(0.0f, 0.0f);
+    onGround = 0;
+    current_obj_count = 0;       /* no pickup objects in this level */
+    ProjectileActive = 0;
+
+
+    // Initialise boss AFTER player position
+    BOSS_Init();
 }
 
 void Elevator_Update(void)
 {
-    float dt = CP_System_GetDt();
+    DrawBG(bossBG);
 
-    float moveDir = 0.0f;
-    if (CP_Input_KeyDown(KEY_A)) moveDir -= 1.0f;
-    if (CP_Input_KeyDown(KEY_D)) moveDir += 1.0f;
-    int wantJump = CP_Input_KeyTriggered(KEY_W);
+    /* 2. scroll: shove player down, camera up */
+    if (position.y < SCROLL_Y) {
+        float d = SCROLL_Y - position.y;
+        position.y += d;
+        camY -= d;
+    }
 
-    Body_Step(&player, moveDir, wantJump, dt);
+    /* 3. remove old platforms, make new ones above */
+    Plats_Cull();
+    Plats_Generate();
 
-    CP_Graphics_ClearBackground(CP_Color_Create(30, 30, 40, 255));
-    Platformer_Draw();
+    /* 4. draw platforms */
+    for (int i = 0; i < plat_count; i++) {
+        DrawPlatform(plats[i].x + plats[i].w / 2.0f, plats[i].y - camY + PLAT_H / 2.0f, plats[i].w, PLAT_H, 0.0f, 0.0f);
+        DrawPlatform(plats[i].x + plats[i].w / 2.0f + 600 , plats[i].y - camY + PLAT_H / 2.0f, plats[i].w, PLAT_H, 0.0f, 0.0f);
+        DrawPlatform(plats[i].x + plats[i].w / 2.0f - 600, plats[i].y - camY + PLAT_H / 2.0f, plats[i].w, PLAT_H, 0.0f, 0.0f);
+    }
 
-    CP_Settings_Fill(CP_Color_Create(220, 80, 80, 255));
-    CP_Graphics_DrawRect(player.pos.x, player.pos.y, player.size, player.size);
+    
+    Objective_Text();
+    ingameTimer();
+    TeleportTimer();
+    Teleport_Mechannic();
+
+    if (isCarrying) Character_MovementCarry();
+    else Character_MovementDefault();
+
+    // 6. Boss movement and drawing
+    BOSS_Update();
+
+    Shield_Update();
+
+    // Spawn in Enemy
+    //NPC_MovementDefault();
+    //NPC_Attack();
+    //NPC_UpdateProjectiles(1);
+    //NPC_CheckShieldCollision();
+    //NPC_CheckReflectedHit();
+    //NPC_DrawProjectiles();
+
+    // Check for collision then end game if hit
+    if (NPC_CheckPlayerCollision() == 1)
+    {
+        NPC_UpdateProjectiles(0);
+        CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+        return;
+    }
+
+    Objects_Draw();
+    //Player_Animation_Checks();
+    Player_Animation();
+    Draw_ClingBar();
+    Shield_Draw();
 }
-
 
 void Elevator_Exit(void)
 {
-
+    BOSS_Exit();
 }

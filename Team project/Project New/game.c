@@ -14,6 +14,8 @@ CP_Image Zilong;
 CP_Image background;
 CP_Image backgroundtwo;
 CP_Image backgroundthree;
+CP_Image bossBG;
+CP_Image demonBoss;
 CP_Image platform;
 CP_Image projectile;
 CP_Image objImg[OBJ_TYPE_COUNT];
@@ -30,6 +32,8 @@ void Game_Init(void)
 	background = CP_Image_Load("Assets/level3background.png");
 	backgroundtwo = CP_Image_Load("Assets/level2background.png");
 	backgroundthree = CP_Image_Load("Assets/level1background.png");
+	bossBG = CP_Image_Load("Assets/bossBG.png");
+	demonBoss = CP_Image_Load("Assets/DemonBoss.png");
 	jump = CP_Image_Load("Assets/Jumping.png");
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	npc1 = CP_Image_Load("Assets/Worker.png"); // Load npc 1

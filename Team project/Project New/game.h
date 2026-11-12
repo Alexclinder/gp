@@ -9,6 +9,8 @@ extern CP_Image Zilong;
 extern CP_Image background;
 extern CP_Image backgroundtwo;
 extern CP_Image backgroundthree;
+extern CP_Image bossBG;
+extern CP_Image demonBoss;
 extern CP_Image platform;
 extern CP_Image npc1;
 extern CP_Image projectile;

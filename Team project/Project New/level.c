@@ -12,7 +12,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "screen_seq.h"
 #include "npc_mechanics.h"
 #include "colors.h"
-#include "boss.h"
+#include "elevator.h"
 #include "sounds.h"
 
 
@@ -608,7 +608,7 @@ void level_4th(void) {
 	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
 		NPC_UpdateProjectiles(0);
 		//CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
-		CP_Engine_SetNextGameState(Boss_Init, Boss_Update, Boss_Exit);     // Move to boss lvl after lvl 4
+		CP_Engine_SetNextGameState(Elevator_Init, Elevator_Update, Elevator_Exit);     // Move to boss lvl after lvl 4
 	}
 }
 
@@ -630,7 +630,7 @@ void level_selection(int level_no) {
 			level_4th();
 			break;
 		case boss_level:
-			Boss_Update();
+			Elevator_Update();
 			break;
 	}
 }
