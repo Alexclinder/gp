@@ -226,14 +226,15 @@ float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
 	// Stair Platform
 	{ 1350.0f, 520.0f,  PLATFORM_WIDTH_3 / 3.0f, RECT_HORIZ_H * 1.5f, NO_ROTATION, CORNER_RADIUS },
 
-
-	
-	
 };
 
 // Parameters is for drawing and checking win_con in level 2
 win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER_RADIUS };
 
+k_zone level2_floor = { .kx = 500.0f, .ky = 900.0f, .kw = 2500.0f, .kh = 10.0f };
+
+pressure_door_pos level2 = { .px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1460.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT };
 
 // LEVEL 2: Entering the building
 float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
@@ -439,6 +440,9 @@ void level_2nd(void) {
 			second_level[i][4],
 			second_level[i][5]);
 	}
+	kill_zone(level2_floor.kx, level2_floor.ky, level2_floor.kw, level2_floor.kh);
+
+
 	Objective_Text();
 	ingameTimer();
 	TeleportTimer();
