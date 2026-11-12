@@ -73,6 +73,8 @@ void Game_Reset(void)
 	for (int i = 0; i < MAX_TREASURES; i++) {
 		treasure_collected[i] = 0;
 	}
+	
+	killZoneX = 0.0f;
 }
 
 

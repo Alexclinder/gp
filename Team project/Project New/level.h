@@ -1,6 +1,7 @@
 #pragma once
 
 extern level_selected;
+extern float killZoneX;
 // Needed for Game_Reset() reassign back to 0
 typedef struct{
 	CP_Vector pos;
