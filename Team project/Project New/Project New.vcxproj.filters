@@ -42,6 +42,12 @@
     <ClCompile Include="sounds.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="elevator.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demonBoss.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="level.h">
@@ -68,5 +74,13 @@
     <ClInclude Include="sounds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="demonBoss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="elevator.h">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
