@@ -253,7 +253,7 @@ void Character_MovementDefault(void) {
 	}
 
 	/* --- Space: pick up (grounded + touching an object, not mid-kick) --- */
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !pickingUp && kickedObject == -1 && onGround && (heldObject = Object_Check()) != -1) {
+	if (CP_Input_KeyTriggered(KEY_E) && !pickingUp && kickedObject == -1 && onGround && (heldObject = Object_Check()) != -1) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
 		fromX = current_objects[heldObject][OBJ_X];
@@ -312,7 +312,7 @@ void Character_MovementDefault(void) {
 	}
 
 	/* --- Jump: only when standing on something, not during animation --- */
-	if (CP_Input_KeyTriggered(KEY_W) && onGround && !pickingUp) {
+	if ((CP_Input_KeyTriggered(KEY_W) || CP_Input_KeyTriggered(KEY_SPACE)) && onGround && !pickingUp) {
 		velocity.y = -JUMP_SPEED;
 		onGround = 0;
 	}
@@ -350,7 +350,7 @@ void Character_MovementCarry(void)
 	float screenW = (float)CP_System_GetWindowWidth();
 
 	/* --- G: drop (grounded only) --- */
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !dropping && onGround) {
+	if (CP_Input_KeyTriggered(KEY_E) && !dropping && onGround) {
 		float w = current_objects[heldObject][OBJ_W];
 		float h = current_objects[heldObject][OBJ_H];
 		dropping = 1;
@@ -384,7 +384,7 @@ void Character_MovementCarry(void)
 	}
 
 	/* --- Jump: only when standing on something, not during animation --- */
-	if (CP_Input_KeyTriggered(KEY_W) && onGround && !dropping) {
+	if ((CP_Input_KeyTriggered(KEY_W) || CP_Input_KeyTriggered(KEY_SPACE)) && onGround && !dropping) {
 		velocity.y = -JUMP_SPEED;
 		onGround = 0;
 	}
@@ -423,6 +423,8 @@ void Character_MovementCarry(void)
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height)
 {
 	float dt = CP_System_GetDt();
+	const float WALL_STICK_DIST = 2.0f;   // how close (px) counts as "touching" a wall's side
+	int side;
 
 	// Standing on the floor or a platform -> cling time refills
 	if (onGround) wall_timer = 0.0f;
@@ -443,15 +445,35 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	float overlap_bottom = area_bottom - player_top;
 	float overlap_left = player_right - area_left;
 	float overlap_right = area_right - player_left;
-	int side;
 
-	if (player_right <= area_left || player_left >= area_right || player_bottom < area_top || player_top >= area_bottom)
+	int overlapping = !(player_right <= area_left || player_left >= area_right ||
+		player_bottom < area_top || player_top >= area_bottom);
+
+	if (!overlapping)
 	{
-		return 0;
-	}
+		// Not inside the platform. With wall climb on, still count it as
+		// touching if the player is right next to a side (no need to hold A/D)
+		if (wall_climb != 1) return 0;
 
+		int vertical_overlap = (player_bottom > area_top && player_top < area_bottom);
+		int near_left = (player_right <= area_left && player_right >= area_left - WALL_STICK_DIST);
+		int near_right = (player_left >= area_right && player_left <= area_right + WALL_STICK_DIST);
+
+		if (!vertical_overlap || !(near_left || near_right)) return 0;
+
+		if (near_left)
+		{
+			position.x = area_left - PLAYER_SIZE;   // stay flush against the wall
+			side = 3;
+		}
+		else
+		{
+			position.x = area_right;
+			side = 4;
+		}
+	}
 	// TOP: stop falling through, platform becomes the new ground
-	if (overlap_top <= overlap_bottom && overlap_top <= overlap_left && overlap_top <= overlap_right)
+	else if (overlap_top <= overlap_bottom && overlap_top <= overlap_left && overlap_top <= overlap_right)
 	{
 		position.y = area_top - PLAYER_SIZE;
 		if (velocity.y > 0) velocity.y = 0.0f;
@@ -479,21 +501,16 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 		side = 4;
 	}
 
-
-
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
-
 		// Touching a new wall -> fresh 3 seconds
 		if (area_center_x != cling_wall_x || area_center_y != cling_wall_y)
 		{
 			wall_timer = 0.0f;
 			cling_wall_x = area_center_x;
 			cling_wall_y = area_center_y;
-
 		}
-
 
 		if (wall_timer < WALL_CLING_TIME)
 		{
@@ -503,17 +520,16 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			position.y -= velocity.y * dt;
 			velocity.y = 0.0f;
 
-			// Climb up / down the wall
-			if (CP_Input_KeyDown(KEY_W)) position.y -= CLIMB_SPEED * dt;
+			// Climb up / down the wall (no A/D needed)
+			if (CP_Input_KeyDown(KEY_W) || CP_Input_KeyTriggered(KEY_SPACE)) position.y -= CLIMB_SPEED * dt;
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
 
-			is_clinging = 1;      // ADDED: tell level.c to draw the bar
-			cling_side = side;    // ADDED: which side the wall is on
+			is_clinging = 1;      // tell level.c to draw the bar
+			cling_side = side;    // which side the wall is on
 		}
-
-		return side;
 	}
 
+	return side;
 }
 
 

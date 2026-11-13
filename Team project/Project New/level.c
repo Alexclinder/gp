@@ -281,7 +281,7 @@ float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 };
 
 // Parameters is for drawing and checking win_con in level 3
-win_condition level1_win = { 1300, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
+win_condition level1_win = { 1450, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
 // LEVEL 1
 float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
@@ -294,7 +294,7 @@ float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 400.0f, 530.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 550.0f, 400.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 400.0f, 300.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 400.0f, 390.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 430.0f, 390.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 550.0f, 300.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 450.0f, 200.0f, 100.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 850.0f, 200.0f, 500.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
