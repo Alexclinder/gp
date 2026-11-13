@@ -2,17 +2,6 @@
 
 
 
-
-extern CP_Image npc1;
-
-extern int onGround;
-extern int player_action;
-extern int kickedObject;
-extern CP_Vector position;
-extern CP_Vector velocity;
-
-
-
 /* abilities.h */
 void Draw_ClingBar(void);
 
@@ -49,6 +38,13 @@ extern int isCarrying;
 extern int pickingUp;
 extern int dropping;
 extern float carry_timer;
+extern int onGround;
+extern int player_action;
+extern int kickedObject;
+extern CP_Vector position;
+extern CP_Vector velocity;
+
+
 void Character_MovementDefault(void);
 
 void Character_MovementCarry(void);

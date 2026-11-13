@@ -718,12 +718,15 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 
 	{
 		pressed = 0;
-		
+
+		// 
+		// create a function to call the argument parameters
 		float plate_left = pres_x - pres_width / 2.0f;
 		float plate_right = pres_x + pres_width / 2.0f;
 		float plate_top = pres_y - pres_height / 2.0f;
 		float plate_bottom = pres_y + pres_height / 2.0f;
 
+		// placing into header file
 		float player_left = position.x;
 		float player_right = position.x + PLAYER_SIZE;
 		float player_top = position.y;
@@ -780,12 +783,19 @@ void kill_zone(float x, float y, float w, float h)
 	
 	CP_Settings_Fill(red);
 	CP_Graphics_DrawRect(x, y, w, h);
+
+	// void c (float left, float right, float top, float bottom){
+	// zone_left = left;
+
+	//  name x-w/2.0f
+	// to call c( (x-w/2.0f), (x+w/2.0f), (y-h/2.0f)
 	
 	float zone_left = x - w / 2.0f;
 	float zone_right = x + w / 2.0f;
 	float zone_top = y - h / 2.0f;
 	float zone_bottom = y + h / 2.0f;
 	
+	// In header file
 	float player_left = position.x;
 	float player_right = position.x + PLAYER_SIZE;
 	float player_top = position.y;

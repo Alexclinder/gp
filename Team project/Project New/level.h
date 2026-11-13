@@ -55,15 +55,18 @@ extern float (*current_objects)[5];
 extern int current_obj_count;
 extern int heldObject;
 
-void SaveTime(float time);
 
-void Objective_Text(void);
+// objects.h
 
 void Objects_Reset(void);
 
 int Object_Check(void);
 
 void Objects_Draw(void);
+
+int Object_HitCheck(float cx, float cy, float radius, int self);
+
+// level.h - dont move out
 
 void level_1st(void);
 
@@ -73,9 +76,16 @@ void level_3rd(void);
 
 void level_4th(void);
 
-int Object_HitCheck(float cx, float cy, float radius, int self);
-
 void level_selection(int level_no);
+
+// ingame_text.h
+void SaveTime(float time);
+
+void Objective_Text(void);
+
+// draw_level_element.h
+
+// drawPlatforms()
 
 void DrawExit(float x, float y, float w, float h, float degrees, float cornerRadius);
 
