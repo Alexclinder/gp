@@ -639,6 +639,8 @@ void level_4th(void) {
 
 	kill_zone(killZoneX - 500.0f, 500.0f, 1000.0f, 900.0f);
 
+	// kill_zone(arr[level_2]);
+
 	for (int i = 0; i < LEVEL4_STATIC_PLATFORMS; i++) {
 		DrawPlatform(fourth_level[i][0],
 			fourth_level[i][1],
