@@ -171,23 +171,6 @@ int IsAreaClicked(float area_center_x, float area_center_y, float area_width, fl
 	}
 }
 
-int IsCircleClicked(float circle_center_x, float circle_center_y, float diameter, float click_x, float click_y)
-{
-	// check if the click is within 
-	// x bound of the area(check the x-axis radius from the centre of the circle(x coordinate - (diameter/2) && x coordinate + (diameter/2)))
-	// y bound of the area(check the y-axis radius from the centre of the circle(y coordinate - (diameter/2) && y coordinate + (diameter/2)))
-	if ((click_x >= circle_center_x - diameter / 2 && click_x <= circle_center_x + diameter / 2) &&
-		(click_y >= circle_center_y - diameter / 2 && click_y <= circle_center_y + diameter / 2))
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-
 
 // t = 0 at start spot, 1 at end spot
 void HeldObject_MoveTo(float t)
