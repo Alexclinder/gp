@@ -57,7 +57,7 @@ int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y,
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height);
 
 /* player_animation.h */
-void Player_Animation_Checks(void);
+
 
 void Player_Animation(void);
 //--------------------------------
@@ -74,6 +74,10 @@ extern int unlocked_gate_score;
 extern int pressed;
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 					     float door_x, float door_y, float door_width, float door_height);
+
+void Pressure_Plate_2Door(float pres_x, float pres_y, float pres_width, float pres_height,
+	float door1_x, float door1_y, float door1_width, float door1_height,
+	float door2_x, float door2_y, float door2_width, float door2_height);
 
 void kill_zone(float x, float y, float w, float h);
 

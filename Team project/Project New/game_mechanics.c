@@ -602,82 +602,6 @@ void DrawPlatform(float x, float y, float w, float h,
 
 }
 
-// dt is declared in default player movement
-void Player_Animation_Checks(void) {
-
-	float dt = CP_System_GetDt();
-	// SPACE : Start the grabbing animation
-	if (onGround && CP_Input_KeyTriggered(KEY_SPACE))
-	{
-		if (player_action == STANDING)
-		{
-			toggleGrab = 1;
-			player_action = GRABBING_1;
-			animationTimer = 0.0f;
-		}
-	}
-
-	// G: Start reversing the animation
-	if (onGround && CP_Input_KeyTriggered(KEY_G))
-	{
-		if (player_action == CARRY)
-		{
-			player_action = GRABBING_2;
-			toggleGrab = 0;
-			animationTimer = 0.0f;
-		}
-	}
-
-	
-	if (!onGround)
-	{
-		player_action = JUMPING;
-		animationTimer = 0.0f;
-	}
-
-	// if player touches the ground and the previous action is jumping
-	if (onGround==0 && player_action == JUMPING) {
-		player_action = STANDING;
-	}
-
-	// Animate grabbing or dropping
-	// Both conditions is needed for player action
-	if (player_action == GRABBING_1 || player_action == GRABBING_2)
-	{
-		animationTimer += dt;
-
-		if (animationTimer >= GRAB_FRAME_TIME)
-		{
-			animationTimer = 0.0f;
-
-			if (toggleGrab == 1)
-			{
-				/* Forward: grab */
-				if (player_action == GRABBING_1)
-				{
-					player_action = GRABBING_2;
-				}
-				else if (player_action == GRABBING_2)
-				{
-					player_action = CARRY;
-				}
-			}
-			else
-			{
-				/* Reverse: drop */
-				if (player_action == GRABBING_2)
-				{
-					player_action = GRABBING_1;
-				}
-				else if (player_action == GRABBING_1)
-				{
-					player_action = STANDING;
-					animationTimer = 0.0f;
-				}
-			}
-		}
-	}
-}
 
 void Player_Animation(void)
 {
@@ -792,6 +716,79 @@ void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pre
 			collision_check(door_x, door_y, door_width, door_height);
 		}
 	}
+}
+
+void Pressure_Plate_2Door(float pres_x, float pres_y, float pres_width, float pres_height,
+	float door1_x, float door1_y, float door1_width, float door1_height,
+	float door2_x, float door2_y, float door2_width, float door2_height) {
+
+	// if characteer or object intersects the pressure plate, the door will open.
+
+		{
+			pressed = 0;
+
+			// 
+			// create a function to call the argument parameters
+			float plate_left = pres_x - pres_width / 2.0f;
+			float plate_right = pres_x + pres_width / 2.0f;
+			float plate_top = pres_y - pres_height / 2.0f;
+			float plate_bottom = pres_y + pres_height / 2.0f;
+
+			// placing into header file
+			float player_left = position.x;
+			float player_right = position.x + PLAYER_SIZE;
+			float player_top = position.y;
+			float player_bottom = position.y + PLAYER_SIZE;
+
+			if (player_right > plate_left &&
+				player_left < plate_right &&
+				player_bottom > plate_top &&
+				player_top < plate_bottom)
+			{
+				pressed = 1;
+			}
+
+			// for loop to check how long player/object is intersecting pressure plate 
+			for (int i = 0; i < current_obj_count && !pressed; i++)
+			{
+				float obj_left = current_objects[i][OBJ_X];
+				float obj_right = obj_left + current_objects[i][OBJ_W];
+				float obj_top = current_objects[i][OBJ_Y];
+				float obj_bottom = obj_top + current_objects[i][OBJ_H];
+
+				if (obj_right > plate_left &&
+					obj_left < plate_right &&
+					obj_bottom > plate_top &&
+					obj_top < plate_bottom)
+				{
+					pressed = 1;
+				}
+			}
+
+			if (pressed) {
+				CP_Settings_Fill(medium_light_green);
+
+				CP_Settings_Fill(purple);
+				CP_Graphics_DrawRect(door2_x, door2_y, door2_width, door2_height);
+
+				collision_check(door2_x, door2_y, door2_width, door2_height);
+			}
+			else {
+
+				CP_Settings_Fill(light_green);
+			}
+			CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
+
+
+			if (!pressed)
+			{
+
+				CP_Settings_Fill(purple);
+				CP_Graphics_DrawRect(door1_x, door1_y, door1_width, door1_height);
+
+				collision_check(door1_x, door1_y, door1_width, door1_height);
+			}
+		}
 }
 
 void kill_zone(float x, float y, float w, float h)

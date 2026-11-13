@@ -66,6 +66,7 @@ typedef struct {
 typedef struct {
 	float px, py, pw, ph;
 	float dx, dy, dw, dh;
+	float d2x, d2y, d2w, d2h;
 } pressure_door_pos;
 
 
@@ -261,8 +262,9 @@ win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER
 
 k_zone level2_floor = { .kx = 500.0f, .ky = 900.0f, .kw = 2500.0f, .kh = 10.0f };
 
-pressure_door_pos level2 = { .px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
-							.dx = 1460.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT };
+pressure_door_pos level2 = { .px = 1100.0f, .py = 570.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1360.0f, .dy = 250.0f, .dw = DOOR_WIDTH * 14.0f, .dh = DOOR_HEIGHT * 0.1f,
+							.d2x = 1300.0f, .d2y = 490.0f, .d2w = 100.0f, .d2h = RECT_HORIZ_H, };
 
 // LEVEL 2: Entering the building
 float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
@@ -275,7 +277,7 @@ float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 600.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1000.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1400.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1300.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	
 	{ 1400.0f, 400.0f, 15.0f, 150.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 1540.0f, 260.0f, 220.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
 };
@@ -493,6 +495,11 @@ void level_2nd(void) {
 			second_level[i][5]);
 	}
 	kill_zone(level2_floor.kx, level2_floor.ky, level2_floor.kw, level2_floor.kh);
+	
+	Pressure_Plate_2Door(level2.px, level2.py, level2.pw, level2.ph, 
+						 level2.dx, level2.dy, level2.dw, level2.dh,
+						 level2.d2x, level2.d2y, level2.d2w, level2.d2h 
+						);
 
 
 	Objective_Text();
