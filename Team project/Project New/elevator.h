@@ -7,3 +7,5 @@ void Elevator_Update(void);
 
 
 void Elevator_Exit(void);
+
+extern float playerHealth;

@@ -1,22 +1,33 @@
 #include <stdio.h>
 #include <math.h>
-
 #include "cprocessing.h"
+
 #include "game.h"
 #include "game_mechanics.h"
-#include "boss.h"
-#include <Windows.h>
+#include "elevator.h"
+#include "screen_seq.h"
+#include "game_mechanics.h"
+
 
 // =====================================
 // BOSS SETTINGS
 // =====================================
 
 #define BOSS_SIZE              150.0f
-#define BOSS_DISTANCE          300.0f
+
 #define BOSS_HOVER_SPEED       200.0f
 #define BOSS_ATTACK_SPEED      600.0f
+#define BOSS_RETURN_SPEED      250.0f
+
 #define BOSS_ATTACK_TIME       5.0f
-#define BOSS_STOP_DISTANCE    70.0f
+#define BOSS_STOP_DISTANCE     70.0f
+
+#define BOSS_DAMAGE_DISTANCE 100.0f // If player within this distance from boss damage taken
+
+// Boss safe zone (top portion of screen)
+#define BOSS_ZONE_LEFT         100.0f
+#define BOSS_ZONE_TOP          50.0f
+#define BOSS_ZONE_BOTTOM       155.0f
 
 // =====================================
 // BOSS STATES
@@ -34,16 +45,18 @@ typedef enum
 // BOSS VARIABLES
 // =====================================
 
-static float debugTimer = 0.0f;
-
-
 static float bossX;
 static float bossY;
 
 static float bossTimer = 0.0f;
 
+static int bossHasHitPlayer = 0;
+
 static float attackTargetX;
 static float attackTargetY;
+
+static float returnTargetX;
+static float returnTargetY;
 
 static BossState bossState = BOSS_HOVER;
 
@@ -51,31 +64,6 @@ static BossState bossState = BOSS_HOVER;
 // =====================================
 // MOVE TOWARDS TARGET
 // =====================================
-
-static void BOSS_Debug(void)
-{
-    debugTimer += CP_System_GetDt();
-
-    if (debugTimer >= 1.0f)
-    {
-        debugTimer = 0.0f;
-
-        char message[256];
-
-        sprintf_s(
-            message,
-            sizeof(message),
-            "Boss State: %d | Timer: %.2f | DT: %.4f | X: %.2f | Y: %.2f\n",
-            bossState,
-            bossTimer,
-            CP_System_GetDt(),
-            bossX,
-            bossY
-        );
-
-        OutputDebugStringA(message);
-    }
-}
 
 static void BOSS_MoveTowards(float targetX, float targetY, float speed)
 {
@@ -101,6 +89,42 @@ static void BOSS_MoveTowards(float targetX, float targetY, float speed)
 
 
 // =====================================
+// SELECT RANDOM SAFE-ZONE POSITION
+// =====================================
+
+static void BOSS_SetRandomPosition(void)
+{
+    float screenW = (float)CP_System_GetWindowWidth();
+
+    int minX = (int)(BOSS_ZONE_LEFT + BOSS_SIZE / 2.0f);
+    int maxX = (int)(screenW - BOSS_ZONE_LEFT - BOSS_SIZE / 2.0f);
+
+    int minY = (int)(BOSS_ZONE_TOP + BOSS_SIZE / 2.0f);
+    int maxY = (int)BOSS_ZONE_BOTTOM;
+
+    returnTargetX = (float)CP_Random_RangeInt(minX, maxX);
+    returnTargetY = (float)CP_Random_RangeInt(minY, maxY);
+}
+
+// =====================================
+// CHECK COLLISION BETWEEN PLAYER AND BOSS
+// =====================================
+
+static int BOSS_CheckCollision(void)
+{
+    float dx = bossX - position.x;
+    float dy = bossY - position.y;
+
+    float distance = sqrtf(dx * dx + dy * dy);
+
+    if (distance < BOSS_DAMAGE_DISTANCE)
+        return 1;
+
+    return 0;
+}
+
+
+// =====================================
 // INITIALISE BOSS
 // =====================================
 
@@ -109,9 +133,11 @@ void BOSS_Init(void)
     bossState = BOSS_HOVER;
     bossTimer = 0.0f;
 
-    // Start 700 pixels away from player
-    bossX = position.x + BOSS_DISTANCE;
-    bossY = position.y - PLAYER_SIZE / 2.0f;
+    // Choose a random starting position
+    BOSS_SetRandomPosition();
+
+    bossX = returnTargetX;
+    bossY = returnTargetY;
 }
 
 
@@ -119,11 +145,11 @@ void BOSS_Init(void)
 // UPDATE BOSS MOVEMENT
 // =====================================
 
-
 void BOSS_Movement(void)
 {
     float dt = CP_System_GetDt();
 
+    // Player centre
     float playerX = position.x;
     float playerY = position.y - PLAYER_SIZE / 2.0f;
 
@@ -133,15 +159,22 @@ void BOSS_Movement(void)
 
     switch (bossState)
     {
+        // =================================
+        // HOVER STATE
+        // =================================
+
     case BOSS_HOVER:
     {
+        // Wait for 5 seconds
         bossTimer += dt;
 
-        // Wait for 5 seconds before attacking
         if (bossTimer >= BOSS_ATTACK_TIME)
         {
+            // Lock onto player's current position
             attackTargetX = playerX;
             attackTargetY = playerY;
+
+            bossHasHitPlayer = 0; // Reset hit detection for new attack
 
             bossTimer = 0.0f;
             bossState = BOSS_ATTACK;
@@ -150,6 +183,9 @@ void BOSS_Movement(void)
         break;
     }
 
+    // =================================
+    // ATTACK STATE
+    // =================================
 
     case BOSS_ATTACK:
     {
@@ -158,75 +194,82 @@ void BOSS_Movement(void)
 
         distance = sqrtf(dx * dx + dy * dy);
 
-        // Stop when close enough to the player
+        // Stop before reaching the player
         if (distance <= BOSS_STOP_DISTANCE + 1.0f)
         {
+            BOSS_SetRandomPosition();
+
             bossState = BOSS_RETURN;
             break;
         }
 
-        // Calculate how far the boss can move this frame
+        // Calculate movement for this frame
         float move = BOSS_ATTACK_SPEED * dt;
 
-        // Calculate the maximum distance it can move
-        // without getting closer than the stop distance
+        // Prevent boss from getting too close
         float allowedMove = distance - BOSS_STOP_DISTANCE;
 
         if (move > allowedMove)
             move = allowedMove;
 
-        // Move directly towards the player's locked position
+        // Move towards the locked player position
         bossX += (dx / distance) * move;
         bossY += (dy / distance) * move;
 
-        // Check whether the boss has reached its stopping distance
+        // Check if boss hits player
+        if (!bossHasHitPlayer && BOSS_CheckCollision())
+        {
+            bossHasHitPlayer = 1;
+
+            // Only take damage if shield is not active
+            if (!shieldActive)
+            {
+                playerHealth -= 25.0f;
+
+                if (playerHealth <= 0.0f)
+                {
+                    playerHealth = 0.0f;
+                    CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+                    return;
+                }
+            }
+        }
+
+        // Check whether boss has reached stopping distance
         if (distance - move <= BOSS_STOP_DISTANCE + 1.0f)
         {
+            BOSS_SetRandomPosition();
+
             bossState = BOSS_RETURN;
         }
 
         break;
     }
 
+    // =================================
+    // RETURN STATE
+    // =================================
 
     case BOSS_RETURN:
     {
-        // Direction from player to boss
-        dx = bossX - playerX;
-        dy = bossY - playerY;
-
-        distance = sqrtf(dx * dx + dy * dy);
-
-        if (distance < 0.001f)
-        {
-            dx = 1.0f;
-            dy = 0.0f;
-            distance = 1.0f;
-        }
-
-        // Find a position 300 pixels away
-        float targetX = playerX +
-            (dx / distance) * BOSS_DISTANCE;
-
-        float targetY = playerY +
-            (dy / distance) * BOSS_DISTANCE;
-
-        // Move away from player
+        // Move towards the new random position
         BOSS_MoveTowards(
-            targetX,
-            targetY,
-            BOSS_HOVER_SPEED
+            returnTargetX,
+            returnTargetY,
+            BOSS_RETURN_SPEED
         );
 
-        // Only start the next 5-second timer
-        // once the boss has returned
-        dx = targetX - bossX;
-        dy = targetY - bossY;
+        dx = returnTargetX - bossX;
+        dy = returnTargetY - bossY;
 
         distance = sqrtf(dx * dx + dy * dy);
 
-        if (distance < 5.0f)
+        // Boss has reached its destination
+        if (distance < 1.0f)
         {
+            bossX = returnTargetX;
+            bossY = returnTargetY;
+
             bossTimer = 0.0f;
             bossState = BOSS_HOVER;
         }
@@ -235,7 +278,6 @@ void BOSS_Movement(void)
     }
     }
 }
-
 
 
 // =====================================
@@ -262,7 +304,6 @@ void BOSS_Draw(void)
 void BOSS_Update(void)
 {
     BOSS_Movement();
-    BOSS_Debug();
     BOSS_Draw();
 }
 

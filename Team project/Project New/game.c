@@ -21,6 +21,7 @@ CP_Image objImg[OBJ_TYPE_COUNT];
 CP_Image objBG[OBJ_TYPE_COUNT];
 CP_Image bossBG;
 CP_Image demonBoss;
+CP_Image vent;
 
 
 // For Resume Game Btn
@@ -38,6 +39,7 @@ void Game_Init(void)
 	Zilong = CP_Image_Load("Assets/Main_Character.png");
 	npc1 = CP_Image_Load("Assets/Worker.png"); // Load npc 1
 	demonBoss = CP_Image_Load("Assets/DemonBoss.png"); //load Boss
+	vent = CP_Image_Load("Assets/Vent.png");
 	platform = CP_Image_Load("Assets/Platform.png");
 	projectile = CP_Image_Load("Assets/paperball.png");
 	objImg[OBJ_DESK] = CP_Image_Load("Assets/desk.png");

@@ -425,7 +425,7 @@ void level_1st(void) {
 			first_level[i][4],
 			first_level[i][5]);
 	}
-	ProjectileActive = 0;
+
 	Objective_Text();
 	ingameTimer();
 	TeleportTimer();
@@ -690,6 +690,7 @@ void level_4th(void) {
 		score_complete_level();
 		NPC_UpdateProjectiles(0);
 		// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
+		level_selected = boss_level;
 		CP_Engine_SetNextGameState(Elevator_Init, Elevator_Update, Elevator_Exit);    // Move to boss lvl after lvl 4
 	}
 }
