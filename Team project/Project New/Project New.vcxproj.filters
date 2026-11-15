@@ -95,6 +95,9 @@
     <Filter Include="Source Files\Player">
       <UniqueIdentifier>{7fe43604-40be-41ad-9a28-ac0bba5fce7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header File\NewFilter1">
+      <UniqueIdentifier>{8ca2b7ce-927d-48f8-a79b-3e9ad6cc072a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="elevator.h">

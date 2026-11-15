@@ -31,3 +31,12 @@ void save_lvl_score(int score);
 
 // Can move time_buf to timer.h, for now its here
 typedef enum BUFFER_SIZE { TIME_BUF_SIZE = 16, SCORE_BUF_SIZE = 16 };
+
+/*********Treasure Related************/
+#define MAX_TREASURES 2
+
+extern int Trea_score;
+extern int Trea;
+extern int treasure_collected[MAX_TREASURES];
+int Treasure(float x, float y, int treasure_id);
+

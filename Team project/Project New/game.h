@@ -24,7 +24,6 @@ void Game_Init(void);
 
 void Game_Reset(void);
 
-void level_selection(int level_no);
 void Game_Update(void);
 
 void Game_Exit(void);

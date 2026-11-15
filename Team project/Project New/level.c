@@ -16,50 +16,37 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "scoring.h"
 #include "elevator.h"
 
+/*Platform positions for Level 3*/
+/******************************************CHECK THIS MULTIPLE DEFINITIONS***************************/
+/*USED IN BOTH OBJECTS AND LEVELS FUNCTIONS*/
+#define LEVEL3_STATIC_PLATFORMS 29
+#define LEVEL3_SEC_BUILDING 580.0f
+#define LEVEL3_THIRD_BUILDING 280.0f
+#define LEVEL3_FOURTH_BUILDING 400.0f
+#define LEVEL3_BUILDING_WALL 10.0f
+#define LEVEL3_FOURTH_BUILDING_WIDTH 3.0f
+#define PLATFORM_WIDTH_3 120.0f
 
-
+#define LEVEL3_PLATFORMS 30
+#define LEVEL3_SEC_BUILDING 580.0f
+#define LEVEL3_THIRD_BUILDING 280.0f
+#define LEVEL3_FOURTH_BUILDING 320.0f
+#define LEVEL3_BUILDING_WALL 10.0f
+#define LEVEL3_FOURTH_BUILDING_WIDTH 2.0f
 
 #define LEVEL1_STATIC_PLATFORMS 29
 #define LEVEL2_STATIC_PLATFORMS 29
 #define LEVEL4_STATIC_PLATFORMS 29
+/*END*/
 
 // compile time constant 
 enum {LEVELS = 6};
 
 // Platform Parameters
-#define PLATFORM_WIDTH_3 120.0f
 #define PARAMETERS 6
 #define NO_ROTATION 0
 #define CORNER_RADIUS 0
 #define RECT_HORIZ_H 15
-
-#define HIGHLIGHT_PAD 6.0f
-
-#define PRESSURE_WIDTH 30.0f
-#define PRESSURE_HEIGHT 15.0f
-#define DOOR_WIDTH 10.0f
-#define DOOR_HEIGHT 80.0f
-
-
-
-float killZoneX = 0.0f;     // start at the left
-const float killZoneEndX = 1700.0f;  // last position
-const float killZoneSpeed = 50.0f;   // pixels per second
-
-typedef struct {
-	float kx, ky, kw, kh;
-} k_zone;
-
-typedef struct {
-	float px, py, pw, ph;
-	float dx, dy, dw, dh;
-	float d2x, d2y, d2w, d2h;
-} pressure_door_pos;
-
-
-int level_selected = level_1;
-
-struct LevelScore Level_Score = { 0, 0, 0, 0 };
 
 /*******************Level Timer Functions************/
 float Seconds, Zeroing_Time;
@@ -214,10 +201,54 @@ spawn NPC_1_spawns[LEVELS] = {
 							
 							 };
 
+/**********************************************************LEVEL Selection*********************************************************************/
 
-
+// Level selection function to call the appropriate level function based on the current level_selected value.
+int level_selected = level_1;
+void level_selection(int level_no) {
+	switch (level_no) {
+	case main_menu:
+		Main_Menu_Update();
+		break;
+	case level_1:
+		level_1st();
+		break;
+	case level_2:
+		level_2nd();
+		break;
+	case level_3:
+		level_3rd();
+		break;
+	case level_4:
+		level_4th();
+		break;
+	case boss_level:
+		Elevator_Update();
+		break;
+	}
+}
 
 /**********************************************************LEVEL Platforms*********************************************************************/
+
+float killZoneX = 0.0f;     // start at the left
+const float killZoneEndX = 1700.0f;  // last position
+const float killZoneSpeed = 50.0f;   // pixels per second
+
+typedef struct {
+	float kx, ky, kw, kh;
+} k_zone;
+
+typedef struct {
+	float px, py, pw, ph;
+	float dx, dy, dw, dh;
+	float d2x, d2y, d2w, d2h;
+} pressure_door_pos;
+
+//Pressure plate and parameters for levels 
+#define PRESSURE_WIDTH 30.0f
+#define PRESSURE_HEIGHT 15.0f
+#define DOOR_WIDTH 10.0f
+#define DOOR_HEIGHT 80.0f
 
 /***************** LEVEL 1: ********************/
 /*Platform positions for Level 1*/
@@ -296,21 +327,6 @@ k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
 // Win_con positions in level 3
 win_condition level3_win = { 1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS };
 
-/*Platform positions for Level 3*/
-/******************************************CHECK THIS MULTIPLE DEFINITIONS***************************/
-#define LEVEL3_STATIC_PLATFORMS 29
-#define LEVEL3_SEC_BUILDING 580.0f
-#define LEVEL3_THIRD_BUILDING 280.0f
-#define LEVEL3_FOURTH_BUILDING 400.0f
-#define LEVEL3_BUILDING_WALL 10.0f
-#define LEVEL3_FOURTH_BUILDING_WIDTH 3.0f
-
-#define LEVEL3_PLATFORMS 30
-#define LEVEL3_SEC_BUILDING 580.0f
-#define LEVEL3_THIRD_BUILDING 280.0f
-#define LEVEL3_FOURTH_BUILDING 320.0f
-#define LEVEL3_BUILDING_WALL 10.0f
-#define LEVEL3_FOURTH_BUILDING_WIDTH 2.0f
 float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 1st building ----------  */
@@ -466,6 +482,8 @@ int Object_Check(void) {
 	return -1;
 }
 
+
+#define HIGHLIGHT_PAD 6.0f
 void Objects_Draw(void) {
 	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
 	float dt = CP_System_GetDt();

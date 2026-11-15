@@ -28,6 +28,8 @@ int npc_score = 0;
 int timer_bonus_awarded = 0;
 int level_score_locked = 0;
 
+struct LevelScore Level_Score = { 0, 0, 0, 0 }; //Was in level.c, moved to scoring.c by Lewin
+
 void game_score(void) {
 
 	if (level_score_locked) {
