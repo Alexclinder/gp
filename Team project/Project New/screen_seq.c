@@ -468,6 +468,11 @@ void Controls_Screen(void) {
 
 void Screen_Exit(void)
 {
+    CP_Image_Free(mainbackground);
+    CP_Image_Free(defeat);
+    CP_Image_Free(levelselection);
+    CP_Image_Free(frame);
+    CP_Image_Free(pausemenu);
     CP_Font_Free(Font);
 }
 

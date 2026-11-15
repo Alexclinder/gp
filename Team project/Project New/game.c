@@ -152,4 +152,5 @@ void Game_Exit(void)
 		CP_Image_Free(&objImg[i]);
 		CP_Image_Free(&objBG[i]);
 	}
+
 }
