@@ -3,6 +3,7 @@
 void Screen_Init(void);
 void Screen_Exit(void);
 void Next_level_Init(void);
+void Exit_Main_Menu_Init(void);
 
 // Screens Sequence
 void Main_Menu_Update(void);

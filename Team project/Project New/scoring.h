@@ -1,6 +1,6 @@
 #pragma once
 
-extern int* score;
+extern int level_score;
 
 void game_score(void);
 
@@ -19,3 +19,15 @@ extern int player_score;
 
 extern int timer_bonus_awarded;
 extern int level_score_locked;
+
+extern struct LevelScore {
+	int level1_score;
+	int level2_score;
+	int level3_score;
+	int level4_score;
+} Level_Score;
+
+void save_lvl_score(int score);
+
+// Can move time_buf to timer.h, for now its here
+typedef enum BUFFER_SIZE { TIME_BUF_SIZE = 16, SCORE_BUF_SIZE = 16 };

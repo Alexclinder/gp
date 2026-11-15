@@ -43,10 +43,10 @@ void ResetALLTimers_Status(void) {
 }
 
 // score_reset reset level score but not the player_score (cumulative of all level_score)
-void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected); score_reset(); }
-void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected); score_reset(); }
-void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected); score_reset(); }
-void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected); score_reset(); }
+void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
 
 void Screen_Init(void)
 {
@@ -185,16 +185,27 @@ void Pause_Menu_Update(void)
     CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Controls", rect_x, third_y, Screen_Init, Controls_Screen, Screen_Exit);
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Exit to Main Menu", rect_x, fourth_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, fourth_y, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
+ 
+}
 
+void Exit_Main_Menu_Init(void)
+{
+    // prevents from constantly incrementing 
+    if (!level_score_locked) {
+        player_score += level_score;
+        level_score_locked = 1;
+    }
+
+    Screen_Init();
 }
 
 void Win_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
-    char score_buf[16] = { 0 };
-    sprintf_s(score_buf, 16, "Score: %d", *score);
+    char score_buf[SCORE_BUF_SIZE] = { 0 };
+    sprintf_s(score_buf, SCORE_BUF_SIZE, "Score: %d", level_score);
     // move the actual score value to the right of Score:
     drawTextCenter(score_buf, rect_x, 300.0f, 1.0f);
      
@@ -202,14 +213,15 @@ void Win_Screen(void) {
     CP_Settings_TextSize(50);
     CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
     CP_Settings_Fill(black);
-    char buffer[16] = { 0 };
-    sprintf_s(buffer, 16, "Time: %.2f", WinScreenTime);
+    char buffer[TIME_BUF_SIZE] = { 0 };
+    sprintf_s(buffer, TIME_BUF_SIZE, "Time: %.2f", WinScreenTime);
 
     CP_Font_DrawText("Well Done", rect_x, 100.0f);
     CP_Font_DrawText(buffer, rect_x, 150.0f);
-    // For testing
-    char total_score_buf[32] = { 0 };
-    sprintf_s(total_score_buf, 32, "Total Score: %d", player_score);
+
+    // Need larger size than 16 chars, otherwise game will crash
+    char total_score_buf[SCORE_BUF_SIZE*2] = { 0 };
+    sprintf_s(total_score_buf, SCORE_BUF_SIZE*2, "Total Score: %d", player_score);
 
     CP_Font_DrawText(total_score_buf, rect_x, 200.0f);
 
@@ -246,38 +258,89 @@ void Lose_Screen(void) {
     
 }
 
+
+
+// Score: = 6 chars, 1 white space, 
+// assume score can reach up to 99,999.00 (excluding comma - 8 char) 
+// 1 null terminator - 6 + 1 + 8 + 1 = 16
+
 void Leaderboard_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 140, 200, 0));
 
+    float left_offset = 100.0f;
+    float right_offset = 500.0f;
+
+    float top_timer_y = 300.0f;
+    float bottom_timer_y = 700.0f;
+
+    float score_offset_y = 50.0f;
+
+    float timer_score_offset_x = 300.0f;
+    float timer_score_top_y = 200.0f;
+    float timer_score_bot_y = 600.0f;
+
+    float timer_score_w = 400.0f;
 
     CP_Settings_TextSize(textSize);
     //Level 1 Leaderboard Time 
-    CP_Font_DrawTextBox("Level 1 \nScore & Time", rect_x - 100.0f, 200.0, 400.0);
-    char Level1_Time[16] = { 0 };
-    sprintf_s(Level1_Time, 16, "Time: %.2f", Level_Timer.level1_time);
-    CP_Font_DrawText(Level1_Time, rect_x + 100.0f, 300.0);
+    CP_Font_DrawTextBox("Level 1 \nScore & Time", rect_x - left_offset, timer_score_top_y, timer_score_w);
+    char Level1_Time[TIME_BUF_SIZE] = { 0 };
+    sprintf_s(Level1_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level1_time);
+    CP_Font_DrawText(Level1_Time, rect_x + left_offset, top_timer_y);
+
+    char Level1_Score[SCORE_BUF_SIZE] = { 0 };
+    sprintf_s(Level1_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level1_score);
+    CP_Font_DrawText(Level1_Score, rect_x + left_offset, top_timer_y + score_offset_y);
+
     //Level 2 Leaderboard Time
-    CP_Font_DrawTextBox("Level 2 \nScore & Time", rect_x + 300.0f, 200.0, 400.0);
-    char Level2_Time[16] = { 0 };
-    sprintf_s(Level2_Time, 16, "Time: %.2f", Level_Timer.level2_time);
-    CP_Font_DrawText(Level2_Time, rect_x + 500.0f, 300.0);
+    CP_Font_DrawTextBox("Level 2 \nScore & Time", rect_x + timer_score_offset_x, timer_score_top_y, timer_score_w);
+    char Level2_Time[TIME_BUF_SIZE] = { 0 };
+    sprintf_s(Level2_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level2_time);
+    CP_Font_DrawText(Level2_Time, rect_x + right_offset, top_timer_y);
+
+    char Level2_Score[SCORE_BUF_SIZE] = { 0 };
+    sprintf_s(Level2_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level2_score);
+    CP_Font_DrawText(Level2_Score, rect_x + right_offset, top_timer_y + score_offset_y);
+
     //Level 3 Leaderboard Time
-    CP_Font_DrawTextBox("Level 3 \nScore & Time", rect_x - 100.0f, 600.0, 400.0);
-    char Level3_Time[16] = { 0 };
-    sprintf_s(Level3_Time, 16, "Time: %.2f", Level_Timer.level3_time);
-    CP_Font_DrawText(Level3_Time, rect_x + 100.0f, 700.0);
+    CP_Font_DrawTextBox("Level 3 \nScore & Time", rect_x - left_offset, timer_score_bot_y, timer_score_w);
+    char Level3_Time[TIME_BUF_SIZE] = { 0 };
+    sprintf_s(Level3_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level3_time);
+    CP_Font_DrawText(Level3_Time, rect_x + left_offset, bottom_timer_y);
+
+    char Level3_Score[SCORE_BUF_SIZE] = { 0 };
+    sprintf_s(Level3_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level3_score);
+    CP_Font_DrawText(Level3_Score, rect_x + left_offset, bottom_timer_y + score_offset_y);
+
     //Level 4 Leaderboard Time
-    CP_Font_DrawTextBox("Level 4 \nScore & Time", rect_x + 300.0f, 600.0, 400.0);
+    CP_Font_DrawTextBox("Level 4 \nScore & Time", rect_x + timer_score_offset_x, timer_score_bot_y, timer_score_w);
+
+    // @ToDo Lewin, add time here
+
+    char Level4_Score[SCORE_BUF_SIZE] = { 0 };
+    sprintf_s(Level4_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level4_score);
+    CP_Font_DrawText(Level4_Score, rect_x + right_offset, bottom_timer_y + score_offset_y);
+
+    // Total Score
+    CP_Font_DrawTextBox("Total Score", rect_x + timer_score_offset_x, timer_score_bot_y, timer_score_w);
+
+    // @ToDo Lewin, add time here
+
+    // player_score buf needs to be more than 16 char, or game will crash
+    char Player_Score[SCORE_BUF_SIZE*2] = { 0 };
+    sprintf_s(Player_Score, SCORE_BUF_SIZE*2, "Total Score: %d", player_score);
+    CP_Font_DrawText(Player_Score, rect_x - right_offset, first_y = CP_System_GetWindowHeight() / 2.0 - 300.0f);
+
 
     // Restart Level
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
     // Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
     CP_Settings_Fill(orange);
-    dynamicBtn("Level Select", rect_x-500.0f, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Level Select", rect_x - right_offset, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Exit to Main Menu", rect_x - 500.0f, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x - right_offset, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
 
@@ -458,12 +521,14 @@ void dynamicBtn(const char* text, float rect_x, float rect_y, void* init(void), 
         CP_Image_Draw(frame, rect_x, rect_y, rect_width * scalar, rect_height * scalar, 255);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
             CP_Engine_SetNextGameStateForced(init, update, exit);
+        return 1;
     }
     else {
         scalar = 1.0f;
         drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar);
         CP_Settings_ImageMode(CP_POSITION_CENTER);
         CP_Image_Draw(frame, rect_x, rect_y, rect_width, rect_height, 255);
+        return 0;
     }
 }
 

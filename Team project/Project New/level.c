@@ -71,10 +71,14 @@ typedef struct {
 
 
 int level_selected = level_1;
+
+struct LevelScore Level_Score = { 0, 0, 0, 0 };
+
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
 struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f };
+
 
 void SaveTime(float time) {
 	switch (level_selected) {
@@ -111,11 +115,11 @@ spawn player_spawns[LEVELS] = {
 spawn NPC_1_spawns[LEVELS] = {
 			
 							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
-							   { 1250.0f, 200.0f }, // level 1
-							   { 100.0f, 100.0f }, // level 2
-							   { 200.0f, 300.0f }, // level 3
-							   { 300.0f, 200.0f }, // level 4
-							   { 300.0f, 200.0f }, // boss level
+							   { 100.0f, 900.0f }, // level 1
+							   { 100.0f, 900.0f }, // level 2
+							   { 800.0f, 900.0f }, // level 3
+							   { 1200.0f, 900.0f }, // level 4
+							   { 300.0f, 900.0f }, // boss level
 							
 							 };
 
@@ -141,17 +145,17 @@ void Objective_Text(void){
 	float text_size = 1.0f;
 	game_score();
 
-	char buffer[16] = { 0 };
-	sprintf_s(buffer, 16, "%d", *score);
+	char buffer[TIME_BUF_SIZE] = { 0 };
+	sprintf_s(buffer, TIME_BUF_SIZE, "%d", level_score);
 
 	// Font Size is 100.0f by default
 
-	// display *score that will persists through all levels
+	// display level_score that will persists through all levels
 	switch (level_selected){
 		case level_4:
 			drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size);
-			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
-			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
 			break;
 		case level_3:
 			drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
@@ -163,13 +167,13 @@ void Objective_Text(void){
 		case level_2: 
 			drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
 			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
-			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
 			
 			break;
 		case level_1:
 			drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size);
-			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
-			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
+			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
 			
 			break;
 		default:
@@ -269,8 +273,9 @@ pressure_door_pos level2 = { .px = 1100.0f, .py = 570.0f, .pw = PRESSURE_WIDTH, 
 // LEVEL 2: Entering the building
 float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
 	{ 0.0f, 250.0f, 630.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 600.0f, 10.0f, 50.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 10.0f, 50.0f, 560.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 500.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 345.0f, 355.0f, 15.0f, 220.0f, NO_ROTATION, CORNER_RADIUS },
 	{ 800.0f, 360.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 1000.0f, 250.0f, 600.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
 	{ 200.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
@@ -376,8 +381,8 @@ float ingameTimer(void) {
 		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
 
 		SaveTime(Seconds);//Save the current time to the Level_Timer struct for the current level, Time stored in the struct is displayed leaderboard
-		char buffer[16] = { 0 };
-		sprintf_s(buffer, 16, "%.2f", Seconds);
+		char buffer[TIME_BUF_SIZE] = { 0 };
+		sprintf_s(buffer, TIME_BUF_SIZE, "%.2f", Seconds);
 		CP_Font_DrawText(buffer, CP_System_GetWindowWidth()/2, 0);
 		CP_Settings_Fill(yellow);
 
@@ -426,52 +431,21 @@ void level_1st(void) {
 			first_level[i][5]);
 	}
 
-	Objective_Text();
-	ingameTimer();
-	TeleportTimer();
-	Teleport_Mechannic();
-
 	if (Treasure(410.0f, 150.0f, 0))
 	{
-		*score += 500;
+		level_score += 500;
 	}
 
 	if (Treasure(800.0f, 300.0f, 1))
 	{
-		*score += 500;
+		level_score += 500;
 	}
-
-	if (isCarrying) Character_MovementCarry();
-	else Character_MovementDefault();
-	
-	Shield_Update();
-
 	// level 1 kill boundary 
 
 	kill_zone_alternating_movement(level1_kwall.kx, level1_kwall.ky, level1_kwall.kw, level1_kwall.kh, 500.0f, 800.0f);
 	kill_zone_alternating_movement(level1_kwall2.kx, level1_kwall2.ky, level1_kwall2.kw, level1_kwall2.kh, 900.0f, 1100.0f);
 
-	// Spawn in Enemy
-	NPC_MovementDefault();
-	NPC_Attack();
-	NPC_UpdateProjectiles(1);
-	NPC_CheckShieldCollision();
-	NPC_CheckReflectedHit();
-	NPC_DrawProjectiles();
 
-	// Check for collision then end game if hit
-	if (NPC_CheckPlayerCollision() == 1)
-	{
-		NPC_UpdateProjectiles(0);
-		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
-		return;
-	}
-	
-	Objects_Draw();
-	//Player_Animation_Checks();
-	Player_Animation();
-	Draw_ClingBar();
-	Shield_Draw();
 	// iterates thru the 4 rows and 6 col
 	// Nested loop not needed as first level columns are iterated through.
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
@@ -500,41 +474,16 @@ void level_2nd(void) {
 						 level2.dx, level2.dy, level2.dw, level2.dh,
 						 level2.d2x, level2.d2y, level2.d2w, level2.d2h 
 						);
-
-
-	Objective_Text();
-	ingameTimer();
-	TeleportTimer();
-	Teleport_Mechannic();
-
-	if (isCarrying) Character_MovementCarry();
-	else Character_MovementDefault();
-
-	Shield_Update();
-
-	// Spawn in Enemy
-	NPC_MovementDefault();
-	NPC_Attack();
-	NPC_UpdateProjectiles(1);
-	NPC_CheckShieldCollision();
-	NPC_CheckReflectedHit();
-	NPC_DrawProjectiles();
-
-	// Check for collision then end game if hit
-	if (NPC_CheckPlayerCollision() == 1)
-	{
-		NPC_UpdateProjectiles(0);
-		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
-		return;
+	// Treasure at right side
+	if (Treasure(1350.0f, 460.0f, 0)) {
+		level_score += 500;
 	}
 
-	Objects_Draw();
-	//Player_Animation_Checks();
-	Player_Animation();
-	Draw_ClingBar();
-	Shield_Draw();
-	// iterates thru the 4 rows and 6 col
-	// Nested loop not needed as first level columns are iterated through.
+	// Treasure at left side 
+	if (Treasure(150.0f, 540.0f, 1)) {
+		level_score += 500;
+	}
+
 	DrawExit(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius);
 
 	if (CheckWinCondition(level2_win.x, level2_win.y, level2_win.w, level2_win.h, level2_win.degrees, level2_win.cornerRadius) == 1) {
@@ -563,25 +512,19 @@ void level_3rd(void) {
 			third_level[i][5]);
 	}
 
-	DrawBG(background);
-	Objective_Text();
-	ingameTimer();
-	TeleportTimer();
-	Teleport_Mechannic();
 
+	DrawBG(background);
+	
 	// on tiny platform directly ontop of longest killzone
 	if (Treasure(1050.0f, 680.0f, 0))
 	{
-		*score += 500;
+		level_score += 500;
 	}
 
 	if (Treasure(1550.0f, 850.0f, 1))
 	{
-		*score += 500;
+		level_score += 500;
 	}
-
-	if (isCarrying) Character_MovementCarry();
-	else Character_MovementDefault();
 
 	// Top Platform connecting 2nd and 3rd building 
 
@@ -589,24 +532,7 @@ void level_3rd(void) {
 		RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS,
 		LEFT_BOUNDARY, RIGHT_BOUNDARY);
 	
-	// Spawn in Enemy
-	NPC_MovementDefault();
-	NPC_Attack();
-	NPC_UpdateProjectiles(1);
-	NPC_CheckShieldCollision();
-	NPC_CheckReflectedHit();
-	NPC_DrawProjectiles();
-
-	// Check for collision then end game if hit
-	if (NPC_CheckPlayerCollision() == 1)
-	{
-		NPC_UpdateProjectiles(0);
-		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
-		return;
-	}
 	
-	Shield_Update();
-
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level3.px, level3.py, level3.pw, level3.ph,
 		level3.dx, level3.dy, level3.dw, level3.dh);
@@ -614,11 +540,6 @@ void level_3rd(void) {
 	kill_zone(level3_k.kx, level3_k.ky, level3_k.kw, level3_k.kh);
 	kill_zone(level3_4b.kx, level3_4b.ky, level3_4b.kw, level3_4b.kh);
 	kill_zone(level3_23b.kx, level3_23b.ky, level3_23b.kw, level3_23b.kh);
-	Objects_Draw();
-	//Player_Animation_Checks();
-	Player_Animation();
-	Draw_ClingBar();
-	Shield_Draw();
 
 
 	DrawExit(level3_win.x, level3_win.y, level3_win.w, level3_win.h, level3_win.degrees, level3_win.cornerRadius);
@@ -656,33 +577,6 @@ void level_4th(void) {
 			fourth_level[i][4],
 			fourth_level[i][5]);
 	}
-	Objective_Text();
-	if (isCarrying) Character_MovementCarry();
-	else Character_MovementDefault();
-
-	Shield_Update();
-
-	// Spawn in Enemy
-	NPC_MovementDefault();
-	NPC_Attack();
-	NPC_UpdateProjectiles(1);
-	NPC_CheckShieldCollision();
-	NPC_CheckReflectedHit();
-	NPC_DrawProjectiles();
-
-	// Check for collision then end game if hit
-	if (NPC_CheckPlayerCollision() == 1)
-	{
-		NPC_UpdateProjectiles(0);
-		CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
-		return;
-	}
-
-	Objects_Draw();
-	//Player_Animation_Checks();
-	Player_Animation();
-	Draw_ClingBar();
-	Shield_Draw();
 
 	DrawExit(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius);
 

@@ -47,6 +47,7 @@ void Game_Init(void)
 	objImg[OBJ_PRINTER] = CP_Image_Load("Assets/printer.png");
 	objBG[OBJ_PRINTER] = CP_Image_Load("Assets/printer_background.png");
 	Objects_Reset();
+	score_reset();
 
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
@@ -98,10 +99,40 @@ void Game_Update(void)
 		}
 		
 
+		Objective_Text();
+		ingameTimer();
+		TeleportTimer();
+		Teleport_Mechannic();
+		
+		// Spawn in Enemy
+		NPC_MovementDefault();
+		NPC_Attack();
+		NPC_UpdateProjectiles(1);
+		NPC_CheckShieldCollision();
+		NPC_CheckReflectedHit();
+		NPC_DrawProjectiles();
 
-		// if player loses, go to Lose screen
-			// CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
-			// status = 0;
+		if (isCarrying) Character_MovementCarry();
+		else Character_MovementDefault();
+
+		Shield_Update();
+
+		// Check for collision then end game if hit
+		if (NPC_CheckPlayerCollision() == 1)
+		{
+			NPC_UpdateProjectiles(0);
+			CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
+			// Update Player_Score if ded
+			player_score += level_score;
+			return;
+		}
+
+		Objects_Draw();
+		Player_Animation();
+		Draw_ClingBar();
+		Shield_Draw();
+
+		save_lvl_score(level_score);
 }
 
 
