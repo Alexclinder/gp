@@ -15,22 +15,16 @@ void Completed_Game_Screen(void);
 void Level_Select_Screen(void);
 void Controls_Screen(void);
 
-// Dynamic button function to handle hover and click events
+// Elements for the menu buttons
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
+void drawBtn(float x, float y, float w, float h, const char* text, float scalar);
+void drawTextCenter(const char* text, float x, float y, float scalar);
+
+// Dynamic button function to handle hover and click events
 void dynamicBtn(const char* text, float rect_x, float rect_y, void *init(void), void *update(void), void *exit(void));
 void Exit_dynamicBtn(const char* text, float rect_x, float rect_y);
 
-// Elements for the menu buttons
-void drawBtn(float x, float y, float w, float h, const char* text, float scalar);
-void drawTextCenter(const char* text, float x, float y, float scalar);
 
 // For Objective and score text
 void drawTextTopLeft(const char* text, float x, float y, float scalar);
 void drawScoreTopLeft(const int* text, float x, float y, float scalar);
-
-extern CP_Image mainbackground;
-extern CP_Image frame;
-extern CP_Image levelselection;
-extern CP_Image defeat;
-extern CP_Image pausemenu;
-extern CP_Font Font;

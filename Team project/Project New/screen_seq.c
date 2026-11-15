@@ -7,7 +7,6 @@
 
 		The remaining functions are used to simplify the code and make it more readable.
 */
-
 #include "cprocessing.h"
 #include "game_mechanics.h"
 #include "game.h"
@@ -17,15 +16,10 @@
 #include "colors.h"
 #include "sounds.h"
 #include "scoring.h"
+#include "Images.h"
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
-CP_Image mainbackground;
-CP_Image frame;
-CP_Image levelselection;
-CP_Image defeat;
-CP_Image pausemenu;
-CP_Font Font;
 
 float first_y;
 float second_y;
@@ -36,28 +30,55 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 
-void ResetALLTimers_Status(void) {
-    TimeSet = 0;
-    ResetTime = 1; 
-    Teleport_count = 3;
-}
+/*******Transition Sequences*******/
 void Screen_Init(void)
 {
     //Use to load all the sounds to be used in the game
     LoadSounds();
     // Use to initalize the color variables with values stored
     color_create();
+    // Use to initalize the Assets Images used in the game
+    LoadImages();
 
-    mainbackground = CP_Image_Load("Assets/MainMenu.png");
-    defeat = CP_Image_Load("Assets/Defeat.png");
-    levelselection = CP_Image_Load("Assets/LevelSelect.png");
-    frame = CP_Image_Load("Assets/buttonframe.png");
-    pausemenu = CP_Image_Load("Assets/pause.png");
-    Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
     CP_Font_Set(Font);
+
     PauseTimeStatus = 1;
 }
 
+void Screen_Exit(void)
+{
+    CP_Image_Free(mainbackground);
+    CP_Image_Free(defeat);
+    CP_Image_Free(levelselection);
+    CP_Image_Free(frame);
+    CP_Image_Free(pausemenu);
+    CP_Font_Free(Font);
+}
+
+void Next_level_Init(void) {
+    Game_Next_Level();
+
+    Game_Reset();
+}
+
+void Exit_Main_Menu_Init(void)
+{
+    // prevents from constantly incrementing 
+    if (!level_score_locked) {
+        player_score += level_score;
+        level_score_locked = 1;
+    }
+
+    Screen_Init();
+}
+
+
+
+void ResetALLTimers_Status(void) {
+    TimeSet = 0;
+    ResetTime = 1;
+    Teleport_count = 3;
+}
 /***********************Level Initialization Functions******************/
 // score_reset reset level score but not the player_score (cumulative of all level_score)
 void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
@@ -447,41 +468,9 @@ void Controls_Screen(void) {
 
 
 
-
-
-/*******Transition Sequences*******/
-void Exit_Main_Menu_Init(void)
-{
-    // prevents from constantly incrementing 
-    if (!level_score_locked) {
-        player_score += level_score;
-        level_score_locked = 1;
-    }
-
-    Screen_Init();
-}
-
-void Next_level_Init(void) {
-    Game_Next_Level();
-
-    Game_Reset();
-}
-
-void Screen_Exit(void)
-{
-    CP_Image_Free(mainbackground);
-    CP_Image_Free(defeat);
-    CP_Image_Free(levelselection);
-    CP_Image_Free(frame);
-    CP_Image_Free(pausemenu);
-    CP_Font_Free(Font);
-}
-
 // Score: = 6 chars, 1 white space, 
 // assume score can reach up to 99,999.00 (excluding comma - 8 char) 
 // 1 null terminator - 6 + 1 + 8 + 1 = 16
-
-
 
 /*
 The functions below are the elements or functionalities of each updated screen*/

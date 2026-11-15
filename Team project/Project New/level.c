@@ -15,6 +15,8 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "sounds.h"
 #include "scoring.h"
 #include "elevator.h"
+#include "Images.h"
+
 
 /*Platform positions for Level 3*/
 /******************************************CHECK THIS MULTIPLE DEFINITIONS***************************/

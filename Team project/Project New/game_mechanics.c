@@ -9,6 +9,7 @@
 #include "npc_mechanics.h"
 #include "sounds.h"
 #include "scoring.h"
+#include "Images.h"
 
 #define MOVE_SPEED     300.0f
 #define JUMP_SPEED     500.0f

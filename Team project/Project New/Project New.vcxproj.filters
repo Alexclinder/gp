@@ -40,6 +40,7 @@
     <ClCompile Include="Objects.c">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Images.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -77,6 +78,9 @@
     </ClInclude>
     <ClInclude Include="PlayerStats.h">
       <Filter>Header File\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Images.h">
+      <Filter>Header File\Assets Related</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
