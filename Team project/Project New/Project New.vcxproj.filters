@@ -25,8 +25,12 @@
     <ClInclude Include="scoring.h" />
     <ClInclude Include="screen_seq.h" />
     <ClInclude Include="sounds.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="elevator.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Project New.rc" />
   </ItemGroup>
 </Project>

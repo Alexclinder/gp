@@ -518,6 +518,23 @@ void drawScoreTopLeft(const int* text, float x, float y, float scalar)
 This function checks if the mouse is hovering over a button area
 and scales the button accordingly.
 If the button is clicked, it transitions to the game state.      */
+
+int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
+{
+    // check if the click is within 
+    // x bound of the area(check the x-axis radius from the centre of the rectangle(x coordinate - (width/2) && x coordinate + (width/2)))
+    // y bound of the area(check the y-axis radius from the centre of the rectangle(y coordinate - (length/2) && x coordinate + (length/2)))
+    if ((click_x >= area_center_x - area_width / 2 && click_x <= area_center_x + area_width / 2) &&
+        (click_y >= area_center_y - area_height / 2 && click_y <= area_center_y + area_height / 2))
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 void dynamicBtn(const char* text, float rect_x, float rect_y, void* init(void), void* update(void), void* exit(void)) {
     if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;

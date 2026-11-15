@@ -16,6 +16,7 @@ void Level_Select_Screen(void);
 void Controls_Screen(void);
 
 // Dynamic button function to handle hover and click events
+int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y);
 void dynamicBtn(const char* text, float rect_x, float rect_y, void *init(void), void *update(void), void *exit(void));
 void Exit_dynamicBtn(const char* text, float rect_x, float rect_y);
 

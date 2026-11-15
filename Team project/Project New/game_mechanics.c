@@ -54,19 +54,18 @@ float area_right;
 float area_top;
 float area_bottom;
 
+
+/* Player variables */
+CP_Vector position = { 100,100 };
+CP_Vector velocity = { 0, 0 };
+
 // Player edges (position is the player's top-left corner)
 float player_left;
 float player_right;
 float player_top;
 float player_bottom;
 
-
-
-CP_Vector position = { 100,100 };
-CP_Vector velocity = { 0, 0 };
-
-
-/* Player states */
+/************************ Player states ***********************/
 typedef enum player_states
 {
 	STANDING = 1, // 1
@@ -78,28 +77,29 @@ typedef enum player_states
 	SLIDING       // 7
 } PlayerState;
 
-/* Player variables */
 int player_action = STANDING;
 int onGround = 0;
 int toggleGrab = 0;
 
-struct TeleportCountCoordinates {
+
+
+struct TeleportCountTextCoordinates {
 	float XLeft;
 	float XMiddle;
 	float Xright;
 	float y;
-} TeleportCountCoordinates;
+} TeleportTextCoordinates;
 
-
+/**********************Teleport Ability******************/
+//Teleport Timer//
 void TeleportTimer(void) {
 	float dt = CP_System_GetDt();
 	//Cooldown before pressing to Teleport again
 	TeleportWindowTiming += dt; // Contuously increase the Teleport window timing based on the delta time
-	if (TeleportWindowTiming >= TeleportCooldown) {
+	if (TeleportWindowTiming >= TeleportCooldown)
 		Teleport_Status = 1; // reset the Teleport status once the Teleport cooldown is reset
-	}
-
 }
+//Things to do once Teleport is activated//
 void Teleport_Activated(void) {
 	CP_Sound_Play(teleportSound);
 	TeleportWindowTiming = 0;
@@ -107,36 +107,31 @@ void Teleport_Activated(void) {
 	Teleport_count--;
 	score_teleport_used();
 }
-
-//Lewin - Teleport Mechanic
+//Teleport Mechanic//
 int Teleport_Mechannic(void){
-	TeleportCountCoordinates.XLeft = 1520.0;
-	TeleportCountCoordinates.XMiddle = 1550.0;
-	TeleportCountCoordinates.Xright = 1580.0;
-	TeleportCountCoordinates.y = 40.0;
+	TeleportTextCoordinates.XLeft = 1520.0;
+	TeleportTextCoordinates.XMiddle = 1550.0;
+	TeleportTextCoordinates.Xright = 1580.0;
+	TeleportTextCoordinates.y = 40.0;
 
-
-	// Teleport mechanic
 	CP_Settings_Fill(medium_light_green);
 	CP_Font_Set(Font);
 	CP_Settings_TextSize(25);
 	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_RIGHT, CP_TEXT_ALIGN_V_TOP);
-	//CP_Font_DrawText("Teleport Charges", 1500.0f, 0.0f);
+	
 	//show how many teleports the player has left
-
-
 	switch (Teleport_count) {
 	case 3:
-		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.XLeft, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
+		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.XLeft, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 2:
-		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.XMiddle, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
+		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.XMiddle, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 1:
 		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
-		CP_Graphics_DrawRectAdvanced(TeleportCountCoordinates.Xright, TeleportCountCoordinates.y, 20.0, 20.0, 45.0, 30.0);
+		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.Xright, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 		break;
 	}
 
-	//Activate Teleport window when movement key is pressed
+	//Activate Teleport when movement key & LeftShift is pressed
 	if (Teleport_count > 0) {
 		if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the right and presses the LeftShift key,
 			position.x += TeleportDistance;
@@ -153,22 +148,6 @@ int Teleport_Mechannic(void){
 	}
 	return 0;
 
-}
-
-int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
-{
-	// check if the click is within 
-	// x bound of the area(check the x-axis radius from the centre of the rectangle(x coordinate - (width/2) && x coordinate + (width/2)))
-	// y bound of the area(check the y-axis radius from the centre of the rectangle(y coordinate - (length/2) && x coordinate + (length/2)))
-	if ((click_x >= area_center_x - area_width / 2 && click_x <= area_center_x + area_width / 2) &&
-		(click_y >= area_center_y - area_height / 2 && click_y <= area_center_y + area_height / 2))
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
 }
 
 
