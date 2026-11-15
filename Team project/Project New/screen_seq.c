@@ -41,21 +41,15 @@ void ResetALLTimers_Status(void) {
     ResetTime = 1; 
     Teleport_count = 3;
 }
-
-// score_reset reset level score but not the player_score (cumulative of all level_score)
-void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
-void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
-void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
-void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
-
 void Screen_Init(void)
 {
-	LoadSounds();
+    //Use to load all the sounds to be used in the game
+    LoadSounds();
     // Use to initalize the color variables with values stored
     color_create();
 
-	mainbackground = CP_Image_Load("Assets/MainMenu.png");
-	defeat = CP_Image_Load("Assets/Defeat.png");
+    mainbackground = CP_Image_Load("Assets/MainMenu.png");
+    defeat = CP_Image_Load("Assets/Defeat.png");
     levelselection = CP_Image_Load("Assets/LevelSelect.png");
     frame = CP_Image_Load("Assets/buttonframe.png");
     pausemenu = CP_Image_Load("Assets/pause.png");
@@ -64,12 +58,16 @@ void Screen_Init(void)
     PauseTimeStatus = 1;
 }
 
-void Next_level_Init(void) {
-    Game_Next_Level();
-    
-    Game_Reset();
-}
+/***********************Level Initialization Functions******************/
+// score_reset reset level score but not the player_score (cumulative of all level_score)
+void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
 
+
+
+/*****************************Main Menu Screens*******************************/
 void Main_Menu_Update(void) {
     static float anim_time = 0.0f;   // keeps its value between frames
     float rect_x = 320.0f;
@@ -189,17 +187,6 @@ void Pause_Menu_Update(void)
  
 }
 
-void Exit_Main_Menu_Init(void)
-{
-    // prevents from constantly incrementing 
-    if (!level_score_locked) {
-        player_score += level_score;
-        level_score_locked = 1;
-    }
-
-    Screen_Init();
-}
-
 void Win_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
@@ -257,12 +244,6 @@ void Lose_Screen(void) {
 
     
 }
-
-
-
-// Score: = 6 chars, 1 white space, 
-// assume score can reach up to 99,999.00 (excluding comma - 8 char) 
-// 1 null terminator - 6 + 1 + 8 + 1 = 16
 
 void Leaderboard_Screen(void) {
     float rect_x = CP_System_GetWindowWidth() / 2.0;
@@ -328,8 +309,8 @@ void Leaderboard_Screen(void) {
     // @ToDo Lewin, add time here
 
     // player_score buf needs to be more than 16 char, or game will crash
-    char Player_Score[SCORE_BUF_SIZE*2] = { 0 };
-    sprintf_s(Player_Score, SCORE_BUF_SIZE*2, "Total Score: %d", player_score);
+    char Player_Score[SCORE_BUF_SIZE * 2] = { 0 };
+    sprintf_s(Player_Score, SCORE_BUF_SIZE * 2, "Total Score: %d", player_score);
     CP_Font_DrawText(Player_Score, rect_x - right_offset, first_y = CP_System_GetWindowHeight() / 2.0 - 300.0f);
 
 
@@ -342,7 +323,7 @@ void Leaderboard_Screen(void) {
     CP_Settings_Fill(orange);
     dynamicBtn("Exit to Main Menu", rect_x - right_offset, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
 
-    
+
 
 
 }
@@ -366,7 +347,6 @@ void Completed_Game_Screen(void) {
 }
 
 static float level_anim_time = 0.0f;   // put this at the top of the file
-
 void Level_Select_Screen(void) {
     CP_Graphics_ClearBackground(CP_Color_Create(80, 80, 80, 0));
     CP_Image_Draw(levelselection, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
@@ -408,7 +388,6 @@ void Level_Select_Screen(void) {
 }
 
 enum { NUMBER_OF_CONTROLS = 7 };
-
 void Controls_Screen(void) {
     CP_Graphics_ClearBackground(light_sky_blue);
 
@@ -438,24 +417,24 @@ void Controls_Screen(void) {
     float first_control_y = 100.0f;
     float first_control_x = 550.0f;
     float y_offset = 100.0f; // vertical spacing between controls
-    
+
     float first_controlkey_x = first_control_x * 2.0f;
 
     const float controls_rect_width = 400.0f;
     const float controlskeys_rect_width = 150.0f;
     const float control_rect_height = 70.0f;
 
-	// Draw the boxes and text for each control and corresponding key
+    // Draw the boxes and text for each control and corresponding key
     for (int i = 0; i < NUMBER_OF_CONTROLS; i++) {
-		CP_Settings_Fill(translucent_light_red);
+        CP_Settings_Fill(translucent_light_red);
         drawBtn(first_control_x, first_control_y + (i * y_offset), controls_rect_width, control_rect_height, controls_text[i], 1.0f);
         CP_Settings_Fill(translucent_light_red);
         drawBtn(first_controlkey_x, first_control_y + (i * y_offset), controlskeys_rect_width, control_rect_height, control_keys[i], 1.0f);
     }
 
-	// Back to Menu button
-	float control_backmenu_btn_y = CP_System_GetWindowHeight() - 70.0f;
-	float control_backmenu_btn_x = CP_System_GetWindowWidth() / 2.0f;
+    // Back to Menu button
+    float control_backmenu_btn_y = CP_System_GetWindowHeight() - 70.0f;
+    float control_backmenu_btn_x = CP_System_GetWindowWidth() / 2.0f;
     CP_Settings_Fill(orange);
 
     if (level_selected == main_menu) {
@@ -464,6 +443,28 @@ void Controls_Screen(void) {
     else {
         dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, Screen_Init, Pause_Menu_Update, Screen_Exit);
     }
+}
+
+
+
+
+
+/*******Transition Sequences*******/
+void Exit_Main_Menu_Init(void)
+{
+    // prevents from constantly incrementing 
+    if (!level_score_locked) {
+        player_score += level_score;
+        level_score_locked = 1;
+    }
+
+    Screen_Init();
+}
+
+void Next_level_Init(void) {
+    Game_Next_Level();
+
+    Game_Reset();
 }
 
 void Screen_Exit(void)
@@ -476,26 +477,16 @@ void Screen_Exit(void)
     CP_Font_Free(Font);
 }
 
+// Score: = 6 chars, 1 white space, 
+// assume score can reach up to 99,999.00 (excluding comma - 8 char) 
+// 1 null terminator - 6 + 1 + 8 + 1 = 16
+
+
+
 /*
 The functions below are the elements or functionalities of each updated screen*/
 
-void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
-{
-    CP_Settings_RectMode(CP_POSITION_CENTER);
-    //CP_Settings_Fill(translucent_light_red);
-    CP_Graphics_DrawRect(x, y, w, h);
-    drawTextCenter(text, x, y, scalar);
-}
-
-void drawTextCenter(const char* text, float x, float y, float scalar)
-{
-    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
-    CP_Settings_TextSize(textSize * scalar);
-    CP_Settings_Fill(white);
-    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
-    CP_Font_DrawText(text, x, y);
-}
-
+/*********************Objective & Score Text Position Functions*****************/
 void drawTextTopLeft(const char* text, float x, float y, float scalar)
 {
     Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
@@ -519,6 +510,8 @@ This function checks if the mouse is hovering over a button area
 and scales the button accordingly.
 If the button is clicked, it transitions to the game state.      */
 
+
+/*********************Button Functions****************************/
 int IsAreaClicked(float area_center_x, float area_center_y, float area_width, float area_height, float click_x, float click_y)
 {
     // check if the click is within 
@@ -534,7 +527,21 @@ int IsAreaClicked(float area_center_x, float area_center_y, float area_width, fl
         return 0;
     }
 }
-
+void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
+{
+    CP_Settings_RectMode(CP_POSITION_CENTER);
+    //CP_Settings_Fill(translucent_light_red);
+    CP_Graphics_DrawRect(x, y, w, h);
+    drawTextCenter(text, x, y, scalar);
+}
+void drawTextCenter(const char* text, float x, float y, float scalar)
+{
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    CP_Settings_TextSize(textSize * scalar);
+    CP_Settings_Fill(white);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
+    CP_Font_DrawText(text, x, y);
+}
 void dynamicBtn(const char* text, float rect_x, float rect_y, void* init(void), void* update(void), void* exit(void)) {
     if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
