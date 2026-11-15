@@ -89,6 +89,29 @@ void Game_Reset(void)
 }
 
 
+void level_selection(int level_no) {
+	switch (level_no) {
+	case main_menu:
+		Main_Menu_Update();
+		break;
+	case level_1:
+		level_1st();
+		break;
+	case level_2:
+		level_2nd();
+		break;
+	case level_3:
+		level_3rd();
+		break;
+	case level_4:
+		level_4th();
+		break;
+	case boss_level:
+		Elevator_Update();
+		break;
+	}
+}
+// Used in Game_Update() to call the appropriate level function based on the current level_selected value.
 void Game_Update(void)
 {		
 		level_selection(level_selected);

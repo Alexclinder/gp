@@ -150,7 +150,7 @@ int Teleport_Mechannic(void){
 
 }
 
-
+/************************Object Related Functions**********************/
 // t = 0 at start spot, 1 at end spot
 void HeldObject_MoveTo(float t)
 {

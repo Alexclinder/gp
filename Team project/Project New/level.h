@@ -76,8 +76,6 @@ void level_3rd(void);
 
 void level_4th(void);
 
-void level_selection(int level_no);
-
 // ingame_text.h
 void SaveTime(float time);
 

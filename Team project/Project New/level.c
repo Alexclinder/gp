@@ -74,11 +74,11 @@ int level_selected = level_1;
 
 struct LevelScore Level_Score = { 0, 0, 0, 0 };
 
+/*******************Level Timer Functions************/
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
 struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f };
-
 
 void SaveTime(float time) {
 	switch (level_selected) {
@@ -96,278 +96,11 @@ void SaveTime(float time) {
 			break;
 	}
 }
-	
-
-// Might do 
-// concat player_spawns and NPC_1_spawns into a single array for easier access
-
-spawn player_spawns[LEVELS] = { 
-							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
-							   { 1000.0f, 800.0f }, // level 1 - let player start on bottom right screen
-							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
-							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
-							   { 100.0f, 100.0f }, // level 4 
-							   { 1600.0f, 800.0f }  // boss level  
-							  };
-#define NUMBER_OF_NPC 2
-
-// [LEVELS][NUMBER_OF_NPC]
-spawn NPC_1_spawns[LEVELS] = {
-			
-							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
-							   { 100.0f, 900.0f }, // level 1
-							   { 100.0f, 900.0f }, // level 2
-							   { 800.0f, 900.0f }, // level 3
-							   { 1200.0f, 900.0f }, // level 4
-							   { 300.0f, 900.0f }, // boss level
-							
-							 };
-
-pressure_door_pos level3 = {.px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
-							.dx = 1460.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT};
-// Bottom Pit 
-k_zone level3_k = { .kx = 1010.0f, .ky = 730.0f, .kw = 910.0f, .kh = 20.0f };
-// 4th Roof Kill
-k_zone level3_4b = { .kx = 1055.0f, .ky = 295.0f, .kw = 295.0f, .kh = 5.0f };
-// 2th and 3rd Building moving platform
-k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
-
-
-// Parameters is for drawing and checking win_con in level 3
-win_condition level3_win = {1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS};
-
-void Objective_Text(void){
-
-	float top_left_x = 0.0f;
-	float top_left_y = top_left_x;
-	float score_offset_y = 50.0f;
-	float score_offset_x = 150.0f;
-	float text_size = 1.0f;
-	game_score();
-
-	char buffer[TIME_BUF_SIZE] = { 0 };
-	sprintf_s(buffer, TIME_BUF_SIZE, "%d", level_score);
-
-	// Font Size is 100.0f by default
-
-	// display level_score that will persists through all levels
-	switch (level_selected){
-		case level_4:
-			drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size);
-			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
-			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
-			break;
-		case level_3:
-			drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
-			drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y+50.0f, text_size);
-			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
-			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
-			break;
-			
-		case level_2: 
-			drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
-			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
-			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
-			
-			break;
-		case level_1:
-			drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size);
-			drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
-			drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
-			
-			break;
-		default:
-			break;
-
-
-	}
-}
-
-// LEVEL 3: Outside the building
-float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
-
-	/* ---------- 1st building ----------  */
-	// Jump max is 80f
-	// 260.0f is first building height
-	{ 290.0f, 830.0f, PLATFORM_WIDTH_3 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 350.0f, 820.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 740.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 330.0f, 660.0f, PLATFORM_WIDTH_3 + 30.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 580.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 350.0f, 500.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 250.0f, 420.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 120.0f, 340.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	// first building roof
-	{ 300.0f, 260.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-
-	 /* ---------- 2nd building ----------  */
-
-	// Left wall
-	{ 545.0f, 610.0f, LEVEL3_BUILDING_WALL, LEVEL3_SEC_BUILDING, NO_ROTATION, CORNER_RADIUS },
-	// Roof
-	{ 660.0f, 320.0f, PLATFORM_WIDTH_3 * 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	// 6th floor
-	{ 583.08f, 540.0f, PLATFORM_WIDTH_3 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-
-	/* ---------- 2nd/3rd building ----------  */
-
-	// Bottom Platform connecting 2nd and 3rd building 
-	{ 784.0f, 650.0f, PLATFORM_WIDTH_3*1.4, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-
-	
-	/* ---------- 3rd building ----------  */
-
-	// Left Wall
-	{ 905.0f, 400.0f,  LEVEL3_BUILDING_WALL, LEVEL3_THIRD_BUILDING-58.0f, NO_ROTATION, CORNER_RADIUS },
-
-	// 4th Level	
-	{ 1038.0f, 500.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1190.0f, 500.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 940.0f, 445.0f, LEVEL3_FOURTH_BUILDING_WIDTH * 20.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1080.0f, 580.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 951.0f, 592.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1055.0f, 710.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	
-
-	// Right Wall
-	{ 1206.0f, 333.0f,  LEVEL3_BUILDING_WALL, LEVEL3_THIRD_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
-
-	/* ---------- 3rd/4th building ----------  */
-
-	// Bottom Platform connecting 3rd and 4th building 
-	{ 1250.0f, 660.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	
-	{ 1300.0f, 390.0f, PLATFORM_WIDTH_3 * 2.8f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-
-	/* ---------- 4th building ----------  */
-
-	// Right Wall
-	{ 1490.0f, 730.0f,  LEVEL3_BUILDING_WALL * 4.8f, LEVEL3_FOURTH_BUILDING, NO_ROTATION, CORNER_RADIUS },
-	
-	// Top Right Wall
-	{ 1460.0f, 435.0f,  LEVEL3_BUILDING_WALL, LEVEL3_FOURTH_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
-
-	// Top Left Wall
-	{ 1320.0f, 530.0f,  LEVEL3_BUILDING_WALL, LEVEL3_FOURTH_BUILDING / 2.8f, NO_ROTATION, CORNER_RADIUS },
-
-	// Top Left Platform
-	{ 1300.0f, 480.0f,  PLATFORM_WIDTH_3/2.2f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-
-	// Platform
-	{ 1415.0f, 580.0f,  PLATFORM_WIDTH_3 * 1.6f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-
-	// Stair Platform
-	{ 1350.0f, 520.0f,  PLATFORM_WIDTH_3 / 3.0f, RECT_HORIZ_H * 1.5f, NO_ROTATION, CORNER_RADIUS },
-
-};
-
-// Parameters is for drawing and checking win_con in level 2
-win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER_RADIUS };
-
-k_zone level2_floor = { .kx = 500.0f, .ky = 900.0f, .kw = 2500.0f, .kh = 10.0f };
-
-pressure_door_pos level2 = { .px = 1100.0f, .py = 570.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
-							.dx = 1360.0f, .dy = 250.0f, .dw = DOOR_WIDTH * 14.0f, .dh = DOOR_HEIGHT * 0.1f,
-							.d2x = 1300.0f, .d2y = 490.0f, .d2w = 100.0f, .d2h = RECT_HORIZ_H, };
-
-// LEVEL 2: Entering the building
-float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
-	{ 0.0f, 250.0f, 630.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 600.0f, 10.0f, 50.0f, 560.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 500.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 345.0f, 355.0f, 15.0f, 220.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 800.0f, 360.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1000.0f, 250.0f, 600.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 200.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 600.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1000.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1400.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	
-	{ 1400.0f, 400.0f, 15.0f, 150.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 1540.0f, 260.0f, 220.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
-};
-
-// Parameters is for drawing and checking win_con in level 3
-win_condition level1_win = { 1450, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
-
-// LEVEL 1
-float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
-	{ 470.0f, 830.0f, 180.0f, 170, NO_ROTATION, CORNER_RADIUS },
-	{ 650.0f, 658.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 850.0f, 718.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1050.0f, 628.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
-	{ 1390.0f, 600.0f, 250.0f, 200, NO_ROTATION, CORNER_RADIUS },
-	{ 1550.0f, 500.0f, 100.0f, 800, NO_ROTATION, CORNER_RADIUS },
-	{ 400.0f, 530.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 550.0f, 400.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 400.0f, 300.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 430.0f, 390.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 550.0f, 300.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 450.0f, 200.0f, 100.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 850.0f, 200.0f, 500.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 850.0f, 350.0f, 500.0f, 15.0f, NO_ROTATION, CORNER_RADIUS }
-};
-
-// Parameters is for drawing and checking win_con in level 4
-win_condition level4_win = { 1500, 130, 100, 100, NO_ROTATION, CORNER_RADIUS };
-
-
-// LEVEL 4
-float fourth_level[LEVEL4_STATIC_PLATFORMS][PARAMETERS] = { 
-	{ 150.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 550.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 950.0f, 230.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 950.0f, 750.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 800.0f, 35.0f, 1800.0f, 100.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 600.0f, 140.0f, 120.0f, 120.0f, NO_ROTATION, CORNER_RADIUS },
-	{ 1400.0f, 500.0f, 400.0f, 600.0f, NO_ROTATION, CORNER_RADIUS }
-	
-};
-
-// Object start coords for level 1 (const so the level start never changes)
-// { x, y, w, h, type }
-const float first_level_objects[2][5] = {
-	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
-	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
-};
-
-
-// Object coords in game for level 1 (carrying and dropping change these)
-float first_level_objects_ingame[2][5];
-
-
-// Object start coords for level 2 (const so the level start never changes)
-// { x, y, w, h, type }
-const float second_level_objects[2][5] = {
-	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
-	{ 270.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
-};
-
-// Object coords in game for level 2 (carrying and dropping change these)
-float second_level_objects_ingame[2][5];
-
-// Object start coords for level 3 (const so the level start never changes)
-// { x, y, w, h, type }
-const float third_level_objects[2][5] = {
-	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
-	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
-};
-
-// Object coords in game for level 3 (carrying and dropping change these)
-float third_level_objects_ingame[2][5];
-
-
-// Points to the in-game object array of the level being played
-float (*current_objects)[5] = NULL;
-int current_obj_count = 0;
-int heldObject = -1;
-
 void LeaderboardScore_Time(int score, float time) {
 	// Implementation for updating leaderboard with score and time
 }
-
 float ingameTimer(void) {
-	
+
 	if (TimeSet == 1) {// If Timer has been set, then we can start counting time
 		//differenceTime = Seconds - PauseingameTime;
 		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
@@ -378,12 +111,12 @@ float ingameTimer(void) {
 		//Seconds variable is used to store the time that will be displayed on the screen. It is calculated by subtracting 
 		// the Zeroing_Time from the current time and adding the PauseingameTime. 
 		// This ensures that the timer continues from where it left off after a pause.
-		Seconds = CP_System_GetSeconds()-Zeroing_Time+ PauseingameTime;
+		Seconds = CP_System_GetSeconds() - Zeroing_Time + PauseingameTime;
 
 		SaveTime(Seconds);//Save the current time to the Level_Timer struct for the current level, Time stored in the struct is displayed leaderboard
 		char buffer[TIME_BUF_SIZE] = { 0 };
 		sprintf_s(buffer, TIME_BUF_SIZE, "%.2f", Seconds);
-		CP_Font_DrawText(buffer, CP_System_GetWindowWidth()/2, 0);
+		CP_Font_DrawText(buffer, CP_System_GetWindowWidth() / 2, 0);
 		CP_Settings_Fill(yellow);
 
 		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
@@ -395,11 +128,11 @@ float ingameTimer(void) {
 			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
 			// variable right_star is to lock the increment count after increment once
 		}
-	
+
 
 	}
 	else if (TimeSet == 0) {
-		Zeroing_Time = CP_System_GetSeconds(); 
+		Zeroing_Time = CP_System_GetSeconds();
 		//Zeroing_Time is set to the current time when the timer is first initialized. 
 		//This serves as a reference point for calculating elapsed time.
 		TimeSet = 1;
@@ -417,6 +150,319 @@ float ingameTimer(void) {
 	return Seconds;
 }
 
+/*********************Prints Objective Text*******************/
+void Objective_Text(void) {
+
+	float top_left_x = 0.0f;
+	float top_left_y = top_left_x;
+	float score_offset_y = 50.0f;
+	float score_offset_x = 150.0f;
+	float text_size = 1.0f;
+	game_score();
+
+	char buffer[TIME_BUF_SIZE] = { 0 };
+	sprintf_s(buffer, TIME_BUF_SIZE, "%d", level_score);
+
+	// Font Size is 100.0f by default
+
+	// display level_score that will persists through all levels
+	switch (level_selected) {
+	case level_4:
+		drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
+		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
+		break;
+	case level_3:
+		drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
+		drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y + 50.0f, text_size);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
+		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+		break;
+
+	case level_2:
+		drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
+		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
+
+		break;
+	case level_1:
+		drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
+		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
+
+		break;
+	default:
+		break;
+
+
+	}
+}
+
+// Might do 
+// concat player_spawns and NPC_1_spawns into a single array for easier access
+
+
+/*****************Spawn Locations for Player********************/
+spawn player_spawns[LEVELS] = { 
+							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
+							   { 1000.0f, 800.0f }, // level 1 - let player start on bottom right screen
+							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
+							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
+							   { 100.0f, 100.0f }, // level 4 
+							   { 1600.0f, 800.0f }  // boss level  
+							  };
+
+
+/*****************Spawn Locations for NPCs********************/
+// [LEVELS][NUMBER_OF_NPC]
+#define NUMBER_OF_NPC 2
+spawn NPC_1_spawns[LEVELS] = {
+			
+							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
+							   { 100.0f, 900.0f }, // level 1
+							   { 100.0f, 900.0f }, // level 2
+							   { 800.0f, 900.0f }, // level 3
+							   { 1200.0f, 900.0f }, // level 4
+							   { 300.0f, 900.0f }, // boss level
+							
+							 };
+
+
+
+
+/**********************************************************LEVEL Platforms*********************************************************************/
+
+/***************** LEVEL 1: ********************/
+/*Platform positions for Level 1*/
+float first_level[LEVEL1_STATIC_PLATFORMS][PARAMETERS] = {
+	{ 470.0f, 830.0f, 180.0f, 170, NO_ROTATION, CORNER_RADIUS },
+	{ 650.0f, 658.0f, 140.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 850.0f, 718.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1050.0f, 628.0f, 150.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1390.0f, 600.0f, 250.0f, 200, NO_ROTATION, CORNER_RADIUS },
+	{ 1550.0f, 500.0f, 100.0f, 800, NO_ROTATION, CORNER_RADIUS },
+	{ 400.0f, 530.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 550.0f, 400.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 400.0f, 300.0f, 15.0f, 170.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 430.0f, 390.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 550.0f, 300.0f, 45.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 450.0f, 200.0f, 100.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 850.0f, 200.0f, 500.0f, 15.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 850.0f, 350.0f, 500.0f, 15.0f, NO_ROTATION, CORNER_RADIUS }
+};
+
+// Win_con positions in level 1
+win_condition level1_win = { 1450, 300, 100, 100, NO_ROTATION, CORNER_RADIUS };
+
+
+
+
+
+/***************** LEVEL 2: Entering the building********************/
+// Win_con positions in level 2
+win_condition level2_win = { 1528.0f, 150.0f, 50.0f, 146.0f, NO_ROTATION, CORNER_RADIUS };
+
+/*Kill Zones positions for Level 2*/
+k_zone level2_floor = { .kx = 500.0f, .ky = 900.0f, .kw = 2500.0f, .kh = 10.0f };
+
+/* Pressure plate and door positions for level 2*/
+pressure_door_pos level2 = { .px = 1100.0f, .py = 570.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1360.0f, .dy = 250.0f, .dw = DOOR_WIDTH * 14.0f, .dh = DOOR_HEIGHT * 0.1f,
+							.d2x = 1300.0f, .d2y = 490.0f, .d2w = 100.0f, .d2h = RECT_HORIZ_H, };
+
+/*Platform positions for Level 2*/
+float second_level[LEVEL2_STATIC_PLATFORMS][PARAMETERS] = {
+	{ 0.0f, 250.0f, 630.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 10.0f, 50.0f, 560.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 500.0f, 460.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 345.0f, 355.0f, 15.0f, 220.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 800.0f, 360.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1000.0f, 250.0f, 600.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 200.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1000.0f, 590.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 490.0f, 100.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	{ 1400.0f, 400.0f, 15.0f, 150.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 1540.0f, 260.0f, 220.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS }
+};
+
+
+
+
+
+
+/***************** LEVEL 3: Outside the building********************/
+
+/* Pressure plate and door positions for level 3*/
+pressure_door_pos level3 = { .px = 1185.0f, .py = 380.0f, .pw = PRESSURE_WIDTH, .ph = PRESSURE_HEIGHT,
+							.dx = 1460.0f, .dy = 530.0f, .dw = DOOR_WIDTH, .dh = DOOR_HEIGHT };
+
+/*Kill Zones positions for Level 3*/
+// Bottom Pit 
+k_zone level3_k = { .kx = 1010.0f, .ky = 730.0f, .kw = 910.0f, .kh = 20.0f };
+// 4th Roof Kill
+k_zone level3_4b = { .kx = 1055.0f, .ky = 295.0f, .kw = 295.0f, .kh = 5.0f };
+// 2th and 3rd Building moving platform
+k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
+
+// Win_con positions in level 3
+win_condition level3_win = { 1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS };
+
+/*Platform positions for Level 3*/
+float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
+
+	/* ---------- 1st building ----------  */
+	// Jump max is 80f
+	// 260.0f is first building height
+	{ 290.0f, 830.0f, PLATFORM_WIDTH_3 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 350.0f, 820.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 740.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 330.0f, 660.0f, PLATFORM_WIDTH_3 + 30.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 580.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 350.0f, 500.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 250.0f, 420.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	{ 120.0f, 340.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+	// first building roof
+	{ 300.0f, 260.0f, 240.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+	/* ---------- 2nd building ----------  */
+
+   // Left wall
+   { 545.0f, 610.0f, LEVEL3_BUILDING_WALL, LEVEL3_SEC_BUILDING, NO_ROTATION, CORNER_RADIUS },
+   // Roof
+   { 660.0f, 320.0f, PLATFORM_WIDTH_3 * 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+   // 6th floor
+   { 583.08f, 540.0f, PLATFORM_WIDTH_3 / 2.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+   /* ---------- 2nd/3rd building ----------  */
+
+   // Bottom Platform connecting 2nd and 3rd building 
+   { 784.0f, 650.0f, PLATFORM_WIDTH_3 * 1.4, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+
+   /* ---------- 3rd building ----------  */
+
+   // Left Wall
+   { 905.0f, 400.0f,  LEVEL3_BUILDING_WALL, LEVEL3_THIRD_BUILDING - 58.0f, NO_ROTATION, CORNER_RADIUS },
+
+   // 4th Level	
+   { 1038.0f, 500.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+   { 1190.0f, 500.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+   { 940.0f, 445.0f, LEVEL3_FOURTH_BUILDING_WIDTH * 20.0f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+   { 1080.0f, 580.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+   { 951.0f, 592.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+   { 1055.0f, 710.0f, LEVEL3_FOURTH_BUILDING_WIDTH, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+
+   // Right Wall
+   { 1206.0f, 333.0f,  LEVEL3_BUILDING_WALL, LEVEL3_THIRD_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
+
+   /* ---------- 3rd/4th building ----------  */
+
+   // Bottom Platform connecting 3rd and 4th building 
+   { 1250.0f, 660.0f, PLATFORM_WIDTH_3, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+   { 1300.0f, 390.0f, PLATFORM_WIDTH_3 * 2.8f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+   /* ---------- 4th building ----------  */
+
+   // Right Wall
+   { 1490.0f, 730.0f,  LEVEL3_BUILDING_WALL * 4.8f, LEVEL3_FOURTH_BUILDING, NO_ROTATION, CORNER_RADIUS },
+
+   // Top Right Wall
+   { 1460.0f, 435.0f,  LEVEL3_BUILDING_WALL, LEVEL3_FOURTH_BUILDING / 3.0f, NO_ROTATION, CORNER_RADIUS },
+
+   // Top Left Wall
+   { 1320.0f, 530.0f,  LEVEL3_BUILDING_WALL, LEVEL3_FOURTH_BUILDING / 2.8f, NO_ROTATION, CORNER_RADIUS },
+
+   // Top Left Platform
+   { 1300.0f, 480.0f,  PLATFORM_WIDTH_3 / 2.2f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+   // Platform
+   { 1415.0f, 580.0f,  PLATFORM_WIDTH_3 * 1.6f, RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS },
+
+   // Stair Platform
+   { 1350.0f, 520.0f,  PLATFORM_WIDTH_3 / 3.0f, RECT_HORIZ_H * 1.5f, NO_ROTATION, CORNER_RADIUS },
+
+};
+
+
+
+
+
+/***************** LEVEL 4: ********************/
+/*Platform positions for Level 4*/
+float fourth_level[LEVEL4_STATIC_PLATFORMS][PARAMETERS] = {
+	{ 150.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 550.0f, 500.0f, 300.0f, 600.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 950.0f, 230.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 950.0f, 750.0f, 300.0f, 300.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 800.0f, 35.0f, 1800.0f, 100.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 600.0f, 140.0f, 120.0f, 120.0f, NO_ROTATION, CORNER_RADIUS },
+	{ 1400.0f, 500.0f, 400.0f, 600.0f, NO_ROTATION, CORNER_RADIUS }
+
+};
+
+// Parameters is for drawing and checking win_con in level 4
+win_condition level4_win = { 1500, 130, 100, 100, NO_ROTATION, CORNER_RADIUS };
+
+
+
+
+
+
+
+/**********************************************************Object Related*********************************************************************/
+
+// Points to the in-game object array of the level being played
+float (*current_objects)[5] = NULL;
+int current_obj_count = 0;
+int heldObject = -1;
+
+/***************** LEVEL 1 Objects ********************/
+// Object start coords for level 1 (const so the level start never changes)
+// { x, y, w, h, type }
+const float first_level_objects[2][5] = {
+	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
+};
+
+// Object coords in game for level 1 (carrying and dropping change these)
+float first_level_objects_ingame[2][5];
+
+
+
+/***************** LEVEL 2 Objects ********************/
+// Object start coords for level 2 (const so the level start never changes)
+// { x, y, w, h, type }
+const float second_level_objects[2][5] = {
+	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
+	{ 270.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
+};
+
+// Object coords in game for level 2 (carrying and dropping change these)
+float second_level_objects_ingame[2][5];
+
+
+
+/***************** LEVEL 3 Objects ********************/
+// Object start coords for level 3 (const so the level start never changes)
+// { x, y, w, h, type }
+const float third_level_objects[2][5] = {
+	{ 120.0f, 690.0f, 60.0f, 45.0f, OBJ_DESK },
+	{ 970.0f, 470.0f, 50.0f, 55.0f, OBJ_PRINTER }
+};
+
+// Object coords in game for level 3 (carrying and dropping change these)
+float third_level_objects_ingame[2][5];
+
+
+/**********************************************************LEVEL LOOP*********************************************************************/
+
+
+/***************** LEVEL 1: ********************/
+/* Alternating Kill Zones */
 k_zone level1_kwall = { .kx = 500.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 k_zone level1_kwall2 = { .kx = 900.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 
@@ -458,6 +504,9 @@ void level_1st(void) {
 
 }
 
+
+
+/***************** LEVEL 2: ********************/
 void level_2nd(void) {
 	DrawBG(backgroundtwo);
 	for (int i = 0; i <	LEVEL2_STATIC_PLATFORMS; i++) {
@@ -497,6 +546,8 @@ void level_2nd(void) {
 }
 
 
+
+/***************** LEVEL 3: ********************/
 #define LEFT_BOUNDARY 650.0f
 #define RIGHT_BOUNDARY 850.0f
 
@@ -553,6 +604,9 @@ void level_3rd(void) {
 	}
 }
 
+
+
+/***************** LEVEL 4: ********************/
 void level_4th(void) {
 	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
 	// iterates thru the 4 rows and 6 col
@@ -589,28 +643,6 @@ void level_4th(void) {
 	}
 }
 
-void level_selection(int level_no) {
-	switch (level_no) {
-		case main_menu:
-			Main_Menu_Update();
-			break;
-		case level_1: 
-			level_1st();
-			break;
-		case level_2: 
-			level_2nd();
-			break;
-		case level_3: 
-			level_3rd();
-			break;
-		case level_4: 
-			level_4th();
-			break;
-		case boss_level:
-			Elevator_Update();
-			break;
-	}
-}
 
 void DrawExit(float x, float y, float w, float h, float degrees, float cornerRadius){
 	CP_Settings_RectMode(CP_POSITION_CENTER);

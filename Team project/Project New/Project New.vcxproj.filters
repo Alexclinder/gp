@@ -1,36 +1,104 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="boss.c" />
-    <ClCompile Include="colors.c" />
-    <ClCompile Include="demonBoss.c" />
-    <ClCompile Include="elevator.c" />
-    <ClCompile Include="game_mechanics.c" />
-    <ClCompile Include="game.c" />
-    <ClCompile Include="level.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="npc_mechanics.c" />
-    <ClCompile Include="scoring.c" />
-    <ClCompile Include="screen_seq.c" />
-    <ClCompile Include="sounds.c" />
+    <ClCompile Include="screen_seq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scoring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="npc_mechanics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="level.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game_mechanics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="colors.c">
+      <Filter>Source Files\Assets Related</Filter>
+    </ClCompile>
+    <ClCompile Include="sounds.c">
+      <Filter>Source Files\Assets Related</Filter>
+    </ClCompile>
+    <ClCompile Include="elevator.c">
+      <Filter>Source Files\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="demonBoss.c">
+      <Filter>Source Files\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="boss.c">
+      <Filter>Source Files\Boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="boss.h" />
-    <ClInclude Include="colors.h" />
-    <ClInclude Include="demonBoss.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="game_mechanics.h" />
-    <ClInclude Include="level.h" />
-    <ClInclude Include="npc_mechanics.h" />
-    <ClInclude Include="scoring.h" />
-    <ClInclude Include="screen_seq.h" />
-    <ClInclude Include="sounds.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="game.h">
+      <Filter>Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="game_mechanics.h">
+      <Filter>Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="npc_mechanics.h">
+      <Filter>Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="scoring.h">
+      <Filter>Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="screen_seq.h">
+      <Filter>Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="boss.h">
+      <Filter>Header File\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="demonBoss.h">
+      <Filter>Header File\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="colors.h">
+      <Filter>Header File\Assets Related</Filter>
+    </ClInclude>
+    <ClInclude Include="sounds.h">
+      <Filter>Header File\Assets Related</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="elevator.h" />
+    <Filter Include="Header File">
+      <UniqueIdentifier>{ea8fcb04-aaa7-42db-9850-82d8ab40ff29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{c3dc8d83-9408-4dce-8c8b-c23d95d640da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Boss">
+      <UniqueIdentifier>{16ad9848-9849-4125-a13c-f22faa44acc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assets Related">
+      <UniqueIdentifier>{896715b3-ed2f-4c65-9b62-c91531d12143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header File\Assets Related">
+      <UniqueIdentifier>{374679b2-7f72-4f65-9cda-187fbf9c3353}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header File\Boss">
+      <UniqueIdentifier>{fac872f1-0a62-40d4-acbb-b0aeaac3ba37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header File\Player">
+      <UniqueIdentifier>{7edde7d3-2e49-4fa8-8c73-6fd0f4fe8cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Player">
+      <UniqueIdentifier>{7fe43604-40be-41ad-9a28-ac0bba5fce7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Project New.rc" />
+    <None Include="elevator.h">
+      <Filter>Header File\Boss</Filter>
+    </None>
   </ItemGroup>
 </Project>
