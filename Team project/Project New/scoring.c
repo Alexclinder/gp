@@ -89,6 +89,7 @@ void game_score(void) {
 
 	void score_complete_level(void)
 	{
+		printf("Complete level scoring called!\n");
 		printf("Before completion: level_score = %d, player_score = %d\n",
 			level_score, player_score);
 
@@ -113,6 +114,7 @@ void game_score(void) {
 	// for teleport activated - award points when teleport is active for 1 frame or small number of frames (event)
 	void score_teleport_used(void)
 	{
+		printf("Teleport scoring called!\n");
 		// award 200 we
 		// check level_score_locked to avoid score changes after win
 		if (!level_score_locked) {

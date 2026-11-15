@@ -123,7 +123,6 @@ void Game_Update(void)
 			NPC_UpdateProjectiles(0);
 			CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
 			// Update Player_Score if ded
-			player_score += level_score;
 			return;
 		}
 
