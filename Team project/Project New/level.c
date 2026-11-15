@@ -17,20 +17,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "elevator.h"
 
 
-#define LEVEL3_STATIC_PLATFORMS 29
-#define LEVEL3_SEC_BUILDING 580.0f
-#define LEVEL3_THIRD_BUILDING 280.0f
-#define LEVEL3_FOURTH_BUILDING 400.0f
-#define LEVEL3_BUILDING_WALL 10.0f
-#define LEVEL3_FOURTH_BUILDING_WIDTH 3.0f
-#define PLATFORM_WIDTH_3 120.0f
 
-#define LEVEL3_PLATFORMS 30
-#define LEVEL3_SEC_BUILDING 580.0f
-#define LEVEL3_THIRD_BUILDING 280.0f
-#define LEVEL3_FOURTH_BUILDING 320.0f
-#define LEVEL3_BUILDING_WALL 10.0f
-#define LEVEL3_FOURTH_BUILDING_WIDTH 2.0f
 
 #define LEVEL1_STATIC_PLATFORMS 29
 #define LEVEL2_STATIC_PLATFORMS 29
@@ -310,6 +297,20 @@ k_zone level3_23b = { .kx = 790.0f, .ky = 465.0f, .kw = 210.0f, .kh = 15.0f };
 win_condition level3_win = { 1490.0f, 530.0f, 50.0f, DOOR_HEIGHT, NO_ROTATION, CORNER_RADIUS };
 
 /*Platform positions for Level 3*/
+/******************************************CHECK THIS MULTIPLE DEFINITIONS***************************/
+#define LEVEL3_STATIC_PLATFORMS 29
+#define LEVEL3_SEC_BUILDING 580.0f
+#define LEVEL3_THIRD_BUILDING 280.0f
+#define LEVEL3_FOURTH_BUILDING 400.0f
+#define LEVEL3_BUILDING_WALL 10.0f
+#define LEVEL3_FOURTH_BUILDING_WIDTH 3.0f
+
+#define LEVEL3_PLATFORMS 30
+#define LEVEL3_SEC_BUILDING 580.0f
+#define LEVEL3_THIRD_BUILDING 280.0f
+#define LEVEL3_FOURTH_BUILDING 320.0f
+#define LEVEL3_BUILDING_WALL 10.0f
+#define LEVEL3_FOURTH_BUILDING_WIDTH 2.0f
 float third_level[LEVEL3_STATIC_PLATFORMS][PARAMETERS] = {
 
 	/* ---------- 1st building ----------  */
@@ -415,6 +416,135 @@ win_condition level4_win = { 1500, 130, 100, 100, NO_ROTATION, CORNER_RADIUS };
 
 /**********************************************************Object Related*********************************************************************/
 
+/**************Objects Checks & Draw Functions****************/
+// Copies the level's start coords into its in-game array. Call on level start/restart
+void Objects_Reset(void) {
+	current_objects = NULL;
+	current_obj_count = 0;
+	heldObject = -1;
+	kickedObject = -1;   /* stop any kick that was still sliding */
+
+	switch (level_selected) {
+	case level_1:
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++)
+				first_level_objects_ingame[i][j] = first_level_objects[i][j];
+		current_objects = first_level_objects_ingame;
+		current_obj_count = 2;
+		break;
+	case level_2:
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++)
+				second_level_objects_ingame[i][j] = second_level_objects[i][j];
+		current_objects = second_level_objects_ingame;
+		current_obj_count = 2;
+		break;
+	case level_3:
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++)
+				third_level_objects_ingame[i][j] = third_level_objects[i][j];
+		current_objects = third_level_objects_ingame;
+		current_obj_count = 2;
+		break;
+	}
+}
+
+// Returns the object the player is touching, or -1. Skips the held one
+int Object_Check(void) {
+	float cx = position.x + PLAYER_SIZE / 2.0f;
+	float cy = position.y + PLAYER_SIZE / 2.0f;
+	float radius = PLAYER_SIZE / 2.0f;
+
+	for (int i = 0; i < current_obj_count; i++) {
+		if (i == heldObject) continue;
+		if (sphere_aabb_intersection(cx, cy, radius,
+			current_objects[i][0], current_objects[i][1],
+			current_objects[i][2], current_objects[i][3])) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void Objects_Draw(void) {
+	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
+	float dt = CP_System_GetDt();
+
+	/* platforms of the level being played */
+	float (*plats)[PARAMETERS] = first_level;
+	int plat_count = LEVEL1_STATIC_PLATFORMS;
+	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
+	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
+
+	for (int i = 0; i < current_obj_count; i++) {
+		int type = (int)current_objects[i][OBJ_TYPE];
+
+		/* --- Fall when not being carried, until it hits something --- */
+		if (i != heldObject) {
+			float x = current_objects[i][OBJ_X];
+			float w = current_objects[i][OBJ_W];
+			float h = current_objects[i][OBJ_H];
+			float nextY = current_objects[i][OBJ_Y] + 400.0f * dt;   /* fall speed: 400 px/s */
+			float floor = (float)CP_System_GetWindowHeight();         /* ground */
+
+			/* closest platform top under the object's middle */
+			for (int p = 0; p < plat_count; p++) {
+				float top = plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f;
+				if (x + w > plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f &&
+					x < plats[p][PLAT_X] + plats[p][PLAT_W] / 2.0f &&
+					current_objects[i][OBJ_Y] + h / 2.0f <= top && top < floor)
+					floor = top;
+			}
+
+			if (nextY + h >= floor) current_objects[i][OBJ_Y] = floor - h;   /* hit: sit on top */
+			else current_objects[i][OBJ_Y] = nextY;                         /* keep falling */
+		}
+
+		/* --- Draw: highlight behind (only when touching), then the object --- */
+		CP_Image_Draw(objBG[type],
+			current_objects[i][OBJ_X] - HIGHLIGHT_PAD,
+			current_objects[i][OBJ_Y] - HIGHLIGHT_PAD,
+			current_objects[i][OBJ_W] + HIGHLIGHT_PAD * 2,
+			current_objects[i][OBJ_H] + HIGHLIGHT_PAD * 2,
+			(i == target) ? 255 : 0);
+
+		CP_Image_Draw(objImg[type],
+			current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
+			current_objects[i][OBJ_W], current_objects[i][OBJ_H], 255);
+	}
+}
+
+// Returns 0 = no hit, 1 = platform, 2 = other object, 3 = ground
+int Object_HitCheck(float cx, float cy, float radius, int self) {
+	/* platforms of the level being played */
+	float (*plats)[PARAMETERS] = first_level;
+	int plat_count = LEVEL1_STATIC_PLATFORMS;
+	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
+	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
+	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
+
+	for (int p = 0; p < plat_count; p++) {
+		if (sphere_aabb_intersection(cx, cy, radius,
+			plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f,
+			plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f,
+			plats[p][PLAT_W], plats[p][PLAT_H]))
+			return 1;
+	}
+
+	for (int i = 0; i < current_obj_count; i++) {
+		if (i == self) continue;
+		if (sphere_aabb_intersection(cx, cy, radius,
+			current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
+			current_objects[i][OBJ_W], current_objects[i][OBJ_H]))
+			return 2;
+	}
+
+	if (cy + radius >= (float)CP_System_GetWindowHeight()) return 3;
+
+	return 0;
+}
+
 // Points to the in-game object array of the level being played
 float (*current_objects)[5] = NULL;
 int current_obj_count = 0;
@@ -458,7 +588,32 @@ const float third_level_objects[2][5] = {
 float third_level_objects_ingame[2][5];
 
 
+
+
+
+
+
 /**********************************************************LEVEL LOOP*********************************************************************/
+
+/*****************BACKGROUND DRAWING FUNCTION****************/
+//Draws the background image for the level being played
+void DrawBG(CP_Image BG) {
+	/* --- Draw --- */
+	CP_Graphics_ClearBackground(CP_Color_Create(0, 100, 0, 100));
+	CP_Settings_ImageMode(CP_POSITION_CORNER);
+	CP_Image_Draw(BG, 0.0f, 0.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
+}
+
+
+/*****************EXIT DRAWING FUNCTION****************/
+//Draws the background image for the level being played
+void DrawExit(float x, float y, float w, float h, float degrees, float cornerRadius) {
+	CP_Settings_RectMode(CP_POSITION_CENTER);
+	CP_Settings_Fill(medium_light_green);
+	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
+}
+
+
 
 
 /***************** LEVEL 1: ********************/
@@ -644,188 +799,6 @@ void level_4th(void) {
 }
 
 
-void DrawExit(float x, float y, float w, float h, float degrees, float cornerRadius){
-	CP_Settings_RectMode(CP_POSITION_CENTER);
-	CP_Settings_Fill(medium_light_green);
-	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
-}
 
-void DrawBG(CP_Image BG) {
-	/* --- Draw --- */
-	CP_Graphics_ClearBackground(CP_Color_Create(0, 100, 0, 100));
-	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(BG, 0.0f, 0.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
-}
-// Copies the level's start coords into its in-game array. Call on level start/restart
-void Objects_Reset(void) {
-	current_objects = NULL;
-	current_obj_count = 0;
-	heldObject = -1;
-	kickedObject = -1;   /* stop any kick that was still sliding */
-
-	switch (level_selected) {
-	case level_1:
-		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 5; j++)
-				first_level_objects_ingame[i][j] = first_level_objects[i][j];
-		current_objects = first_level_objects_ingame;
-		current_obj_count = 2;
-		break;
-	case level_2:
-		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 5; j++)
-				second_level_objects_ingame[i][j] = second_level_objects[i][j];
-		current_objects = second_level_objects_ingame;
-		current_obj_count = 2;
-		break;
-	case level_3:
-		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 5; j++)
-				third_level_objects_ingame[i][j] = third_level_objects[i][j];
-		current_objects = third_level_objects_ingame;
-		current_obj_count = 2;
-		break;
-	}
-}
-
-// Returns the object the player is touching, or -1. Skips the held one
-int Object_Check(void) {
-	float cx = position.x + PLAYER_SIZE / 2.0f;
-	float cy = position.y + PLAYER_SIZE / 2.0f;
-	float radius = PLAYER_SIZE / 2.0f;
-
-	for (int i = 0; i < current_obj_count; i++) {
-		if (i == heldObject) continue;
-		if (sphere_aabb_intersection(cx, cy, radius,
-			current_objects[i][0], current_objects[i][1],
-			current_objects[i][2], current_objects[i][3])) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-void Objects_Draw(void) {
-	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
-	float dt = CP_System_GetDt();
-
-	/* platforms of the level being played */
-	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = LEVEL1_STATIC_PLATFORMS;
-	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
-	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
-	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
-
-	for (int i = 0; i < current_obj_count; i++) {
-		int type = (int)current_objects[i][OBJ_TYPE];
-
-		/* --- Fall when not being carried, until it hits something --- */
-		if (i != heldObject) {
-			float x = current_objects[i][OBJ_X];
-			float w = current_objects[i][OBJ_W];
-			float h = current_objects[i][OBJ_H];
-			float nextY = current_objects[i][OBJ_Y] + 400.0f * dt;   /* fall speed: 400 px/s */
-			float floor = (float)CP_System_GetWindowHeight();         /* ground */
-
-			/* closest platform top under the object's middle */
-			for (int p = 0; p < plat_count; p++) {
-				float top = plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f;
-				if (x + w > plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f &&
-					x < plats[p][PLAT_X] + plats[p][PLAT_W] / 2.0f &&
-					current_objects[i][OBJ_Y] + h / 2.0f <= top && top < floor)
-					floor = top;
-			}
-
-			if (nextY + h >= floor) current_objects[i][OBJ_Y] = floor - h;   /* hit: sit on top */
-			else current_objects[i][OBJ_Y] = nextY;                         /* keep falling */
-		}
-
-		/* --- Draw: highlight behind (only when touching), then the object --- */
-		CP_Image_Draw(objBG[type],
-			current_objects[i][OBJ_X] - HIGHLIGHT_PAD,
-			current_objects[i][OBJ_Y] - HIGHLIGHT_PAD,
-			current_objects[i][OBJ_W] + HIGHLIGHT_PAD * 2,
-			current_objects[i][OBJ_H] + HIGHLIGHT_PAD * 2,
-			(i == target) ? 255 : 0);
-
-		CP_Image_Draw(objImg[type],
-			current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
-			current_objects[i][OBJ_W], current_objects[i][OBJ_H], 255);
-	}
-}
-
-// Returns 0 = no hit, 1 = platform, 2 = other object, 3 = ground
-int Object_HitCheck(float cx, float cy, float radius, int self) {
-	/* platforms of the level being played */
-	float (*plats)[PARAMETERS] = first_level;
-	int plat_count = LEVEL1_STATIC_PLATFORMS;
-	if (level_selected == level_2) { plats = second_level; plat_count = LEVEL2_STATIC_PLATFORMS; }
-	if (level_selected == level_3) { plats = third_level;  plat_count = LEVEL3_STATIC_PLATFORMS; }
-	if (level_selected == level_4) { plats = fourth_level; plat_count = LEVEL4_STATIC_PLATFORMS; }
-
-	for (int p = 0; p < plat_count; p++) {
-		if (sphere_aabb_intersection(cx, cy, radius,
-			plats[p][PLAT_X] - plats[p][PLAT_W] / 2.0f,
-			plats[p][PLAT_Y] - plats[p][PLAT_H] / 2.0f,
-			plats[p][PLAT_W], plats[p][PLAT_H]))
-			return 1;
-	}
-
-	for (int i = 0; i < current_obj_count; i++) {
-		if (i == self) continue;
-		if (sphere_aabb_intersection(cx, cy, radius,
-			current_objects[i][OBJ_X], current_objects[i][OBJ_Y],
-			current_objects[i][OBJ_W], current_objects[i][OBJ_H]))
-			return 2;
-	}
-
-	if (cy + radius >= (float)CP_System_GetWindowHeight()) return 3;
-
-	return 0;
-}
-
-int Trea_score = 0;
-int Trea;
-
-int treasure_collected[MAX_TREASURES] = {0,0};
-
-int Treasure(float x, float y, int treasure_id)
-{
-	float trea_w = 20.0f;
-	float trea_h = 20.0f;
-
-	// Check whether treasure has already been collected
-	if (treasure_collected[treasure_id] == 1)
-	{
-		return 0;
-	}
-
-
-	CP_Settings_Fill(orange);
-	CP_Graphics_DrawRect(x, y, trea_w, trea_h);
-
-	float trea_left = x - trea_w / 2.0f;
-	float trea_right = x + trea_w / 2.0f;
-	float trea_top = y - trea_h / 2.0f;
-	float trea_bottom = y + trea_h / 2.0f;
-
-
-	float player_left = position.x;
-	float player_right = position.x + PLAYER_SIZE;
-	float player_top = position.y;
-	float player_bottom = position.y + PLAYER_SIZE;
-
-
-	if (player_right > trea_left &&
-		player_left < trea_right &&
-		player_bottom > trea_top &&
-		player_top < trea_bottom)
-	{
-		treasure_collected[treasure_id] = 1;
-
-		return 1; // Treasure collected this frame
-	}
-
-	return 0;
-}
-
+/**********************************************************Treasure/Collectables Functions*********************************************************************/
+//Treasure/Collectables Functions was here ,but was moved by Lewin was is now in scoring.c
