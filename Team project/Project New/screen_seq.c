@@ -47,6 +47,7 @@ void Screen_Init(void)
 
 void Screen_Exit(void)
 {
+
     CP_Image_Free(mainbackground);
     CP_Image_Free(defeat);
     CP_Image_Free(levelselection);

@@ -784,9 +784,7 @@ void level_3rd(void) {
 
 /***************** LEVEL 4: ********************/
 void level_4th(void) {
-	DrawBG(backgroundthree); // Use background 3 as placeholder for level 4
-	// iterates thru the 4 rows and 6 col
-// Nested loop not needed as first level columns are iterated through.
+	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 	
 	
 	float dt = CP_System_GetDt();
