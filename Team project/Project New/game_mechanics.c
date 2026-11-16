@@ -106,7 +106,8 @@ void Teleport_Activated(void) {
 	CP_Sound_Play(teleportSound);
 	TeleportWindowTiming = 0;
 	Teleport_Status = 0;
-	Teleport_count--;
+	if(Teleport_count<=3)
+		Teleport_count--;
 	score_teleport_used();
 }
 //Teleport Mechanic//
@@ -137,6 +138,10 @@ int Teleport_Mechannic(void){
 			CP_Settings_Fill(yellow);
 			CP_Graphics_DrawRect(position.x, position.y - 20.0, TeleportWindowTiming * TeleportCooldownBarScale, 10.0);
 		}
+		break;
+	case 4:
+		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
+		CP_Font_DrawText("Unlimted Charges", 1600.0f, 30.0f);
 		break;
 	}
 

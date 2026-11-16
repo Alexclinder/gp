@@ -8,7 +8,7 @@
 #include "scoring.h"
 
 
-// NPC
+// NPC Stats
 #define NPC_SIZE       100.0f
 #define GRAVITY        1500.0f
 #define MAX_FALL_SPEED 900.0f
