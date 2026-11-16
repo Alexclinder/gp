@@ -133,8 +133,10 @@ int Teleport_Mechannic(void){
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.Xright, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 		CP_Settings_RectMode(CP_POSITION_CORNER);
 		//CP_Graphics_DrawRect(TeleportTextCoordinates.XLeft-15.0, TeleportTextCoordinates.y+25.0, TeleportWindowTiming* TeleportCooldownBarScale, 20.0);
-		if(TeleportWindowTiming < TeleportCooldown)
-			CP_Graphics_DrawRect(position.x, position.y -20.0, TeleportWindowTiming* TeleportCooldownBarScale, 10.0);
+		if(TeleportWindowTiming < TeleportCooldown){// A "Meter" above the player's head indicating the dash cooldown
+			CP_Settings_Fill(yellow);
+			CP_Graphics_DrawRect(position.x, position.y - 20.0, TeleportWindowTiming * TeleportCooldownBarScale, 10.0);
+		}
 		break;
 	}
 
