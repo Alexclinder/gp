@@ -59,6 +59,7 @@ void Screen_Exit(void)
 void Next_level_Init(void) {
     Game_Next_Level();
 
+    
     Game_Reset();
 }
 

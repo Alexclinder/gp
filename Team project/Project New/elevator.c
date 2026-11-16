@@ -285,7 +285,6 @@ void Elevator_Init(void)
 void Elevator_Update(void)
 {
     DrawBG(bossBG);
-
     // CLIMB TIMER
     if (!platformsStopped)
     {
