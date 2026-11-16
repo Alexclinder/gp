@@ -6,6 +6,8 @@
 #include "npc_mechanics.h"
 #include "colors.h"
 #include "scoring.h"
+#include "elevator.h"
+
 
 
 
@@ -25,7 +27,16 @@ void Game_Init(void)
 
 void Game_Reset(void)
 {
+
 	LoadLevelImages();
+
+
+	printf("Current Level Restarted: %d\n", level_selected);
+	printf("Current Player Coordinates After Level Restarted: %d\n", player_spawns);
+	NPC_UpdateProjectiles(0);
+
+	LoadLevelImages();
+
 	Teleport_count = 3;
 	Teleport_Status = 1;
 	TeleportWindowTiming = 0.1f;
@@ -38,8 +49,9 @@ void Game_Reset(void)
 	TimeSet = 0;
 	ResetTime = 1;
 	PauseTimeStatus = 0;
-	Player_Starting_Pos(player_spawns,level_selected);
+	Player_Starting_Pos(player_spawns,level_selected); // shld also reset boss spawn
 	NPC_Starting_Pos(NPC_1_spawns, level_selected);
+
 
 	// Unlocked scoring 
 	npc_score = 0;
@@ -56,6 +68,11 @@ void Game_Reset(void)
 	}
 	
 	killZoneX = 0.0f;
+
+	// Boss level: reset health, lasers, platforms, camera, vent and boss.
+	// Called last so the boss level's player/NPC positions override the ones above.
+	if (level_selected == boss_level)
+		Elevator_Reset();
 }
 
 // Used in Game_Update() to call the appropriate level function based on the current level_selected value.
@@ -107,13 +124,10 @@ void Game_Update(void)
 
 void Game_Next_Level(void) {
 
-	if (level_selected > 3) {
-		CP_Engine_SetNextGameStateForced(Screen_Init, Completed_Game_Screen, Screen_Exit);
-	}
-	else {
+
 		level_selected++;
 		Game_Reset();
-	}
+	
 }
 
 void Game_Exit(void)

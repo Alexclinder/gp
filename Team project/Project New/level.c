@@ -185,7 +185,7 @@ spawn player_spawns[LEVELS] = {
 							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
 							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
 							   { 100.0f, 100.0f }, // level 4 
-							   { 1600.0f, 800.0f }  // boss level  
+							   { 100.0f, 850.0f }  // boss level  
 							  };
 
 
@@ -822,7 +822,7 @@ void level_4th(void) {
 		NPC_UpdateProjectiles(0);
 		// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 		level_selected = boss_level;
-		CP_Engine_SetNextGameState(Elevator_Init, Elevator_Update, Elevator_Exit);    // Move to boss lvl after lvl 4
+		CP_Engine_SetNextGameState(Elevator_Init, Game_Update, Elevator_Exit);    // Move to boss lvl after lvl 4
 	}
 }
 

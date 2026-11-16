@@ -10,7 +10,6 @@
 #include "boss.h"
 #include "Images.h"
 
-#include "game.h"   // DELETEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 #define PLAT_H      24.0f
 #define MAX_PLATS   32
@@ -45,9 +44,11 @@ static float laserTimer = 0.0f;
 static float laserY = 0.0f;
 static int laserActive = 0;
 
+
+
 // CLIMB TIMER
 #define CLIMB_DURATION 30.0f
-
+        
 static float climbTimer = 0.0f;
 static int platformsStopped = 0;
 
@@ -147,7 +148,7 @@ static void Lasers_Draw(void)
     float screenW = (float)CP_System_GetWindowWidth();
     float screenH = (float)CP_System_GetWindowHeight();
 
-    CP_Settings_Fill(CP_Color_Create(255, 0, 0, 255));
+    CP_Settings_Fill(red);
 
     // Horizontal laser lines
     for (int i = 0; i < screenW; i += 40)
@@ -239,48 +240,45 @@ static void Vent_Init(void)
 
 
 
-void Elevator_Init(void)
+void Elevator_Reset(void)
 {
+
     NPC_Starting_Pos(NPC_1_spawns, level_selected); //change after adding in proper sequencing
 	LoadLevelImages();
+
     float screenH = (float)CP_System_GetWindowHeight();
 
-    /* reset generation state */
     camY = 0.0f;
-    topY = screenH;      /* first platform sits just above the floor */
-    // lastX = 100.0f;
+    topY = screenH;
     plat_count = 0;
+    lastX = 700.0f;            /* your original never resets this either */
+    platformDirection = 1;     /* or this */
 
     position = CP_Vector_Set(100.0f, screenH - PLAYER_SIZE);
     velocity = CP_Vector_Set(0.0f, 0.0f);
     onGround = 0;
-    current_obj_count = 0;       /* no pickup objects in this level */
+    current_obj_count = 0;
     ProjectileActive = 0;
 
-    // Reset player health
     playerHealth = PLAYER_MAX_HEALTH;
 
-
-    // =====================================
-    // Initialize Lazers
-    // =====================================
     laserTimer = 0.0f;
     laserActive = 0;
     laserY = 0.0f;
 
-    // =====================================
-    // Reset climbing sequence
-    // =====================================
     climbTimer = 0.0f;
     platformsStopped = 0;
     ventVisible = 0;
     ventX = 0.0f;
     ventY = 0.0f;
 
-
-    // Initialise boss AFTER player position
     BOSS_Init();
-    
+}
+
+void Elevator_Init(void)
+{
+    NPC_Starting_Pos(NPC_1_spawns, level_selected);
+    Elevator_Reset();
 }
 
 void Elevator_Update(void)
@@ -327,6 +325,9 @@ void Elevator_Update(void)
         Plats_Generate();
     }
 
+    //if (isCarrying) Character_MovementCarry();
+    //else Character_MovementDefault();
+
     /* 4. draw platforms */
     for (int i = 0; i < plat_count; i++) {
         DrawPlatform(plats[i].x + plats[i].w / 2.0f, plats[i].y - camY + PLAT_H / 2.0f, plats[i].w, PLAT_H, 0.0f, 0.0f);
@@ -340,27 +341,9 @@ void Elevator_Update(void)
     //Draw Player health Bar
     DrawPlayerHealth();
 
-
-    Objective_Text();
-    ingameTimer();
-    TeleportTimer();
-    Teleport_Mechannic();
-
-    if (isCarrying) Character_MovementCarry();
-    else Character_MovementDefault();
-
     // 6. Boss movement and drawing
     BOSS_Update();
 
-    Shield_Update();
-
-    // Spawn in Enemy
-    NPC_MovementDefault();
-    NPC_Attack();
-    NPC_UpdateProjectiles(1);
-    NPC_CheckShieldCollision();
-    NPC_CheckReflectedHit();
-    NPC_DrawProjectiles();
 
     // Check for collision then end game if hit
     if (NPC_CheckPlayerCollision() == 1 || Laser_CheckCollision() )
@@ -373,7 +356,7 @@ void Elevator_Update(void)
     // Check if player reaches the vent
     if (Vent_CheckCollision())
     {
-        CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit); // change to win screen 
+        CP_Engine_SetNextGameState(Screen_Init, Leaderboard_Screen, Screen_Exit); // change to win screen 
         return;
     }
 

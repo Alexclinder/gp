@@ -24,7 +24,6 @@ void drawTextCenter(const char* text, float x, float y, float scalar);
 void dynamicBtn(const char* text, float rect_x, float rect_y, void *init(void), void *update(void), void *exit(void));
 void Exit_dynamicBtn(const char* text, float rect_x, float rect_y);
 
-
 // For Objective and score text
 void drawTextTopLeft(const char* text, float x, float y, float scalar);
 void drawScoreTopLeft(const int* text, float x, float y, float scalar);

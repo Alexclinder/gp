@@ -88,10 +88,18 @@ void ResetALLTimers_StatusBossLvl(void) {
 }
 /***********************Level Initialization Functions******************/
 // score_reset reset level score but not the player_score (cumulative of all level_score)
+
+void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+void Level_Boss_Init(void) { level_selected = boss_level; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+
 void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_1); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
 void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_2); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
 void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_3); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
 void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl();  Game_Init(); Player_Starting_Pos(player_spawns, level_4); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+
 
 
 
