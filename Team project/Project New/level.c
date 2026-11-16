@@ -652,6 +652,8 @@ void level_1st(void) {
 			first_level[i][5]);
 	}
 	DrawBG(backgroundthree);
+	CP_Settings_Fill(black);
+	CP_Graphics_DrawRect(800, 50, 1600, 100);
 
 	if (Treasure(410.0f, 150.0f, 0))
 	{
@@ -693,6 +695,8 @@ void level_2nd(void) {
 			second_level[i][5]);
 	}
 	DrawBG(backgroundtwo);
+	CP_Settings_Fill(black);
+	CP_Graphics_DrawRect(800, 50, 1600, 100);
 	kill_zone(level2_floor.kx, level2_floor.ky, level2_floor.kw, level2_floor.kh);
 	
 	Pressure_Plate_2Door(level2.px, level2.py, level2.pw, level2.ph, 
@@ -741,6 +745,8 @@ void level_3rd(void) {
 
 
 	DrawBG(background);
+	CP_Settings_Fill(black);
+	CP_Graphics_DrawRect(800, 50, 1600, 100);
 	
 	// on tiny platform directly ontop of longest killzone
 	if (Treasure(1050.0f, 680.0f, 0))
@@ -785,6 +791,7 @@ void level_3rd(void) {
 /***************** LEVEL 4: ********************/
 void level_4th(void) {
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
+
 	
 	
 	float dt = CP_System_GetDt();
@@ -805,6 +812,8 @@ void level_4th(void) {
 			fourth_level[i][4],
 			fourth_level[i][5]);
 	}
+	CP_Settings_Fill(black);
+	CP_Graphics_DrawRect(800, 50, 1600, 100);
 
 	DrawExit(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius);
 
