@@ -684,7 +684,6 @@ void level_1st(void) {
 
 /***************** LEVEL 2: ********************/
 void level_2nd(void) {
-	DrawBG(backgroundtwo);
 	for (int i = 0; i <	LEVEL2_STATIC_PLATFORMS; i++) {
 		DrawPlatform(second_level[i][0],
 			second_level[i][1],
@@ -693,6 +692,7 @@ void level_2nd(void) {
 			second_level[i][4],
 			second_level[i][5]);
 	}
+	DrawBG(backgroundtwo);
 	kill_zone(level2_floor.kx, level2_floor.ky, level2_floor.kw, level2_floor.kh);
 	
 	Pressure_Plate_2Door(level2.px, level2.py, level2.pw, level2.ph, 
