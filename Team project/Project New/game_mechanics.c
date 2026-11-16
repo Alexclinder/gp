@@ -97,6 +97,7 @@ void TeleportTimer(void) {
 	float dt = CP_System_GetDt();
 	//Cooldown before pressing to Teleport again
 	TeleportWindowTiming += dt; // Contuously increase the Teleport window timing based on the delta time
+	TeleportWindowTiming = CP_Math_ClampFloat(TeleportWindowTiming, 0.0, TeleportCooldown);
 	if (TeleportWindowTiming >= TeleportCooldown)
 		Teleport_Status = 1; // reset the Teleport status once the Teleport cooldown is reset
 }
@@ -114,6 +115,7 @@ int Teleport_Mechannic(void){
 	TeleportTextCoordinates.XMiddle = 1550.0;
 	TeleportTextCoordinates.Xright = 1580.0;
 	TeleportTextCoordinates.y = 40.0;
+	float TeleportCooldownBarScale = 25.0f;
 
 	CP_Settings_Fill(medium_light_green);
 	CP_Font_Set(Font);
@@ -129,6 +131,10 @@ int Teleport_Mechannic(void){
 	case 1:
 		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.Xright, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
+		CP_Settings_RectMode(CP_POSITION_CORNER);
+		//CP_Graphics_DrawRect(TeleportTextCoordinates.XLeft-15.0, TeleportTextCoordinates.y+25.0, TeleportWindowTiming* TeleportCooldownBarScale, 20.0);
+		if(TeleportWindowTiming < TeleportCooldown)
+			CP_Graphics_DrawRect(position.x, position.y -20.0, TeleportWindowTiming* TeleportCooldownBarScale, 10.0);
 		break;
 	}
 
