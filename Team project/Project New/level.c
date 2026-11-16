@@ -181,7 +181,7 @@ void Objective_Text(void) {
 /*****************Spawn Locations for Player********************/
 spawn player_spawns[LEVELS] = { 
 							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
-							   { 1000.0f, 800.0f }, // level 1 - let player start on bottom right screen
+							   { 100.0f, 800.0f }, // level 1 - let player start on bottom right screen
 							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
 							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
 							   { 100.0f, 100.0f }, // level 4 
@@ -638,11 +638,11 @@ void DrawExit(float x, float y, float w, float h, float degrees, float cornerRad
 
 /***************** LEVEL 1: ********************/
 /* Alternating Kill Zones */
-k_zone level1_kwall = { .kx = 500.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
+k_zone level1_kwall = { .kx = 600.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 k_zone level1_kwall2 = { .kx = 900.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 
 void level_1st(void) {
-	DrawBG(backgroundthree);
+
 	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
 		DrawPlatform(first_level[i][0],
 			first_level[i][1],
@@ -651,6 +651,7 @@ void level_1st(void) {
 			first_level[i][4],
 			first_level[i][5]);
 	}
+	DrawBG(backgroundthree);
 
 	if (Treasure(410.0f, 150.0f, 0))
 	{
