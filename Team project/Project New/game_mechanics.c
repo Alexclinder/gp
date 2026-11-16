@@ -786,7 +786,7 @@ void Pressure_Plate_2Door(float pres_x, float pres_y, float pres_width, float pr
 
 void kill_zone(float x, float y, float w, float h)
 {
-	
+	CP_Settings_RectMode(CP_POSITION_CENTER);
 	CP_Settings_Fill(red);
 	CP_Graphics_DrawRect(x, y, w, h);
 

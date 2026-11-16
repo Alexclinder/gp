@@ -800,8 +800,8 @@ void level_4th(void) {
 	if (killZoneX > killZoneEndX)
 		killZoneX = killZoneEndX;   // stop at endpoint
 
-	kill_zone(killZoneX - 500.0f, 500.0f, 1000.0f, 900.0f);
-
+	kill_zone(killZoneX-500.0f, 500.0f, 1000.0f, 900.0f);
+	
 	// kill_zone(arr[level_2]);
 
 	for (int i = 0; i < LEVEL4_STATIC_PLATFORMS; i++) {

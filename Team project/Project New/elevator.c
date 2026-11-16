@@ -8,6 +8,7 @@
 #include "npc_mechanics.h"
 #include "screen_seq.h"
 #include "boss.h"
+#include "Images.h"
 
 #include "game.h"   // DELETEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
@@ -241,7 +242,7 @@ static void Vent_Init(void)
 void Elevator_Init(void)
 {
     NPC_Starting_Pos(NPC_1_spawns, level_selected); //change after adding in proper sequencing
-
+	LoadLevelImages();
     float screenH = (float)CP_System_GetWindowHeight();
 
     /* reset generation state */
@@ -388,4 +389,5 @@ void Elevator_Update(void)
 void Elevator_Exit(void)
 {
     BOSS_Exit();
+	FreeLevelImages();
 }

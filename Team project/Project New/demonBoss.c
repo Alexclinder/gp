@@ -6,7 +6,8 @@
 #include "game_mechanics.h"
 #include "elevator.h"
 #include "screen_seq.h"
-#include "game_mechanics.h"
+#include "Images.h"
+
 
 
 // =====================================

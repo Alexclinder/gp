@@ -566,6 +566,7 @@ void Exit_dynamicBtn(const char* text, float rect_x, float rect_y) {
         CP_Image_Draw(frame, rect_x, rect_y, rect_width * scalar, rect_height * scalar, 255);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
             CP_Engine_Terminate();
+
     }
     else {
         scalar = 1.0f;
