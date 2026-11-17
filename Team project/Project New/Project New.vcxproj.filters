@@ -34,9 +34,6 @@
     <ClCompile Include="demonBoss.c">
       <Filter>Source Files\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="boss.c">
-      <Filter>Source Files\Boss</Filter>
-    </ClCompile>
     <ClCompile Include="Objects.c">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
@@ -60,9 +57,6 @@
     </ClInclude>
     <ClInclude Include="screen_seq.h">
       <Filter>Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="boss.h">
-      <Filter>Header File\Boss</Filter>
     </ClInclude>
     <ClInclude Include="demonBoss.h">
       <Filter>Header File\Boss</Filter>
