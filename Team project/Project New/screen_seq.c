@@ -40,6 +40,10 @@ void Screen_Init(void)
     // Use to initalize the Assets Images used in the game
     LoadImages();
 
+    if (Font == NULL) {
+        //if this prints, the file path or name is wrong!
+        printf("ERROR: Failed to load font!\n");
+    }
     CP_Font_Set(Font);
 
     PauseTimeStatus = 1;
@@ -54,6 +58,12 @@ void Screen_Exit(void)
     CP_Image_Free(frame);
     CP_Image_Free(pausemenu);
     CP_Font_Free(Font);
+
+    // free images from leaderboard screen
+    CP_Image_Free(background);
+    CP_Image_Free(backgroundtwo);
+    CP_Image_Free(backgroundthree);
+    CP_Image_Free(backgroundfour_pre);
 }
 
 void Next_level_Init(void) {
@@ -169,14 +179,14 @@ void Main_Menu_Update(void) {
 
 
     CP_Settings_Fill(orange);
-    dynamicBtn("Start Game!", rect_x + start_offset, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Start Game!", rect_x + start_offset, first_y, white, Screen_Init, Level_Select_Screen, Screen_Exit);
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Controls", rect_x + middle_offset, second_y, Screen_Init, Controls_Screen, Screen_Exit);
+    dynamicBtn("Controls", rect_x + middle_offset, second_y, white, Screen_Init, Controls_Screen, Screen_Exit);
     CP_Settings_Fill(dark_blue);
-    Exit_dynamicBtn("Exit to Desktop", rect_x + exit_offset, third_y);
+    Exit_dynamicBtn("Exit to Desktop", rect_x + exit_offset, third_y, white);
 
     CP_Settings_Fill(dark_blue);
-	dynamicBtn("Leaderboard", 1400.0, 745.0, Screen_Init, Leaderboard_Screen, Screen_Exit);//Temporary Leaderboard button for testing purposes Removed if not needed
+	dynamicBtn("Leaderboard", 1400.0, 745.0, white, Screen_Init, Leaderboard_Screen, Screen_Exit);//Temporary Leaderboard button for testing purposes Removed if not needed
 }
 
 void Pause_Menu_Update(void)
@@ -194,7 +204,7 @@ void Pause_Menu_Update(void)
 	float two_third_section = CP_System_GetWindowHeight() + 700.0f;
     float y_offset = 0.13f;
 	// 1/5 = 20% of the 2/3 section for each button
-    // Resume
+     // Resume
     first_y = two_third_section * y_offset;
     // Restart
     second_y = two_third_section * (y_offset * 2);
@@ -205,13 +215,13 @@ void Pause_Menu_Update(void)
 
 
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Resume Game!", rect_x, first_y, Game_Init, Game_Update, Game_Exit);
+    dynamicBtn("Resume Game!", rect_x, first_y, white, Game_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Restart Level", rect_x, second_y, white, Game_Reset, Game_Update, Game_Exit);
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Controls", rect_x, third_y, Screen_Init, Controls_Screen, Screen_Exit);
+    dynamicBtn("Controls", rect_x, third_y, white, Screen_Init, Controls_Screen, Screen_Exit);
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Exit to Main Menu", rect_x, fourth_y, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, fourth_y, white, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
  
 }
 
@@ -222,7 +232,7 @@ void Win_Screen(void) {
     char score_buf[SCORE_BUF_SIZE] = { 0 };
     sprintf_s(score_buf, SCORE_BUF_SIZE, "Score: %d", level_score);
     // move the actual score value to the right of Score:
-    drawTextCenter(score_buf, rect_x, 300.0f, 1.0f);
+    drawTextCenter(score_buf, rect_x, 300.0f, 1.0f, white);
      
     CP_Font_Set(Font);
     CP_Settings_TextSize(50);
@@ -248,16 +258,16 @@ void Win_Screen(void) {
     third_y = CP_System_GetWindowHeight() / 2.0 + 300.0f;
     
     CP_Settings_Fill(orange);
-    dynamicBtn("Next Level", rect_x, first_y, Next_level_Init, Game_Update, Game_Exit);
+    dynamicBtn("Next Level", rect_x, first_y, white, Next_level_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Restart Level", rect_x, second_y, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Restart Level", rect_x, second_y, white, Game_Reset, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, third_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
 
 }
 
 void Lose_Screen(void) {
-    float rect_y = CP_System_GetWindowHeight() / 2.0;
+    float rect_y = CP_System_GetWindowHeight() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
     CP_Image_Draw(defeat, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
 
@@ -265,17 +275,19 @@ void Lose_Screen(void) {
     first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
 	// Exit to Main Menu
     second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-    CP_Settings_Fill(translucent_light_red);
-    dynamicBtn("Restart Level", 300, rect_y, Game_Reset, Game_Update, Game_Exit);
-    CP_Settings_Fill(translucent_light_red);
-    dynamicBtn("Exit to Main Menu", 1300, rect_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    CP_Settings_Fill(purple_blue);
+    dynamicBtn("Restart Level", 300, rect_y, white, Game_Reset, Game_Update, Game_Exit);
+    CP_Settings_Fill(purple_blue);
+    dynamicBtn("Exit to Main Menu", 1300, rect_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
 
     
 }
 
 void Leaderboard_Screen(void) {
+
+
     float rect_x = CP_System_GetWindowWidth() / 2.0;
-    CP_Graphics_ClearBackground(CP_Color_Create(100, 140, 200, 0));
+    CP_Graphics_ClearBackground(CP_Color_Create(0,50,100,100));
 
     float left_offset = 100.0f;
     float right_offset = 500.0f;
@@ -291,87 +303,141 @@ void Leaderboard_Screen(void) {
 
     float timer_score_w = 400.0f;
 
-    CP_Settings_TextSize(textSize);
-    //Level 1 Leaderboard Time 
-    CP_Font_DrawTextBox("Level 1 \nScore & Time", rect_x - left_offset, timer_score_top_y, timer_score_w);
+    CP_Color text_color = white;
+    float text_scalar = 0.5f;
+
+    // Drawing 2x2 matrix rectangles
+    // first rect starts at left row, left col
+    // 0 0 
+    // 0 1
+    // 1 0 
+    // 1 1
+    // ask sin wee if need questions about this 2x2 matrix
+    float level_box_width = 450.0f;
+    float level_box_height = 360.0f;
+    float padding = 50.0f;
+    float box_start_posX = rect_x - 220.0f;
+    float box_start_posY = 120.0f;
+
+    float bg_width = level_box_width - 30.0f;
+    // height follows the bg_width - current screen size is 16 by 9. so 9*bg_width/16 = bg_height 
+    float bg_height = ((float)CP_System_GetWindowHeight() * bg_width) / (float)CP_System_GetWindowWidth();
+    float alpha = 255.0f;
+
+    float level_text_scalar = 0.8f;
+    float level_text_yOffset = 23.0f;
+
+    // Buffers
     char Level1_Time[TIME_BUF_SIZE] = { 0 };
-    sprintf_s(Level1_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level1_time);
-    CP_Font_DrawText(Level1_Time, rect_x + left_offset, top_timer_y);
-
     char Level1_Score[SCORE_BUF_SIZE] = { 0 };
-    sprintf_s(Level1_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level1_score);
-    CP_Font_DrawText(Level1_Score, rect_x + left_offset, top_timer_y + score_offset_y);
 
-    //Level 2 Leaderboard Time
-    CP_Font_DrawTextBox("Level 2 \nScore & Time", rect_x + timer_score_offset_x, timer_score_top_y, timer_score_w);
     char Level2_Time[TIME_BUF_SIZE] = { 0 };
-    sprintf_s(Level2_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level2_time);
-    CP_Font_DrawText(Level2_Time, rect_x + right_offset, top_timer_y);
-
     char Level2_Score[SCORE_BUF_SIZE] = { 0 };
-    sprintf_s(Level2_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level2_score);
-    CP_Font_DrawText(Level2_Score, rect_x + right_offset, top_timer_y + score_offset_y);
 
-    //Level 3 Leaderboard Time
-    CP_Font_DrawTextBox("Level 3 \nScore & Time", rect_x - left_offset, timer_score_bot_y, timer_score_w);
     char Level3_Time[TIME_BUF_SIZE] = { 0 };
-    sprintf_s(Level3_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level3_time);
-    CP_Font_DrawText(Level3_Time, rect_x + left_offset, bottom_timer_y);
-
     char Level3_Score[SCORE_BUF_SIZE] = { 0 };
-    sprintf_s(Level3_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level3_score);
-    CP_Font_DrawText(Level3_Score, rect_x + left_offset, bottom_timer_y + score_offset_y);
 
-    //Level 4 Leaderboard Time
-    CP_Font_DrawTextBox("Level 4 \nScore & Time", rect_x + timer_score_offset_x, timer_score_bot_y, timer_score_w);
-
-    // @ToDo Lewin, add time here
-
+    char Level4_Time[TIME_BUF_SIZE] = { 0 };
     char Level4_Score[SCORE_BUF_SIZE] = { 0 };
-    sprintf_s(Level4_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level4_score);
-    CP_Font_DrawText(Level4_Score, rect_x + right_offset, bottom_timer_y + score_offset_y);
 
-    // Total Score
-    CP_Font_DrawTextBox("Total Score", rect_x + timer_score_offset_x, timer_score_bot_y, timer_score_w);
+    // need more space to store cumulative, otherwise game will crash
+    char LevelTotal_Time[TIME_BUF_SIZE*2] = { 0 };
+    char LevelTotal_Score[SCORE_BUF_SIZE*2] = { 0 };
 
-    // @ToDo Lewin, add time here
+    CP_Settings_RectMode(CP_POSITION_CORNER); // To match DrawBG Corner Mode
 
-    // player_score buf needs to be more than 16 char, or game will crash
-    char Player_Score[SCORE_BUF_SIZE * 2] = { 0 };
-    sprintf_s(Player_Score, SCORE_BUF_SIZE * 2, "Total Score: %d", player_score);
-    CP_Font_DrawText(Player_Score, rect_x - right_offset, first_y = CP_System_GetWindowHeight() / 2.0 - 300.0f);
+    for (int row = 0; row < 2; row++) {
+        for (int col = 0; col < 2; col++) {
 
+            float x = box_start_posX + col * (padding + level_box_width);
+            float y = box_start_posY + row * (padding + level_box_height);
+            float card_center_x = x + (level_box_width * 0.5f);
 
-    // Restart Level
-    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
-    // Exit to Main Menu
-    second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
+            CP_Settings_Fill(purple_blue);
+            CP_Graphics_DrawRect(x, y, level_box_width, level_box_height);
+
+            // matrix = 0,0 - Level 1
+            if (!row && !col) {
+                DrawBG(backgroundthree, x + 15.0f, y + 15.0f, bg_width, bg_height, alpha);
+
+                drawTextCenter("Level 1", card_center_x, y - level_text_yOffset, level_text_scalar, text_color);
+
+                sprintf_s(Level1_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level1_time);
+                drawTextCenter(Level1_Time, card_center_x, y + level_box_height - 65.0f, text_scalar, text_color);
+
+                sprintf_s(Level1_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level1_score);
+                drawTextCenter(Level1_Score, card_center_x, y + level_box_height - 30.0f, text_scalar, text_color);
+                continue;
+            }
+
+            // matrix = 0,1 - Level 2
+            if (!row && col) {
+                DrawBG(backgroundtwo, x + 15.0f, y + 15.0f, bg_width, bg_height, alpha);
+
+                drawTextCenter("Level 2", card_center_x, y - level_text_yOffset, level_text_scalar, text_color);
+
+                sprintf_s(Level2_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level2_time);
+                drawTextCenter(Level2_Time, card_center_x, y + level_box_height - 65.0f, text_scalar, text_color);
+
+                sprintf_s(Level2_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level2_score);
+                drawTextCenter(Level2_Score, card_center_x, y + level_box_height - 30.0f, text_scalar, text_color);
+                continue;
+            }
+
+            // matrix = 1,0 - Level 3
+            if (row && !col) {
+                DrawBG(background, x + 15.0f, y + 15.0f, bg_width, bg_height, alpha);
+
+                drawTextCenter("Level 3", card_center_x, y - level_text_yOffset, level_text_scalar, text_color);
+
+                sprintf_s(Level3_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level3_time);
+                drawTextCenter(Level3_Time, card_center_x, y + level_box_height - 65.0f, text_scalar, text_color);
+
+                sprintf_s(Level3_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level3_score);
+                drawTextCenter(Level3_Score, card_center_x, y + level_box_height - 30.0f, text_scalar, text_color);
+                continue;
+            }
+
+            // matrix = 1,1 - Level 4
+            if (row && col) {
+                DrawBG(backgroundfour_pre, x + 15.0f, y + 15.0f, bg_width, bg_height, alpha);
+
+                drawTextCenter("Level 4", card_center_x, y - level_text_yOffset, level_text_scalar, text_color);
+
+                // @ToDo Lewin, add time here
+                sprintf_s(Level4_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level4_time);
+                drawTextCenter(Level4_Time, card_center_x, y + level_box_height - 65.0f, text_scalar, text_color);
+
+                sprintf_s(Level4_Score, SCORE_BUF_SIZE, "Score: %d", Level_Score.level4_score);
+                drawTextCenter(Level4_Score, card_center_x, y + level_box_height - 30.0f, text_scalar, text_color);
+                continue;
+            }
+        }
+    }
+
+    CP_Color total_text_color = orange;
+
+    float total_text_xOffset = 500.0f;
+    
+    float total_text_scalar = 1.3f;
+
+    float total_time_text_y = CP_System_GetWindowHeight() / 2.0f - 200.0f;
+    
+    float total_time = Level_Timer.level1_time + Level_Timer.level2_time + Level_Timer.level3_time + Level_Timer.level4_time;
+   
+    sprintf_s(LevelTotal_Time, TIME_BUF_SIZE*2, "Total Time: %.2f", total_time);
+    drawTextCenter(LevelTotal_Time, rect_x - total_text_xOffset, total_time_text_y, total_text_scalar, total_text_color);
+
+    sprintf_s(LevelTotal_Score, SCORE_BUF_SIZE*2, "Total Score: %d", player_score);
+    drawTextCenter(LevelTotal_Score, rect_x - total_text_xOffset, total_time_text_y + 100.0f, total_text_scalar, total_text_color);
+    
+    // Navigation Buttons
+    first_y = CP_System_GetWindowHeight() - 250.0f;
+    second_y = CP_System_GetWindowHeight() - 100.0f;
     CP_Settings_Fill(orange);
-    dynamicBtn("Level Select", rect_x - right_offset, first_y, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Level Select", rect_x - right_offset, first_y, white, Screen_Init, Level_Select_Screen, Screen_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Exit to Main Menu", rect_x - right_offset, second_y, Screen_Init, Main_Menu_Update, Screen_Exit);
-
-
-
-
-}
-
-void Completed_Game_Screen(void) {
-    float rect_x = CP_System_GetWindowWidth() / 2.0;
-    CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
-
-    // Next Level
-    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
-    // Restart
-    second_y = CP_System_GetWindowHeight() / 2.0;
-    // Exit to Main Menu
-    third_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
-    CP_Settings_Fill(orange);
-    dynamicBtn("Leaderboard", rect_x, first_y, Screen_Init, Leaderboard_Screen, Screen_Exit);
-    CP_Settings_Fill(orange);
-    dynamicBtn("Level Select", rect_x, second_y, Screen_Init, Level_Select_Screen, Screen_Exit);
-    CP_Settings_Fill(orange);
-    dynamicBtn("Exit to Main Menu", rect_x, third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x - right_offset, second_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
 }
 
 static float level_anim_time = 0.0f;   // put this at the top of the file
@@ -397,22 +463,22 @@ void Level_Select_Screen(void) {
 
     float btn_x = 320.0f;
 
-    drawTextCenter("SELECT A LEVEL", btn_x + offset[0], 100.0f, 1.2f);
+    drawTextCenter("SELECT A LEVEL", btn_x + offset[0], 100.0f, 1.2f, white);
 
     // Level buttons (stacked on the left)
     CP_Settings_Fill(orange);
-    dynamicBtn("Level 1", btn_x + offset[1], 230.0f, Level_1_Init, Game_Update, Game_Exit);
+    dynamicBtn("Level 1", btn_x + offset[1], 230.0f, white, Level_1_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Level 2", btn_x + offset[2], 350.0f, Level_2_Init, Game_Update, Game_Exit);
+    dynamicBtn("Level 2", btn_x + offset[2], 350.0f, white, Level_2_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Level 3(HARD)", btn_x + offset[3], 470.0f, Level_3_Init, Game_Update, Game_Exit);
+    dynamicBtn("Level 3(HARD)", btn_x + offset[3], 470.0f, white, Level_3_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Level 4", btn_x + offset[4], 590.0f, Level_4_Init, Game_Update, Game_Exit);
+    dynamicBtn("Level 4", btn_x + offset[4], 590.0f, white, Level_4_Init, Game_Update, Game_Exit);
 
     // Back to Menu (extra gap below the levels)
     third_y = 740.0f;
     CP_Settings_Fill(orange);
-    dynamicBtn("Back to Menu", btn_x + offset[5], third_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Back to Menu", btn_x + offset[5], third_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
 }
 
 enum { NUMBER_OF_CONTROLS = 7 };
@@ -422,11 +488,11 @@ void Controls_Screen(void) {
     const char* controls_text[NUMBER_OF_CONTROLS] =
     {
         "JUMP",
-        "DOWN",
         "LEFT",
         "RIGHT",
         "KICK",
         "PICK UP / DROP",
+        "PARRY / BLOCK",
         "PAUSE/BACK"
     };
     // x, y, w, h, text, scalar
@@ -434,11 +500,11 @@ void Controls_Screen(void) {
     const char* control_keys[NUMBER_OF_CONTROLS] =
     {
         "W",
-        "S",
         "A",
         "D",
         "F",
-        "SPACE",
+        "E",
+        "P"
         "ESC"
     };
 
@@ -449,15 +515,15 @@ void Controls_Screen(void) {
     float first_controlkey_x = first_control_x * 2.0f;
 
     const float controls_rect_width = 400.0f;
-    const float controlskeys_rect_width = 150.0f;
+    const float controlskeys_rect_width = 250.0f;
     const float control_rect_height = 70.0f;
 
     // Draw the boxes and text for each control and corresponding key
     for (int i = 0; i < NUMBER_OF_CONTROLS; i++) {
-        CP_Settings_Fill(translucent_light_red);
-        drawBtn(first_control_x, first_control_y + (i * y_offset), controls_rect_width, control_rect_height, controls_text[i], 1.0f);
-        CP_Settings_Fill(translucent_light_red);
-        drawBtn(first_controlkey_x, first_control_y + (i * y_offset), controlskeys_rect_width, control_rect_height, control_keys[i], 1.0f);
+        CP_Settings_Fill(purple_blue);
+        drawBtn(first_control_x, first_control_y + (i * y_offset), controls_rect_width, control_rect_height, controls_text[i], 1.0f, white);
+        CP_Settings_Fill(purple_blue);
+        drawBtn(first_controlkey_x, first_control_y + (i * y_offset), controlskeys_rect_width, control_rect_height, control_keys[i], 1.0f, white);
     }
 
     // Back to Menu button
@@ -466,10 +532,10 @@ void Controls_Screen(void) {
     CP_Settings_Fill(orange);
 
     if (level_selected == main_menu) {
-        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, Screen_Init, Main_Menu_Update, Screen_Exit);
+        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
     }
     else {
-        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, Screen_Init, Pause_Menu_Update, Screen_Exit);
+        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, white, Screen_Init, Pause_Menu_Update, Screen_Exit);
     }
 }
 
@@ -483,20 +549,11 @@ void Controls_Screen(void) {
 The functions below are the elements or functionalities of each updated screen*/
 
 /*********************Objective & Score Text Position Functions*****************/
-void drawTextTopLeft(const char* text, float x, float y, float scalar)
+void drawTextTopLeft(const char* text, float x, float y, float scalar, CP_Color color)
 {
-    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    CP_Font_Set(Font);
     CP_Settings_TextSize(textSize * scalar);
-    CP_Settings_Fill(white);
-    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
-    CP_Font_DrawText(text, x, y);
-}
-
-void drawScoreTopLeft(const int* text, float x, float y, float scalar)
-{
-    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
-    CP_Settings_TextSize(textSize * scalar);
-    CP_Settings_Fill(white);
+    CP_Settings_Fill(color);
     CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
     CP_Font_DrawText(text, x, y);
 }
@@ -523,25 +580,18 @@ int IsAreaClicked(float area_center_x, float area_center_y, float area_width, fl
         return 0;
     }
 }
-void drawBtn(float x, float y, float w, float h, const char* text, float scalar)
+void drawBtn(float x, float y, float w, float h, const char* text, float scalar, CP_Color color)
 {
     CP_Settings_RectMode(CP_POSITION_CENTER);
-    //CP_Settings_Fill(translucent_light_red);
+    //CP_Settings_Fill(purple_blue);
     CP_Graphics_DrawRect(x, y, w, h);
-    drawTextCenter(text, x, y, scalar);
+    drawTextCenter(text, x, y, scalar, color);
 }
-void drawTextCenter(const char* text, float x, float y, float scalar)
-{
-    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
-    CP_Settings_TextSize(textSize * scalar);
-    CP_Settings_Fill(white);
-    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
-    CP_Font_DrawText(text, x, y);
-}
-void dynamicBtn(const char* text, float rect_x, float rect_y, void* init(void), void* update(void), void* exit(void)) {
+
+void dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color color, void* init(void), void* update(void), void* exit(void)) {
     if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
-        drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar, color);
         CP_Settings_ImageMode(CP_POSITION_CENTER);
         CP_Image_Draw(frame, rect_x, rect_y, rect_width * scalar, rect_height * scalar, 255);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
@@ -550,18 +600,27 @@ void dynamicBtn(const char* text, float rect_x, float rect_y, void* init(void), 
     }
     else {
         scalar = 1.0f;
-        drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar, color);
         CP_Settings_ImageMode(CP_POSITION_CENTER);
         CP_Image_Draw(frame, rect_x, rect_y, rect_width, rect_height, 255);
         return 0;
     }
 }
 
+void drawTextCenter(const char* text, float x, float y, float scalar, CP_Color color)
+{
+    CP_Font_Set(Font);
+    CP_Settings_TextSize(textSize * scalar);
+    CP_Settings_Fill(color);
+    CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
+    CP_Font_DrawText(text, x, y);
+}
+
 // Exclusively for exit to desktop button
-void Exit_dynamicBtn(const char* text, float rect_x, float rect_y) {
+void Exit_dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color color) {
     if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
-        drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar, color);
         CP_Settings_ImageMode(CP_POSITION_CENTER);
         CP_Image_Draw(frame, rect_x, rect_y, rect_width * scalar, rect_height * scalar, 255);
         if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
@@ -570,7 +629,7 @@ void Exit_dynamicBtn(const char* text, float rect_x, float rect_y) {
     }
     else {
         scalar = 1.0f;
-        drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar);
+        drawBtn(rect_x, rect_y, rect_width, rect_height, text, scalar, color);
         CP_Settings_ImageMode(CP_POSITION_CENTER);
         CP_Image_Draw(frame, rect_x, rect_y, rect_width, rect_height, 255);
     }

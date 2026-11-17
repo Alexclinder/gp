@@ -283,7 +283,8 @@ void Elevator_Init(void)
 
 void Elevator_Update(void)
 {
-    DrawBG(bossBG);
+    // Initialization for PosX, PosY & alpha can be found in level.c, declarations in level.h
+    DrawBG(bossBG, PosX, PosY, (float)CP_System_GetDisplayWidth(), (float)CP_System_GetDisplayWidth(), alpha);
     // CLIMB TIMER
     if (!platformsStopped)
     {

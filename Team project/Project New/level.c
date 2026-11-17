@@ -54,7 +54,10 @@ enum {LEVELS = 6};
 float Seconds, Zeroing_Time;
 int TimeSet,PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
-struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f };
+struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f , 0.0f};
+float PosX = 0.0f;
+float PosY = 0.0f;
+float alpha = 255.0f;
 
 void SaveTime(float time) {
 	switch (level_selected) {
@@ -129,6 +132,7 @@ float ingameTimer(void) {
 /*********************Prints Objective Text*******************/
 void Objective_Text(void) {
 
+	
 	float top_left_x = 0.0f;
 	float top_left_y = top_left_x;
 	float score_offset_y = 50.0f;
@@ -144,27 +148,27 @@ void Objective_Text(void) {
 	// display level_score that will persists through all levels
 	switch (level_selected) {
 	case level_4:
-		drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size);
-		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
-		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
+		drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size, white);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size, white);
+		drawTextTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size, white);
 		break;
 	case level_3:
-		drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size);
-		drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y + 50.0f, text_size);
-		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size);
-		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size);
+		drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size, white);
+		drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y + 50.0f, text_size, white);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y + 50.0f, text_size, white);
+		drawTextTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y + 50.0f, text_size, white);
 		break;
 
 	case level_2:
-		drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size);
-		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
-		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
+		drawTextTopLeft("Objective: Avoid your Colleagues", top_left_x, top_left_y, text_size, white);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size, white);
+		drawTextTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size, white);
 
 		break;
 	case level_1:
-		drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size);
-		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size);
-		drawScoreTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size);
+		drawTextTopLeft("Objective: Get into the Building", top_left_x, top_left_y, text_size, white);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size, white);
+		drawTextTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size, white);
 
 		break;
 	default:
@@ -191,11 +195,11 @@ spawn player_spawns[LEVELS] = {
 
 /*****************Spawn Locations for NPCs********************/
 // [LEVELS][NUMBER_OF_NPC]
-#define NUMBER_OF_NPC 2
+#define NUMBER_OF_NPC 1
 spawn NPC_1_spawns[LEVELS] = {
 			
 							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
-							   { 100.0f, 900.0f }, // level 1
+							   { 1500.0f, 900.0f }, // level 1
 							   { 100.0f, 900.0f }, // level 2
 							   { 800.0f, 900.0f }, // level 3
 							   { 1200.0f, 900.0f }, // level 4
@@ -617,11 +621,10 @@ float third_level_objects_ingame[2][5];
 
 /*****************BACKGROUND DRAWING FUNCTION****************/
 //Draws the background image for the level being played
-void DrawBG(CP_Image BG) {
+void DrawBG(CP_Image BG, float PosX, float PosY, float width, float height, float alpha) {
 	/* --- Draw --- */
-	CP_Graphics_ClearBackground(CP_Color_Create(0, 100, 0, 100));
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(BG, 0.0f, 0.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
+	CP_Image_Draw(BG, PosX, PosY, width, height, alpha);
 }
 
 
@@ -651,7 +654,7 @@ void level_1st(void) {
 			first_level[i][4],
 			first_level[i][5]);
 	}
-	DrawBG(backgroundthree);
+	DrawBG(backgroundthree, PosX, PosY, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), alpha);
 	CP_Settings_Fill(black);
 	CP_Graphics_DrawRect(800, 50, 1600, 100);
 
@@ -694,7 +697,7 @@ void level_2nd(void) {
 			second_level[i][4],
 			second_level[i][5]);
 	}
-	DrawBG(backgroundtwo);
+	DrawBG(backgroundtwo, PosX, PosY, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), alpha);
 	CP_Settings_Fill(black);
 	CP_Graphics_DrawRect(800, 50, 1600, 100);
 	kill_zone(level2_floor.kx, level2_floor.ky, level2_floor.kw, level2_floor.kh);
@@ -744,7 +747,7 @@ void level_3rd(void) {
 	}
 
 
-	DrawBG(background);
+	DrawBG(background, PosX, PosY, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), alpha);
 	CP_Settings_Fill(black);
 	CP_Graphics_DrawRect(800, 50, 1600, 100);
 	

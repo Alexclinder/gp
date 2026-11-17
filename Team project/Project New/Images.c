@@ -16,6 +16,7 @@ CP_Image Zilong;
 CP_Image background;
 CP_Image backgroundtwo;
 CP_Image backgroundthree;
+CP_Image backgroundfour_pre;
 CP_Image platform;
 CP_Image projectile;
 CP_Image objImg[OBJ_TYPE_COUNT];
@@ -23,6 +24,7 @@ CP_Image objBG[OBJ_TYPE_COUNT];
 CP_Image bossBG;
 CP_Image demonBoss;
 CP_Image vent;
+CP_Image npc1;
 
 void LoadImages(void) {
     mainbackground = CP_Image_Load("Assets/MainMenu.png");
@@ -31,6 +33,12 @@ void LoadImages(void) {
     frame = CP_Image_Load("Assets/buttonframe.png");
     pausemenu = CP_Image_Load("Assets/pause.png");
     Font = CP_Font_Load("Assets/SuperAdorable-MAvyp.ttf");
+
+	// Used to display images in leaderboard screen
+	background = CP_Image_Load("Assets/level3background.png");
+	backgroundtwo = CP_Image_Load("Assets/level2background.png");
+	backgroundthree = CP_Image_Load("Assets/level1background.png");
+	backgroundfour_pre = CP_Image_Load("Assets/bossBG.png");
 }
 
 void LoadLevelImages(void) {
@@ -61,6 +69,7 @@ void FreeLevelImages(void) {
 	CP_Image_Free(background);
 	CP_Image_Free(backgroundtwo);
 	CP_Image_Free(backgroundthree);
+	CP_Image_Free(backgroundfour_pre);
 	CP_Image_Free(bossBG);
 	CP_Image_Free(jump);
 	CP_Image_Free(Zilong);

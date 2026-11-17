@@ -17,6 +17,7 @@ extern CP_Image Zilong;
 extern CP_Image background;
 extern CP_Image backgroundtwo;
 extern CP_Image backgroundthree;
+extern CP_Image backgroundfour_pre;
 extern CP_Image platform;
 extern CP_Image npc1;
 extern CP_Image bossBG;
