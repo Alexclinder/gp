@@ -8,10 +8,6 @@
 #include "scoring.h"
 #include "elevator.h"
 
-
-
-
-
 // For Resume Game Btn
 void Game_Init(void)
 {
@@ -19,7 +15,7 @@ void Game_Init(void)
 	LoadLevelImages();
 	Objects_Reset();
 	score_reset();
-
+	ProjectileActive = 0;
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 	TimeSet = 0;
@@ -28,12 +24,10 @@ void Game_Init(void)
 void Game_Reset(void)
 {
 
-	LoadLevelImages();
-
 
 	printf("Current Level Restarted: %d\n", level_selected);
 	printf("Current Player Coordinates After Level Restarted: %d\n", player_spawns);
-	NPC_UpdateProjectiles(0);
+	
 
 	LoadLevelImages();
 

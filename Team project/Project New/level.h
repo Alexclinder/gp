@@ -27,7 +27,11 @@ typedef enum {
 extern level_selected;
 void level_selection(int level_no);
 /*****************BACKGROUND DRAWING FUNCTION****************/
-void DrawBG(CP_Image BG);
+extern float PosX;
+extern float PosY;
+extern float alpha;
+
+void DrawBG(CP_Image BG, float PosX, float PosY, float width, float height, float alpha);
 /*****************EXIT DRAWING FUNCTION****************/
 void DrawExit(float x, float y, float w, float h, float degrees, float cornerRadius);
 
@@ -51,6 +55,7 @@ extern struct LevelTimer {
 	float level1_time;
 	float level2_time;
 	float level3_time;
+	float level4_time;
 }Level_Timer;
 
 void SaveTime(float time);
