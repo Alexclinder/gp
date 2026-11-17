@@ -95,16 +95,24 @@ float ingameTimer(void) {
 		CP_Font_DrawText(buffer, CP_System_GetWindowWidth() / 2, 0);
 		CP_Settings_Fill(yellow);
 
-		CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
-		if (Seconds < 35.0) {
-			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
-
+		switch (level_selected){
+		case 	boss_level:
+			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
+			if (Seconds < 90.0) 
+				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
+			if (Seconds < 70.0) 
+				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
+				// variable right_star is to lock the increment count after increment once
+			break;
+		default:
+			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
+			if (Seconds < 35.0) 
+				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
+			if (Seconds < 25.0)
+				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
+				// variable right_star is to lock the increment count after increment once
+			break;
 		}
-		if (Seconds < 25.0) {
-			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
-			// variable right_star is to lock the increment count after increment once
-		}
-
 
 	}
 	else if (TimeSet == 0) {
