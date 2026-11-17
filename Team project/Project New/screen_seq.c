@@ -499,12 +499,12 @@ void Controls_Screen(void) {
 
     const char* control_keys[NUMBER_OF_CONTROLS] =
     {
-        "W",
+        "W / SPCBAR",
         "A",
         "D",
         "F",
         "E",
-        "P"
+        "P",
         "ESC"
     };
 
@@ -515,7 +515,7 @@ void Controls_Screen(void) {
     float first_controlkey_x = first_control_x * 2.0f;
 
     const float controls_rect_width = 400.0f;
-    const float controlskeys_rect_width = 250.0f;
+    const float controlskeys_rect_width = 350.0f;
     const float control_rect_height = 70.0f;
 
     // Draw the boxes and text for each control and corresponding key
