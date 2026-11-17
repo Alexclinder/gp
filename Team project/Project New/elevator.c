@@ -7,7 +7,6 @@
 #include "colors.h"
 #include "npc_mechanics.h"
 #include "screen_seq.h"
-#include "boss.h"
 #include "Images.h"
 
 
