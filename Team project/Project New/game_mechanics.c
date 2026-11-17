@@ -189,7 +189,7 @@ void Shield_Update(void) {
 	float dt = CP_System_GetDt();
 
 	/* --- Right click: summon shield (can't recast while one is up) --- */
-	if (CP_Input_MouseTriggered(MOUSE_BUTTON_RIGHT) && !shieldActive) {
+	if (CP_Input_KeyTriggered(KEY_P) && !shieldActive) {
 		shieldActive = 1;
 		shieldTimer = 0.0f;
 	}
