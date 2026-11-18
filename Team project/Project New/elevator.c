@@ -278,6 +278,8 @@ void Elevator_Init(void)
 {
     NPC_Starting_Pos(NPC_1_spawns, level_selected);
     Elevator_Reset();
+    ResetALLTimers_StatusBossLvl();
+
 }
 
 void Elevator_Update(void)

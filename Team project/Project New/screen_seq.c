@@ -39,7 +39,6 @@ void Screen_Init(void)
     color_create();
     // Use to initalize the Assets Images used in the game
     LoadImages();
-
     if (Font == NULL) {
         //if this prints, the file path or name is wrong!
         printf("ERROR: Failed to load font!\n");
@@ -107,6 +106,7 @@ void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl
 
 /*****************************Main Menu Screens*******************************/
 void Main_Menu_Update(void) {
+
     static float anim_time = 0.0f;   // keeps its value between frames
     float rect_x = 320.0f;
 

@@ -26,4 +26,7 @@ void Exit_dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color colo
 // For Objective and score text
 void drawTextTopLeft(const char* text, float x, float y, float scalar, CP_Color color);
 
+//Rest Time Specifilly for Boss Lvl
+void ResetALLTimers_StatusBossLvl(void);
+
 

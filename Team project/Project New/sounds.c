@@ -37,9 +37,11 @@ enum {
 };
 void LoadSounds(void) {
 	// Load sound files
+	/*****Main Menu Music Sounds*****/
+	backgroundMusic = CP_Sound_LoadMusic("Assets/Sounds/Music/MainMenu.wav");
+
 	/*****Player Ability Sounds*****/
 	teleportSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Teleport_Sound.wav");
 
 	/*****Boss Music & Sounds*****/
-	Keybooard_Attack_Sound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Keyboard Attack Sound.wav");
 }

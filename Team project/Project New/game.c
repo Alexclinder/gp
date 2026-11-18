@@ -30,8 +30,7 @@ void Game_Reset(void)
 	
 
 	LoadLevelImages();
-
-	Teleport_count = 3;
+	Teleport_count = level_selected == boss_level ? 4 : 3;
 	Teleport_Status = 1;
 	TeleportWindowTiming = 0.1f;
 	onGround = 0;
