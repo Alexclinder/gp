@@ -73,6 +73,11 @@ void SaveTime(float time) {
 			// Save time for level 3
 			Level_Timer.level3_time = time;
 			break;
+		default:
+			// Save time for level 4
+			Level_Timer.level4_time = time;
+			break;
+
 	}
 }
 void LeaderboardScore_Time(int score, float time) {
