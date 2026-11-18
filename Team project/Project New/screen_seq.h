@@ -4,6 +4,10 @@ void Screen_Init(void);
 void Screen_Exit(void);
 void Next_level_Init(void);
 void Exit_Main_Menu_Init(void);
+void Game_Resume_Init(void);
+void Start_Game_Init(void);
+void Game_Restart_Init(void);
+
 
 // Screens Sequence
 void Main_Menu_Update(void);
@@ -29,4 +33,4 @@ void drawTextTopLeft(const char* text, float x, float y, float scalar, CP_Color 
 //Rest Time Specifilly for Boss Lvl
 void ResetALLTimers_StatusBossLvl(void);
 
-
+extern CP_Font Font;

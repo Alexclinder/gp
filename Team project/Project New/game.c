@@ -11,10 +11,11 @@
 // For Resume Game Btn
 void Game_Init(void)
 {
+	Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
 	color_create();
 	LoadLevelImages();
 	Objects_Reset();
-	score_reset();
+	level_score_reset();
 	ProjectileActive = 0;
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
@@ -24,12 +25,9 @@ void Game_Init(void)
 void Game_Reset(void)
 {
 
-
 	printf("Current Level Restarted: %d\n", level_selected);
 	printf("Current Player Coordinates After Level Restarted: %d\n", player_spawns);
 	
-
-	LoadLevelImages();
 	Teleport_count = level_selected == boss_level ? 4 : 3;
 	Teleport_Status = 1;
 	TeleportWindowTiming = 0.1f;
@@ -54,7 +52,7 @@ void Game_Reset(void)
 	pressed = 0;
 	ProjectileActive = 0;
 	Trea_score = 0;
-	score_reset();
+	level_score_reset();
 
 	for (int i = 0; i < MAX_TREASURES; i++) {
 		treasure_collected[i] = 0;
@@ -74,7 +72,7 @@ void Game_Update(void)
 		level_selection(level_selected);
 		
 		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
-
+			PauseingameTime = Seconds;
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);
 		}
 		
@@ -100,9 +98,9 @@ void Game_Update(void)
 		// Check for collision then end game if hit
 		if (NPC_CheckPlayerCollision() == 1)
 		{
+			score_abandoned_level();
 			NPC_UpdateProjectiles(0);
 			CP_Engine_SetNextGameState(Screen_Init, Lose_Screen, Screen_Exit);
-			// Update Player_Score if ded
 			return;
 		}
 
@@ -126,5 +124,5 @@ void Game_Next_Level(void) {
 void Game_Exit(void)
 {
 	FreeLevelImages();
-
+	CP_Font_Free(Font);
 }

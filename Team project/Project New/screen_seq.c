@@ -33,6 +33,7 @@ float scalar;
 /*******Transition Sequences*******/
 void Screen_Init(void)
 {
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
     //Use to load all the sounds to be used in the game
     LoadSounds();
     // Use to initalize the color variables with values stored
@@ -67,19 +68,14 @@ void Screen_Exit(void)
 
 void Next_level_Init(void) {
     Game_Next_Level();
-
-    
     Game_Reset();
 }
 
 void Exit_Main_Menu_Init(void)
 {
-    // prevents from constantly incrementing 
-    if (!level_score_locked) {
-        player_score += level_score;
-        level_score_locked = 1;
-    }
-
+    // deducted whatever points earned 
+    score_abandoned_level();
+    level_score_reset();
     Screen_Init();
 }
 
@@ -98,10 +94,10 @@ void ResetALLTimers_StatusBossLvl(void) {
 /***********************Level Initialization Functions******************/
 // score_reset reset level score but not the player_score (cumulative of all level_score)
 
-void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
-void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
-void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
-void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);  }
+void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
 
 
 /*****************************Main Menu Screens*******************************/
@@ -179,7 +175,7 @@ void Main_Menu_Update(void) {
 
 
     CP_Settings_Fill(orange);
-    dynamicBtn("Start Game!", rect_x + start_offset, first_y, white, Screen_Init, Level_Select_Screen, Screen_Exit);
+    dynamicBtn("Start Game!", rect_x + start_offset, first_y, white, Start_Game_Init, Level_Select_Screen, Screen_Exit);
     CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Controls", rect_x + middle_offset, second_y, white, Screen_Init, Controls_Screen, Screen_Exit);
     CP_Settings_Fill(dark_blue);
@@ -188,6 +184,24 @@ void Main_Menu_Update(void) {
     CP_Settings_Fill(dark_blue);
 	dynamicBtn("Leaderboard", 1400.0, 745.0, white, Screen_Init, Leaderboard_Screen, Screen_Exit);//Temporary Leaderboard button for testing purposes Removed if not needed
 }
+
+
+void Start_Game_Init(void)
+{
+    score_reset();
+    Screen_Init();
+}
+
+void Game_Resume_Init(void)
+{
+    Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+    color_create();
+    LoadLevelImages();
+    CP_System_SetFrameRate(120.0f);
+    TimeSet = 0;
+}
+
+
 
 void Pause_Menu_Update(void)
 {
@@ -215,9 +229,9 @@ void Pause_Menu_Update(void)
 
 
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Resume Game!", rect_x, first_y, white, Game_Init, Game_Update, Game_Exit);
+    dynamicBtn("Resume Game!", rect_x, first_y, white, Game_Resume_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(light_sky_blue);
-    dynamicBtn("Restart Level", rect_x, second_y, white, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Restart Level", rect_x, second_y, white, Game_Restart_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(light_sky_blue);
     dynamicBtn("Controls", rect_x, third_y, white, Screen_Init, Controls_Screen, Screen_Exit);
     CP_Settings_Fill(light_sky_blue);
@@ -260,9 +274,9 @@ void Win_Screen(void) {
     CP_Settings_Fill(orange);
     dynamicBtn("Next Level", rect_x, first_y, white, Next_level_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Restart Level", rect_x, second_y, white, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Restart Level", rect_x, second_y, white, Game_Restart_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(orange);
-    dynamicBtn("Exit to Main Menu", rect_x, third_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", rect_x, third_y, white, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
 
 }
 
@@ -278,9 +292,16 @@ void Lose_Screen(void) {
     CP_Settings_Fill(purple_blue);
     dynamicBtn("Restart Level", 300, rect_y, white, Game_Reset, Game_Update, Game_Exit);
     CP_Settings_Fill(purple_blue);
-    dynamicBtn("Exit to Main Menu", 1300, rect_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Exit to Main Menu", 1300, rect_y, white, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
 
     
+}
+
+void Game_Restart_Init(void)
+{
+    Game_Init();
+    Game_Reset();
+    score_remove_level(level_selected);
 }
 
 void Leaderboard_Screen(void) {
@@ -478,8 +499,9 @@ void Level_Select_Screen(void) {
     // Back to Menu (extra gap below the levels)
     third_y = 740.0f;
     CP_Settings_Fill(orange);
-    dynamicBtn("Back to Menu", btn_x + offset[5], third_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
+    dynamicBtn("Back to Menu", btn_x + offset[5], third_y, white, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
 }
+
 
 enum { NUMBER_OF_CONTROLS = 7 };
 void Controls_Screen(void) {
@@ -532,10 +554,10 @@ void Controls_Screen(void) {
     CP_Settings_Fill(orange);
 
     if (level_selected == main_menu) {
-        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, white, Screen_Init, Main_Menu_Update, Screen_Exit);
+        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, white, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
     }
     else {
-        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, white, Screen_Init, Pause_Menu_Update, Screen_Exit);
+        dynamicBtn("Back to Menu", control_backmenu_btn_x, control_backmenu_btn_y, white, Exit_Main_Menu_Init, Pause_Menu_Update, Screen_Exit);
     }
 }
 

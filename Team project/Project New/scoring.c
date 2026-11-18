@@ -28,6 +28,9 @@ int npc_score = 0;
 int timer_bonus_awarded = 0;
 int level_score_locked = 0;
 
+int treasure_collected[MAX_TREASURES] = { 0 };
+// LEVELS are 6
+int completed_level_score[LEVELS] = { 0 };
 struct LevelScore Level_Score = { 0, 0, 0, 0 }; //Was in level.c, moved to scoring.c by Lewin
 
 void game_score(void) {
@@ -55,7 +58,23 @@ void game_score(void) {
 	}
 }
 
-	
+// Resets ONLY the current level's score and flags (keeps player_score intact)
+void level_score_reset(void)
+{
+	level_score = 0;
+
+	reflect_score = 0;
+	npc_score = 0;
+	unlocked_gate_score = 0;
+	teleport_score = 0;
+
+	timer_bonus_awarded = 0;
+	level_score_locked = 0;
+
+	for (int i = 0; i < MAX_TREASURES; i++) {
+		treasure_collected[i] = 0;
+	}
+}
 
 	void time_score(void) {
 		if (timer_bonus_awarded == 0) {
@@ -75,19 +94,49 @@ void game_score(void) {
 
 		printf("Before reset: level_score = %d, player_score = %d\n",
 			level_score, player_score);
+		
+		level_score_reset();
+		player_score = 0;
+		
+			for (int i = 0; i < LEVELS; i++) {
+				completed_level_score[i] = 0;
+			}
 
-		level_score = 0;
 
-		reflect_score = 0;
-		npc_score = 0;
-		unlocked_gate_score = 0;
-
-		timer_bonus_awarded = 0;
-		level_score_locked = 0;
-		teleport_score = 0;
+			Level_Score = (struct LevelScore){ 0, 0, 0, 0 };
+	
 
 		printf("After reset: level_score = %d, player_score = %d\n",
 			level_score, player_score);
+	}
+
+	void score_abandoned_level(void) {
+		// Player did not complete the level
+		if (!level_score_locked)
+		{
+			level_score_reset();
+			save_lvl_score(0); // clears the level score
+		}
+	}
+
+	
+
+	void score_remove_level(int level)
+	{
+		if (level < 1 || level >= LEVELS)
+			return;
+
+		// Deduct the selected level's previous contribution
+		player_score -= completed_level_score[level];
+
+		if (player_score < 0)
+			player_score = 0;
+
+		// Clear the previous contribution
+		completed_level_score[level] = 0;
+
+		// Reset the current level's score and flags, but keep remaining player_score intact
+		level_score_reset();
 	}
 
 	void score_complete_level(void)
@@ -101,11 +150,11 @@ void game_score(void) {
 			return;
 
 		game_score();
-		
 		time_score();
 
+		completed_level_score[level_selected] = level_score;
+
 		// Transfer level score to cumulative score
-		
 		player_score += level_score;
 		
 		level_score_locked = 1;
@@ -161,12 +210,11 @@ void game_score(void) {
 	// If kill enemies, +300
 
 
-//Made by Jun kai, moved by Lewin was orginally in level.c
+// Made by sin wee
 /**********************************************************Treasure/Collectables Functions*********************************************************************/
 int Trea_score = 0;
 int Trea;
 
-int treasure_collected[MAX_TREASURES] = { 0,0 };
 
 int Treasure(float x, float y, int treasure_id)
 {

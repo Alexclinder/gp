@@ -16,6 +16,7 @@ extern int reflect_score;
 extern int npc_score;
 
 extern int player_score;
+extern int level_score;
 
 extern int timer_bonus_awarded;
 extern int level_score_locked;
@@ -28,6 +29,10 @@ extern struct LevelScore {
 } Level_Score;
 
 void save_lvl_score(int score);
+
+void score_abandoned_level(void);
+
+void score_remove_level(int level);
 
 // Can move time_buf to timer.h, for now its here
 typedef enum BUFFER_SIZE { TIME_BUF_SIZE = 16, SCORE_BUF_SIZE = 16 };

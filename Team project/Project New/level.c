@@ -41,8 +41,7 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #define LEVEL4_STATIC_PLATFORMS 29
 /*END*/
 
-// compile time constant 
-enum {LEVELS = 6};
+
 
 // Platform Parameters
 #define PARAMETERS 6
@@ -87,7 +86,6 @@ float ingameTimer(void) {
 
 	if (TimeSet == 1) {// If Timer has been set, then we can start counting time
 		//differenceTime = Seconds - PauseingameTime;
-		Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
 		CP_Font_Set(Font);
 		CP_Settings_TextSize(100);
 		CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
@@ -658,6 +656,8 @@ k_zone level1_kwall = { .kx = 600.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 k_zone level1_kwall2 = { .kx = 900.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 
 void level_1st(void) {
+	
+
 
 	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
 		DrawPlatform(first_level[i][0],
@@ -702,6 +702,9 @@ void level_1st(void) {
 
 /***************** LEVEL 2: ********************/
 void level_2nd(void) {
+
+	
+
 	for (int i = 0; i <	LEVEL2_STATIC_PLATFORMS; i++) {
 		DrawPlatform(second_level[i][0],
 			second_level[i][1],
@@ -748,6 +751,9 @@ void level_2nd(void) {
 #define RIGHT_BOUNDARY 850.0f
 
 void level_3rd(void) {
+
+	
+
 	// iterates thru the 4 rows and 6 col
 // Nested loop not needed as first level columns are iterated through.
 	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
@@ -806,6 +812,9 @@ void level_3rd(void) {
 
 /***************** LEVEL 4: ********************/
 void level_4th(void) {
+
+
+
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 
 	

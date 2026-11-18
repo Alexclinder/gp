@@ -24,6 +24,11 @@ typedef enum {
 	boss_level,	// 5
 } levels;
 
+// compile time constant 
+extern enum { LEVELS = 6 };
+
+extern float PauseingameTime;
+
 extern level_selected;
 void level_selection(int level_no);
 /*****************BACKGROUND DRAWING FUNCTION****************/
