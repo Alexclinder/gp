@@ -24,7 +24,7 @@ void Game_Init(void)
 
 void Game_Reset(void)
 {
-
+	LoadLevelImages();
 	printf("Current Level Restarted: %d\n", level_selected);
 	printf("Current Player Coordinates After Level Restarted: %d\n", player_spawns);
 	
