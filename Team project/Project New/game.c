@@ -7,6 +7,7 @@
 #include "colors.h"
 #include "scoring.h"
 #include "elevator.h"
+#include "sounds.h"
 
 // For Resume Game Btn
 void Game_Init(void)
@@ -20,10 +21,12 @@ void Game_Init(void)
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 	TimeSet = 0;
+	PlaylevelMusicP1();
 }
 
 void Game_Reset(void)
 {
+	PlaylevelMusicP1();
 	LoadLevelImages();
 	printf("Current Level Restarted: %d\n", level_selected);
 	printf("Current Player Coordinates After Level Restarted: %d\n", player_spawns);
@@ -70,7 +73,6 @@ void Game_Reset(void)
 void Game_Update(void)
 {		
 		level_selection(level_selected);
-		
 		if (CP_Input_KeyTriggered(KEY_ESCAPE)) {
 			PauseingameTime = Seconds;
 			CP_Engine_SetNextGameState(Screen_Init, Pause_Menu_Update, Screen_Exit);

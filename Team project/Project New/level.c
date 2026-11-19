@@ -223,6 +223,7 @@ spawn NPC_1_spawns[LEVELS] = {
 // Level selection function to call the appropriate level function based on the current level_selected value.
 int level_selected = level_1;
 void level_selection(int level_no) {
+	CP_Sound_PauseGroup(CP_SOUND_GROUP_1);
 	switch (level_no) {
 	case main_menu:
 		Main_Menu_Update();
@@ -656,9 +657,6 @@ k_zone level1_kwall = { .kx = 600.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 k_zone level1_kwall2 = { .kx = 900.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 
 void level_1st(void) {
-	
-
-
 	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
 		DrawPlatform(first_level[i][0],
 			first_level[i][1],

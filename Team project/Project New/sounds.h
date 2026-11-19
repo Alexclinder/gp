@@ -8,7 +8,8 @@ extern CP_Sound shieldSound;
 
 /*****Music*****/
 extern CP_Sound backgroundMusic;
-extern CP_Sound gameplayMusic;
+extern CP_Sound level_Music;
+extern CP_Sound level_MusicP1;
 
 /*****Game State Sounds*****/
 extern CP_Sound gameOverSound;
@@ -31,3 +32,5 @@ extern CP_Sound bossSummonSound;
 extern CP_Sound Keybooard_Attack_Sound;
 
 void LoadSounds(void);
+void PlayMainMenu(int *PlayOnce);
+void PlaylevelMusicP1(void);

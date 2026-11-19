@@ -34,3 +34,5 @@ void drawTextTopLeft(const char* text, float x, float y, float scalar, CP_Color 
 void ResetALLTimers_StatusBossLvl(void);
 
 extern CP_Font Font;
+extern int MainMenu_Music;
+extern int* MainMenu_Musicpointer;

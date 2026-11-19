@@ -29,6 +29,8 @@ float fourth_y;
 float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
+int MainMenu_Music = 1;
+int* MainMenu_Musicpointer = &MainMenu_Music;
 
 /*******Transition Sequences*******/
 void Screen_Init(void)
@@ -45,13 +47,13 @@ void Screen_Init(void)
         printf("ERROR: Failed to load font!\n");
     }
     CP_Font_Set(Font);
-
+    PlayMainMenu(&MainMenu_Music);
     PauseTimeStatus = 1;
 }
 
 void Screen_Exit(void)
 {
-
+    CP_Sound_ResumeGroup(CP_SOUND_GROUP_1);
     CP_Image_Free(mainbackground);
     CP_Image_Free(defeat);
     CP_Image_Free(levelselection);
@@ -102,7 +104,7 @@ void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl
 
 /*****************************Main Menu Screens*******************************/
 void Main_Menu_Update(void) {
-
+    MainMenu_Music = 0;
     static float anim_time = 0.0f;   // keeps its value between frames
     float rect_x = 320.0f;
 
@@ -205,6 +207,7 @@ void Game_Resume_Init(void)
 
 void Pause_Menu_Update(void)
 {
+
     float rect_x = 250.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
     CP_Image_Draw(pausemenu, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
@@ -281,6 +284,7 @@ void Win_Screen(void) {
 }
 
 void Lose_Screen(void) {
+    CP_Sound_StopGroup(CP_SOUND_GROUP_2);
     float rect_y = CP_System_GetWindowHeight() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
     CP_Image_Draw(defeat, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
