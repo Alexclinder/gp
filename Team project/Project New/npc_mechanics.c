@@ -207,7 +207,7 @@ int NPC_CheckPlayerCollision(void)
         float dx = Projposition.x - (position.x + PLAYER_SIZE / 2.0f);
         float dy = Projposition.y - (position.y + PLAYER_SIZE / 2.0f);
 
-        float distance = sqrt(dx * dx + dy * dy);
+        float distance = sqrtf(dx * dx + dy * dy);
 
         if (distance < PLAYER_SIZE / 2.0f + PROJECTILE_SIZE / 2.0f)
         {

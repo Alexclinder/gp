@@ -17,6 +17,7 @@
 #include "sounds.h"
 #include "scoring.h"
 #include "Images.h"
+#include <stdio.h>
 
 // Global variables are required for constant updates.
 float textSize= 50.0f;
@@ -107,7 +108,7 @@ void Main_Menu_Update(void) {
     float rect_x = 320.0f;
 
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
-    CP_Image_Draw(mainbackground, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
+    CP_Image_Draw(mainbackground, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
     level_selected = 0;
 
     // ---------- Slide-in timing ----------
@@ -207,7 +208,7 @@ void Pause_Menu_Update(void)
 {
     float rect_x = 250.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
-    CP_Image_Draw(pausemenu, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
+    CP_Image_Draw(pausemenu, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
     CP_Settings_Fill(CP_Color_Create(255, 255, 255, 255));
     CP_Settings_TextSize(100.0f);
     CP_Font_DrawText("PAUSED", 250.0f, 80.0f);
@@ -240,7 +241,7 @@ void Pause_Menu_Update(void)
 }
 
 void Win_Screen(void) {
-    float rect_x = CP_System_GetWindowWidth() / 2.0;
+    float rect_x = (float)CP_System_GetWindowWidth() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
     char score_buf[SCORE_BUF_SIZE] = { 0 };
@@ -265,11 +266,11 @@ void Win_Screen(void) {
     CP_Font_DrawText(total_score_buf, rect_x, 200.0f);
 
     // Next Level
-    first_y = CP_System_GetWindowHeight() / 2.0;
+    first_y = (float)CP_System_GetWindowHeight() / 2.0f;
     // Restart
-    second_y = CP_System_GetWindowHeight() / 2.0 +150.0f;
+    second_y = (float)CP_System_GetWindowHeight() / 2.0f + 150.0f;
     // Exit to Main Menu
-    third_y = CP_System_GetWindowHeight() / 2.0 + 300.0f;
+    third_y = (float)CP_System_GetWindowHeight() / 2.0f + 300.0f;
     
     CP_Settings_Fill(orange);
     dynamicBtn("Next Level", rect_x, first_y, white, Next_level_Init, Game_Update, Game_Exit);
@@ -283,12 +284,12 @@ void Win_Screen(void) {
 void Lose_Screen(void) {
     float rect_y = CP_System_GetWindowHeight() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
-    CP_Image_Draw(defeat, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
+    CP_Image_Draw(defeat, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
 
 	// Restart Level
-    first_y = CP_System_GetWindowHeight() / 2.0 - 150.0f;
+    first_y = (float)CP_System_GetWindowHeight() / 2.0f - 150.0f;
 	// Exit to Main Menu
-    second_y = CP_System_GetWindowHeight() / 2.0 + 150.0f;
+    second_y = (float)CP_System_GetWindowHeight() / 2.0f + 150.0f;
     CP_Settings_Fill(purple_blue);
     dynamicBtn("Restart Level", 300, rect_y, white, Game_Reset, Game_Update, Game_Exit);
     CP_Settings_Fill(purple_blue);
@@ -307,7 +308,7 @@ void Game_Restart_Init(void)
 void Leaderboard_Screen(void) {
 
 
-    float rect_x = CP_System_GetWindowWidth() / 2.0;
+    float rect_x = (float)CP_System_GetWindowWidth() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(0,50,100,100));
 
     float left_offset = 100.0f;
@@ -464,7 +465,7 @@ void Leaderboard_Screen(void) {
 static float level_anim_time = 0.0f;   // put this at the top of the file
 void Level_Select_Screen(void) {
     CP_Graphics_ClearBackground(CP_Color_Create(80, 80, 80, 0));
-    CP_Image_Draw(levelselection, CP_System_GetWindowWidth() / 2.0, CP_System_GetWindowHeight() / 2.0, CP_System_GetWindowWidth(), CP_System_GetWindowHeight(), 255);
+    CP_Image_Draw(levelselection, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
     // ---------- Slide-in timing ----------
     level_anim_time += CP_System_GetDt();
 
@@ -610,7 +611,7 @@ void drawBtn(float x, float y, float w, float h, const char* text, float scalar,
     drawTextCenter(text, x, y, scalar, color);
 }
 
-void dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color color, void* init(void), void* update(void), void* exit(void)) {
+int dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color color, void (*init)(void), void (*update)(void), void (*exit)(void)) {
     if (IsAreaClicked(rect_x, rect_y, rect_width, rect_height, CP_Input_GetMouseX(), CP_Input_GetMouseY())) {
         scalar = 1.2f;
         drawBtn(rect_x, rect_y, rect_width * scalar, rect_height * scalar, text, scalar, color);

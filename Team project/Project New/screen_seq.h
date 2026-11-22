@@ -24,7 +24,7 @@ void drawBtn(float x, float y, float w, float h, const char* text, float scalar,
 void drawTextCenter(const char* text, float x, float y, float scalar, CP_Color color);
 
 // Dynamic button function to handle hover and click events
-void dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color color, void *init(void), void *update(void), void *exit(void));
+int dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color color, void (*init)(void), void (*update)(void), void (*exit)(void));
 void Exit_dynamicBtn(const char* text, float rect_x, float rect_y, CP_Color color);
 
 // For Objective and score text

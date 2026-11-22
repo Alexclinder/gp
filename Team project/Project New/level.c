@@ -16,19 +16,13 @@ struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structu
 #include "scoring.h"
 #include "elevator.h"
 #include "Images.h"
+#include <stdio.h>
 
 
 /*Platform positions for Level 3*/
-/******************************************CHECK THIS MULTIPLE DEFINITIONS***************************/
 /*USED IN BOTH OBJECTS AND LEVELS FUNCTIONS*/
 #define LEVEL3_STATIC_PLATFORMS 29
-#define LEVEL3_SEC_BUILDING 580.0f
-#define LEVEL3_THIRD_BUILDING 280.0f
-#define LEVEL3_FOURTH_BUILDING 400.0f
-#define LEVEL3_BUILDING_WALL 10.0f
-#define LEVEL3_FOURTH_BUILDING_WIDTH 3.0f
 #define PLATFORM_WIDTH_3 120.0f
-
 #define LEVEL3_PLATFORMS 30
 #define LEVEL3_SEC_BUILDING 580.0f
 #define LEVEL3_THIRD_BUILDING 280.0f
@@ -81,6 +75,8 @@ void SaveTime(float time) {
 }
 void LeaderboardScore_Time(int score, float time) {
 	// Implementation for updating leaderboard with score and time
+	(void)score;
+	(void)time;
 }
 float ingameTimer(void) {
 
@@ -98,24 +94,24 @@ float ingameTimer(void) {
 		SaveTime(Seconds);//Save the current time to the Level_Timer struct for the current level, Time stored in the struct is displayed leaderboard
 		char buffer[TIME_BUF_SIZE] = { 0 };
 		sprintf_s(buffer, TIME_BUF_SIZE, "%.2f", Seconds);
-		CP_Font_DrawText(buffer, CP_System_GetWindowWidth() / 2, 0);
+		CP_Font_DrawText(buffer, (float)CP_System_GetWindowWidth() / 2.0f, 0.0f);
 		CP_Settings_Fill(yellow);
 
 		switch (level_selected){
 		case 	boss_level:
-			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
+			CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 150.0f, 45.0f, 50.0f, 50.0f);//Left Star
 			if (Seconds < 90.0) 
-				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
+				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 225.0f, 45.0f, 50.0f, 50.0f); // Middle Star
 			if (Seconds < 70.0) 
-				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
+				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 300.0f, 45.0f, 50.0f, 50.0f); //Right Star
 				// variable right_star is to lock the increment count after increment once
 			break;
 		default:
-			CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 150, 45.0, 50.0, 50.0);//Left Star
+			CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 150.0f, 45.0f, 50.0f, 50.0f);//Left Star
 			if (Seconds < 35.0) 
-				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 225, 45.0, 50.0, 50.0); // Middle Star
+				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 225.0f, 45.0f, 50.0f, 50.0f); // Middle Star
 			if (Seconds < 25.0)
-				CP_Graphics_DrawRect(CP_System_GetWindowWidth() / 2 + 300, 45.0, 50.0, 50.0); //Right Star
+				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 300.0f, 45.0f, 50.0f, 50.0f); //Right Star
 				// variable right_star is to lock the increment count after increment once
 			break;
 		}
@@ -635,7 +631,7 @@ float third_level_objects_ingame[2][5];
 void DrawBG(CP_Image BG, float PosX, float PosY, float width, float height, float alpha) {
 	/* --- Draw --- */
 	CP_Settings_ImageMode(CP_POSITION_CORNER);
-	CP_Image_Draw(BG, PosX, PosY, width, height, alpha);
+	CP_Image_Draw(BG, PosX, PosY, width, height, (int)alpha);
 }
 
 

@@ -8,6 +8,7 @@
 #include "npc_mechanics.h"
 #include "screen_seq.h"
 #include "Images.h"
+#include "demonBoss.h"
 
 
 #define PLAT_H      24.0f
@@ -145,14 +146,12 @@ static void Lasers_Draw(void)
         return;
 
     float screenW = (float)CP_System_GetWindowWidth();
-    float screenH = (float)CP_System_GetWindowHeight();
-
     CP_Settings_Fill(red);
 
     // Horizontal laser lines
     for (int i = 0; i < screenW; i += 40)
     {
-        CP_Graphics_DrawRect(i + 10, laserY, 20, 5);
+        CP_Graphics_DrawRect((float)i + 10.0f, laserY, 20.0f, 5.0f);
     }
 }
 
@@ -285,7 +284,10 @@ void Elevator_Init(void)
 void Elevator_Update(void)
 {
     // Initialization for PosX, PosY & alpha can be found in level.c, declarations in level.h
-    DrawBG(bossBG, PosX, PosY, (float)CP_System_GetDisplayWidth(), (float)CP_System_GetDisplayWidth(), alpha);
+    DrawBG(bossBG, PosX, PosY,
+        (float)CP_System_GetWindowWidth(),
+        (float)CP_System_GetWindowHeight(),
+        alpha);
     // CLIMB TIMER
     if (!platformsStopped)
     {
@@ -374,5 +376,6 @@ void Elevator_Update(void)
 void Elevator_Exit(void)
 {
     BOSS_Exit();
+    CP_Image_Free(demonBoss);
 	FreeLevelImages();
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "level.h"
+
 
 
 /* abilities.h */
@@ -64,7 +66,7 @@ void Player_Animation(void);
 // level_mechanics.h
 int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius);
 
-void Player_Starting_Pos(struct spawn arr[], int level_selected);
+void Player_Starting_Pos(spawn arr[], int level_selected);
 // ----------------------------
 
 // gameplay_mechanics.h --> rename game_mechanics.h

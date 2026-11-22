@@ -7,6 +7,8 @@
 #include "colors.h"
 #include "scoring.h"
 #include "elevator.h"
+#include "Images.h"
+#include <stdio.h>
 
 // For Resume Game Btn
 void Game_Init(void)
@@ -26,7 +28,9 @@ void Game_Reset(void)
 {
 	LoadLevelImages();
 	printf("Current Level Restarted: %d\n", level_selected);
-	printf("Current Player Coordinates After Level Restarted: %d\n", player_spawns);
+	printf("Current Player Coordinates After Level Restarted: (%.2f, %.2f)\n",
+		player_spawns[level_selected].pos.x,
+		player_spawns[level_selected].pos.y);
 	
 	Teleport_count = level_selected == boss_level ? 4 : 3;
 	Teleport_Status = 1;

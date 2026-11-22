@@ -121,7 +121,7 @@ int Teleport_Mechannic(void){
 	CP_Settings_RectMode(CP_POSITION_CORNER);
 	if (TeleportWindowTiming < TeleportCooldown) {// A "Meter" above the player's head indicating the dash cooldown
 		CP_Settings_Fill(yellow);
-		CP_Graphics_DrawRect(position.x, position.y - 20.0, TeleportWindowTiming * TeleportCooldownBarScale, 10.0);
+		CP_Graphics_DrawRect(position.x, position.y - 20.0f, TeleportWindowTiming * TeleportCooldownBarScale, 10.0f);
 	}
 
 	CP_Settings_Fill(medium_light_green);

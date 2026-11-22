@@ -7,6 +7,7 @@ void game_score(void);
 void time_score(void);
 
 void score_reset(void);
+void level_score_reset(void);
 
 void score_complete_level(void);
 
@@ -35,7 +36,7 @@ void score_abandoned_level(void);
 void score_remove_level(int level);
 
 // Can move time_buf to timer.h, for now its here
-typedef enum BUFFER_SIZE { TIME_BUF_SIZE = 16, SCORE_BUF_SIZE = 16 };
+enum BUFFER_SIZE { TIME_BUF_SIZE = 16, SCORE_BUF_SIZE = 16 };
 
 /*********Treasure Related************/
 #define MAX_TREASURES 2

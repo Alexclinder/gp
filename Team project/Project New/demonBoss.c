@@ -315,5 +315,6 @@ void BOSS_Update(void)
 
 void BOSS_Exit(void)
 {
-    CP_Image_Free(&demonBoss);
+    CP_Image_Free(demonBoss);
+    FreeLevelImages();
 }

@@ -25,11 +25,11 @@ typedef enum {
 } levels;
 
 // compile time constant 
-extern enum { LEVELS = 6 };
+enum { LEVELS = 6 };
 
 extern float PauseingameTime;
 
-extern level_selected;
+extern levels level_selected;
 void level_selection(int level_no);
 /*****************BACKGROUND DRAWING FUNCTION****************/
 extern float PosX;
@@ -64,6 +64,7 @@ extern struct LevelTimer {
 }Level_Timer;
 
 void SaveTime(float time);
+float ingameTimer(void);
 
 void Objective_Text(void);
 
