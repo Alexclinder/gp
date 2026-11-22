@@ -1,5 +1,5 @@
 #pragma once
-// level.h - dont move out
+
 /***************LEVEL****************/
 extern float killZoneX;
 // Needed for Game_Reset() reassign back to 0

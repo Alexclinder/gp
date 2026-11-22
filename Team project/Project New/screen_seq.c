@@ -1,11 +1,10 @@
-/* Find sin wee for any concerns or questions about the code.
+/* 
 @brief This file contains the screen sequence for the game
 		1) Main Menu
 		2) Pause Menu
 		3) Win Menu
 		4) Lose Menu
-
-		The remaining functions are used to simplify the code and make it more readable.
+        5) Leaderboard Menu
 */
 #include "cprocessing.h"
 #include "game_mechanics.h"

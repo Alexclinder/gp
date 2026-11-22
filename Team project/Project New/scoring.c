@@ -210,7 +210,7 @@ void level_score_reset(void)
 	// If kill enemies, +300
 
 
-// Made by sin wee
+
 /**********************************************************Treasure/Collectables Functions*********************************************************************/
 int Trea_score = 0;
 int Trea;
