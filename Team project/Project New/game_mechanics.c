@@ -190,7 +190,7 @@ void Shield_Draw(void) {
 void Shield_Update(void) {
 	float dt = CP_System_GetDt();
 
-	/* --- Right click: summon shield (can't recast while one is up) --- */
+	/* --- P : summon shield (can't recast while one is up) --- */
 	if (CP_Input_KeyTriggered(KEY_P) && !shieldActive) {
 		shieldActive = 1;
 		shieldTimer = 0.0f;
@@ -215,8 +215,8 @@ void Character_MovementDefault(void) {
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/* --- Right click: summon shield (can't recast while one is up) --- */
-	if (CP_Input_MouseReleased(MOUSE_BUTTON_RIGHT) && !shieldActive) {
+	/* --- P : summon shield (can't recast while one is up) --- */
+	if (CP_Input_KeyTriggered(KEY_P) && !shieldActive) {
 		shieldActive = 1;
 		shieldTimer = 0.0f;
 	}
@@ -239,7 +239,7 @@ void Character_MovementDefault(void) {
 		toX = position.x + (PLAYER_SIZE - current_objects[heldObject][OBJ_W]) / 2.0f;
 		toY = position.y - current_objects[heldObject][OBJ_H];
 	}
-
+	/* --- Animation of carrying --- */
 	if (pickingUp) {
 		carry_timer += dt;
 		if (carry_timer <= 0.15) { player_action = GRABBING_1; HeldObject_MoveTo(0.0f); }
@@ -339,7 +339,7 @@ void Character_MovementCarry(void)
 		if (toX + w > screenW) toX = position.x - w;
 		toY = position.y + PLAYER_SIZE - h;
 	}
-
+	/* --- animation of dropping --- */
 	if (dropping) {
 		carry_timer += dt;
 		if (carry_timer <= 0.15) { player_action = CARRY;      HeldObject_MoveTo(0.0f); }
