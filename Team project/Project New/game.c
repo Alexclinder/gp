@@ -1,3 +1,12 @@
+/*!
+@file     game.c
+@author   Sin Wee, Jun Kai
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     19/09/26
+@brief	  Implements the core game loop: initialising, resetting, updating and
+          exiting a level, and advancing to the next level.
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "screen_seq.h"
 #include "game_mechanics.h"

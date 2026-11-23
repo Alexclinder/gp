@@ -1,3 +1,12 @@
+/*!
+@file     game_mechanics.c
+@author   Jun Kai , Lewin Yeo
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     19/09/26
+@brief	Implements the core gameplay mechanics: player movement, wall cling,
+        teleport, shield, collision, pressure plates, kill zones and moving platforms.
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"

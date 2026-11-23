@@ -1,11 +1,16 @@
-/* 
-@brief This file contains the screen sequence for the game
+/*!
+@file     screen_seq.c
+@author   Sin Wee
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     01/10/26
+@brief  This file contains the screen sequence for the game
 		1) Main Menu
 		2) Pause Menu
 		3) Win Menu
 		4) Lose Menu
         5) Leaderboard Menu
-*/
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game_mechanics.h"
 #include "game.h"

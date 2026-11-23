@@ -1,10 +1,12 @@
-/* Find sin wee for any concerns or questions about the code.
-@brief This files contains the coods for the platform
-		Any interactables will be inside this file as well
-
-struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structures-in-c/
-*/
-
+/*!
+@file     level.c
+@author   Sin Wee, Lewin Yeo
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     19/09/26
+@brief    Implements level layouts, platform data, level timers, objectives, background drawing, and level selection.
+@see	  Struct initialization: https://www.geeksforgeeks.org/c/how-to-initialize-structures-in-c/
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "level.h"
 #include "game_mechanics.h"

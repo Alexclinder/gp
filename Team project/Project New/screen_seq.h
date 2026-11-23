@@ -1,3 +1,11 @@
+/*!
+@file     screen_seq.h
+@author   Sin Wee
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     01/10/26
+@brief
+*//*______________________________________________________________________*/
 #pragma once
 
 void Screen_Init(void);

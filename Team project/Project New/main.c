@@ -1,3 +1,11 @@
+/*!
+@file     main.c
+@author   Sin Wee, Lewin Yeo, Kezin , Jun Kai
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     19/09/26
+@brief	  Welcome to Office Runner. 
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "screen_seq.h"
 

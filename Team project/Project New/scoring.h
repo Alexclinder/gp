@@ -1,3 +1,11 @@
+/*!
+@file     scoring.h
+@author   Sin Wee
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     10/11/26
+@brief
+*//*______________________________________________________________________*/
 #pragma once
 
 extern int level_score;

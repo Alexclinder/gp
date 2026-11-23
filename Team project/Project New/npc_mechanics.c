@@ -1,4 +1,12 @@
-
+/*!
+@file     npc_mechanics.c
+@author   Paul David Sheeba Christobel Kezin David (david.p)
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     23/09/26
+@brief    Implements the NPC: movement, projectile attack, and the collision
+          checks for the player, the shield and reflected projectiles.
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"

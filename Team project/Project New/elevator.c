@@ -4,7 +4,8 @@
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     20/10/26
-@brief
+@brief    Implements the boss-level elevator section, including platforms, camera scrolling, 
+          lasers, the vent, and player health.
 *//*______________________________________________________________________*/
 #include <stdio.h>
 #include <math.h>
