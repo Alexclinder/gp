@@ -4,7 +4,8 @@
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     10/11/26
-@brief
+@brief	  Implements the scoring system: bonus awards, level and cumulative
+          scores, per-level score saving, and treasure collection.
 *//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game_mechanics.h"

@@ -5,11 +5,13 @@
 @section  B
 @date     01/10/26
 @brief  This file contains the screen sequence for the game
-		1) Main Menu
-		2) Pause Menu
-		3) Win Menu
-		4) Lose Menu
+        1) Main Menu
+        2) Pause Menu
+        3) Win Menu
+        4) Lose Menu
         5) Leaderboard Menu
+        6) Level Select Menu
+        7) Controls Menu
 *//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game_mechanics.h"
