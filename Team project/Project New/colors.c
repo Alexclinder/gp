@@ -1,6 +1,6 @@
 /*!
 @file     colors.c
-@author
+@author	  Sin Wee
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     20/10/26
@@ -24,6 +24,14 @@ CP_Color yellow;
 CP_Color blue;
 CP_Color black;
 
+/*
+color_create
+
+CREATE every colour used in the game (RGB + alpha)
+	purple, light green, red, grey, light sky blue, purple blue,
+	white, translucent white, medium light green, orange,
+	dark blue, yellow, blue, black
+*/
 void color_create(void) {
 	purple = CP_Color_Create(128, 0, 128, 255);
 	light_green = CP_Color_Create(144, 238, 144, 255);

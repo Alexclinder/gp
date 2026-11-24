@@ -1,6 +1,7 @@
 /*!
 @file     level.c
-@author   Sin Wee, Lewin Yeo
+@author   Sin Wee
+@co-author Lewin Yeo -
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     19/09/26
@@ -47,39 +48,51 @@
 
 /*******************Level Timer Functions************/
 float Seconds, Zeroing_Time;
-int TimeSet,PauseTimeStatus, ResetTime;
-float PauseingameTime = 0.0,differenceTime = 0.0, WinScreenTime;
-struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f , 0.0f};
+int TimeSet, PauseTimeStatus, ResetTime;
+float PauseingameTime = 0.0, differenceTime = 0.0, WinScreenTime;
+struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f , 0.0f };
 float PosX = 0.0f;
 float PosY = 0.0f;
 float alpha = 255.0f;
 
+/*
+SaveTime
+
+CHECK which level is selected
+	LEVEL 1 -> SAVE time as level 1 time
+	LEVEL 2 -> SAVE time as level 2 time
+	LEVEL 3 -> SAVE time as level 3 time
+	ANY other level -> SAVE time as level 4 time
+*/
 void SaveTime(float time) {
 	switch (level_selected) {
-		case level_1:
-			// Save time for level 1
-			Level_Timer.level1_time = time;
-			break;
-		case level_2:
-			// Save time for level 2
-			Level_Timer.level2_time = time;
-			break;
-		case level_3:
-			// Save time for level 3
-			Level_Timer.level3_time = time;
-			break;
-		default:
-			// Save time for level 4
-			Level_Timer.level4_time = time;
-			break;
+	case level_1:
+		// Save time for level 1
+		Level_Timer.level1_time = time;
+		break;
+	case level_2:
+		// Save time for level 2
+		Level_Timer.level2_time = time;
+		break;
+	case level_3:
+		// Save time for level 3
+		Level_Timer.level3_time = time;
+		break;
+	default:
+		// Save time for level 4
+		Level_Timer.level4_time = time;
+		break;
 
 	}
 }
+
 void LeaderboardScore_Time(int score, float time) {
 	// Implementation for updating leaderboard with score and time
 	(void)score;
 	(void)time;
 }
+
+
 float ingameTimer(void) {
 
 	if (TimeSet == 1) {// If Timer has been set, then we can start counting time
@@ -99,22 +112,20 @@ float ingameTimer(void) {
 		CP_Font_DrawText(buffer, (float)CP_System_GetWindowWidth() / 2.0f, 0.0f);
 		CP_Settings_Fill(yellow);
 
-		switch (level_selected){
+		switch (level_selected) {
 		case 	boss_level:
 			CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 150.0f, 45.0f, 50.0f, 50.0f);//Left Star
-			if (Seconds < 90.0) 
+			if (Seconds < 90.0)
 				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 225.0f, 45.0f, 50.0f, 50.0f); // Middle Star
-			if (Seconds < 70.0) 
+			if (Seconds < 70.0)
 				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 300.0f, 45.0f, 50.0f, 50.0f); //Right Star
-				// variable right_star is to lock the increment count after increment once
 			break;
 		default:
 			CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 150.0f, 45.0f, 50.0f, 50.0f);//Left Star
-			if (Seconds < 35.0) 
+			if (Seconds < 35.0)
 				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 225.0f, 45.0f, 50.0f, 50.0f); // Middle Star
 			if (Seconds < 25.0)
 				CP_Graphics_DrawRect((float)CP_System_GetWindowWidth() / 2.0f + 300.0f, 45.0f, 50.0f, 50.0f); //Right Star
-				// variable right_star is to lock the increment count after increment once
 			break;
 		}
 
@@ -139,9 +150,24 @@ float ingameTimer(void) {
 }
 
 /*********************Prints Objective Text*******************/
+/*
+Objective_Text
+
+SET text position, offsets and size
+UPDATE level score
+CONVERT score to text
+
+CHECK which level is selected
+	LEVEL 1 -> DRAW "Get into the Building"
+	LEVEL 2 -> DRAW "Avoid your Colleagues"
+	LEVEL 3 -> DRAW "Get through the Manufacturing floor" (on two lines)
+	LEVEL 4 -> DRAW "Fight the Boss"
+
+	DRAW "Score :" and score below the objective
+*/
 void Objective_Text(void) {
 
-	
+
 	float top_left_x = 0.0f;
 	float top_left_y = top_left_x;
 	float score_offset_y = 50.0f;
@@ -152,7 +178,7 @@ void Objective_Text(void) {
 	char buffer[TIME_BUF_SIZE] = { 0 };
 	sprintf_s(buffer, TIME_BUF_SIZE, "%d", level_score);
 
-	// Font Size is 100.0f by default
+	// Text size = textSize (50.0f) * text_size
 
 	// display level_score that will persists through all levels
 	switch (level_selected) {
@@ -187,34 +213,30 @@ void Objective_Text(void) {
 	}
 }
 
-// Might do 
-// concat player_spawns and NPC_1_spawns into a single array for easier access
-
-
 /*****************Spawn Locations for Player********************/
-spawn player_spawns[LEVELS] = { 
-							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
-							   { 100.0f, 800.0f }, // level 1 - let player start on bottom right screen
-							   { 100.0f, 60.0f }, // level 2 - player spawn bottom right screen
+spawn player_spawns[LEVELS] = {
+							   { 0.0f, 0.0f }, // main menu - ignore, used for controls screen
+							   { 100.0f, 800.0f }, // level 1 - player spawn bottom left screen
+							   { 100.0f, 60.0f }, // level 2 - player spawn top left screen
 							   { 100.0f, 800.0f }, // level 3 - player spawn bottom left screen
 							   { 100.0f, 100.0f }, // level 4 
 							   { 100.0f, 850.0f }  // boss level  
-							  };
+};
 
 
 /*****************Spawn Locations for NPCs********************/
 // [LEVELS][NUMBER_OF_NPC]
 #define NUMBER_OF_NPC 1
 spawn NPC_1_spawns[LEVELS] = {
-			
-							   { 0.0f, 0.0f }, // main menu - ignore, used tor controls screen
+
+							   { 0.0f, 0.0f }, // main menu - ignore, used for controls screen
 							   { 1500.0f, 900.0f }, // level 1
 							   { 100.0f, 900.0f }, // level 2
 							   { 800.0f, 900.0f }, // level 3
 							   { 1200.0f, 900.0f }, // level 4
 							   { 300.0f, 900.0f }, // boss level
-							
-							 };
+
+};
 
 /**********************************************************LEVEL Selection*********************************************************************/
 
@@ -481,6 +503,21 @@ void Objects_Reset(void) {
 }
 
 // Returns the object the player is touching, or -1. Skips the held one
+/*
+Object_Check
+
+Returns: index of the object the player is touching, or -1 if none
+
+SET circle around player (center of player, radius = half player size)
+
+FOR each object
+	IF object is being held
+		SKIP it
+	IF player's circle touches the object
+		RETURN object's index
+
+RETURN -1
+*/
 int Object_Check(void) {
 	float cx = position.x + PLAYER_SIZE / 2.0f;
 	float cy = position.y + PLAYER_SIZE / 2.0f;
@@ -499,6 +536,30 @@ int Object_Check(void) {
 
 
 #define HIGHLIGHT_PAD 6.0f
+/*
+Objects_Draw
+
+IF player is not carrying or picking up
+	FIND object the player is touching
+GET frame time
+
+GET platforms for the current level
+
+FOR each object
+	IF object is not being held
+		WORK OUT next y position (falling down)
+		SET floor to bottom of screen
+		FOR each platform
+			IF platform is under the object AND higher than current floor
+				SET floor to top of that platform
+		IF object reaches floor
+			PUT object on top of floor
+		ELSE
+			KEEP falling
+
+	DRAW highlight behind object (only visible if player is touching it)
+	DRAW object
+*/
 void Objects_Draw(void) {
 	int target = (!isCarrying && !pickingUp) ? Object_Check() : -1;
 	float dt = CP_System_GetDt();
@@ -549,6 +610,28 @@ void Objects_Draw(void) {
 }
 
 // Returns 0 = no hit, 1 = platform, 2 = other object, 3 = ground
+/*
+Object_HitCheck
+
+Returns: 1 = hit a platform, 2 = hit another object, 3 = hit the ground, 0 = no hit
+
+GET platforms for the current level
+
+FOR each platform
+	IF circle touches the platform
+		RETURN 1
+
+FOR each object
+	IF object is itself
+		SKIP it
+	IF circle touches the object
+		RETURN 2
+
+IF circle reaches bottom of screen
+	RETURN 3
+
+RETURN 0
+*/
 int Object_HitCheck(float cx, float cy, float radius, int self) {
 	/* platforms of the level being played */
 	float (*plats)[PARAMETERS] = first_level;
@@ -638,15 +721,45 @@ void DrawBG(CP_Image BG, float PosX, float PosY, float width, float height, floa
 
 
 /*****************EXIT DRAWING FUNCTION****************/
-//Draws the background image for the level being played
+//Draws the exit (goal) for the level being played
 void DrawExit(float x, float y, float w, float h, float degrees, float cornerRadius) {
 	CP_Settings_RectMode(CP_POSITION_CENTER);
 	CP_Settings_Fill(medium_light_green);
 	CP_Graphics_DrawRectAdvanced(x, y, w, h, degrees, cornerRadius);
 }
 
+/***************** LEVEL Generation: ********************/
 
+/*
+level_1st / level_2nd / level_3rd / level_4th
 
+(LEVEL 4 ONLY) CLEAR background to black
+			   MOVE kill zone right until it reaches its end point
+			   DRAW kill zone
+
+FOR each platform in this level
+	DRAW platform (also checks player collision)
+
+DRAW background
+DRAW black bar at top of screen (HUD area)
+
+DRAW level objects (depends on level)
+	TREASURES        -> IF player collects one, ADD 500 to score
+	KILL ZONES       -> still or moving, send player to lose screen on touch
+	MOVING PLATFORMS -> move left and right between boundaries
+	PRESSURE PLATES  -> open door(s) when pressed
+
+DRAW exit
+
+IF player touches exit
+	ADD level complete score
+	CLEAR projectiles
+	IF level 4
+		SET next level to boss level
+		GO to elevator, then boss level
+	ELSE
+		GO to win screen
+*/
 
 /***************** LEVEL 1: ********************/
 /* Alternating Kill Zones */
@@ -654,7 +767,7 @@ k_zone level1_kwall = { .kx = 600.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 k_zone level1_kwall2 = { .kx = 900.0f, .ky = 300.0f, .kw = 5.0f, .kh = 100.0f };
 
 void level_1st(void) {
-	
+
 
 
 	for (int i = 0; i < LEVEL1_STATIC_PLATFORMS; i++) {
@@ -684,8 +797,6 @@ void level_1st(void) {
 	kill_zone_alternating_movement(level1_kwall2.kx, level1_kwall2.ky, level1_kwall2.kw, level1_kwall2.kh, 900.0f, 1100.0f);
 
 
-	// iterates thru the 4 rows and 6 col
-	// Nested loop not needed as first level columns are iterated through.
 	DrawExit(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius);
 
 	if (CheckWinCondition(level1_win.x, level1_win.y, level1_win.w, level1_win.h, level1_win.degrees, level1_win.cornerRadius) == 1) {
@@ -701,9 +812,9 @@ void level_1st(void) {
 /***************** LEVEL 2: ********************/
 void level_2nd(void) {
 
-	
 
-	for (int i = 0; i <	LEVEL2_STATIC_PLATFORMS; i++) {
+
+	for (int i = 0; i < LEVEL2_STATIC_PLATFORMS; i++) {
 		DrawPlatform(second_level[i][0],
 			second_level[i][1],
 			second_level[i][2],
@@ -715,11 +826,11 @@ void level_2nd(void) {
 	CP_Settings_Fill(black);
 	CP_Graphics_DrawRect(800, 50, 1600, 100);
 	kill_zone(level2_floor.kx, level2_floor.ky, level2_floor.kw, level2_floor.kh);
-	
-	Pressure_Plate_2Door(level2.px, level2.py, level2.pw, level2.ph, 
-						 level2.dx, level2.dy, level2.dw, level2.dh,
-						 level2.d2x, level2.d2y, level2.d2w, level2.d2h 
-						);
+
+	Pressure_Plate_2Door(level2.px, level2.py, level2.pw, level2.ph,
+		level2.dx, level2.dy, level2.dw, level2.dh,
+		level2.d2x, level2.d2y, level2.d2w, level2.d2h
+	);
 	// Treasure at right side
 	if (Treasure(1350.0f, 460.0f, 0)) {
 		level_score += 500;
@@ -739,7 +850,7 @@ void level_2nd(void) {
 		NPC_UpdateProjectiles(0);
 		CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 	}
-		
+
 }
 
 
@@ -750,10 +861,9 @@ void level_2nd(void) {
 
 void level_3rd(void) {
 
-	
 
-	// iterates thru the 4 rows and 6 col
-// Nested loop not needed as first level columns are iterated through.
+
+	// Draw every platform (each row is one platform: x, y, w, h, rotation, corner radius)
 	for (int i = 0; i < LEVEL3_STATIC_PLATFORMS; i++) {
 		DrawPlatform(third_level[i][0],
 			third_level[i][1],
@@ -767,7 +877,7 @@ void level_3rd(void) {
 	DrawBG(background, PosX, PosY, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), alpha);
 	CP_Settings_Fill(black);
 	CP_Graphics_DrawRect(800, 50, 1600, 100);
-	
+
 	// on tiny platform directly ontop of longest killzone
 	if (Treasure(1050.0f, 680.0f, 0))
 	{
@@ -784,8 +894,8 @@ void level_3rd(void) {
 	platform_alternating_movement(850.0f, 450.0f, PLATFORM_WIDTH_3 / 3.0f,
 		RECT_HORIZ_H, NO_ROTATION, CORNER_RADIUS,
 		LEFT_BOUNDARY, RIGHT_BOUNDARY);
-	
-	
+
+
 	// Produce the Pressure_Plate_Door
 	Pressure_Plate_Door(level3.px, level3.py, level3.pw, level3.ph,
 		level3.dx, level3.dy, level3.dw, level3.dh);
@@ -815,17 +925,16 @@ void level_4th(void) {
 
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
 
-	
-	
+
+
 	float dt = CP_System_GetDt();
 	killZoneX += killZoneSpeed * dt;
 
 	if (killZoneX > killZoneEndX)
 		killZoneX = killZoneEndX;   // stop at endpoint
 
-	kill_zone(killZoneX-500.0f, 500.0f, 1000.0f, 900.0f);
-	
-	// kill_zone(arr[level_2]);
+	kill_zone(killZoneX - 500.0f, 500.0f, 1000.0f, 900.0f);
+
 
 	for (int i = 0; i < LEVEL4_STATIC_PLATFORMS; i++) {
 		DrawPlatform(fourth_level[i][0],
@@ -843,7 +952,6 @@ void level_4th(void) {
 	if (CheckWinCondition(level4_win.x, level4_win.y, level4_win.w, level4_win.h, level4_win.degrees, level4_win.cornerRadius) == 1) {
 		score_complete_level();
 		NPC_UpdateProjectiles(0);
-		// CP_Engine_SetNextGameState(Screen_Init, Win_Screen, Screen_Exit);
 		level_selected = boss_level;
 		CP_Engine_SetNextGameState(Elevator_Init, Game_Update, Elevator_Exit);    // Move to boss lvl after lvl 4
 	}
@@ -852,4 +960,4 @@ void level_4th(void) {
 
 
 /**********************************************************Treasure/Collectables Functions*********************************************************************/
-//Treasure/Collectables Functions was here ,but was moved by Lewin was is now in scoring.c
+// Treasure/Collectables functions were moved to scoring.c by Lewin

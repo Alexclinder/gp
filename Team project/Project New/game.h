@@ -1,6 +1,7 @@
 /*!
 @file     game.h
-@author   Sin Wee, Jun Kai
+@author   Sin Wee
+@co-author Lee Jun Kai (l.junkai)
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     19/09/26

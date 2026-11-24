@@ -17,18 +17,20 @@
 
 // player_score stores the total accumulated score across all completed levels.
 // It carries forward the scores earned from previous levels.
- 
-// player_score will be used to store inside json if i got time....T_T
-// Ask sin wee if dont knowwwww
-
 int player_score = 0;  // Total score across all levels
 
 // level_score stores the points earned in the current level only.
 // It is reset to 0 whenever a new level starts or the current level restarts.
-// store the level_score to each level
 // Once the player completes the level, its final score is added to player_score.
 int level_score = 0;   // Score earned in the current level
 
+// Points awarded:
+// Teleport used       +200 (each time)
+// Reflect projectile  +100 (once per level)
+// Kill NPC            +300 (once per level)
+// Open door           +750 (once per level)
+// Treasure            +500 (each, added in level.c)
+// Time bonus          +1000 under 25s, +500 under 35s
 int teleport_score = 0;
 int reflect_score = 0;
 int npc_score = 0;
@@ -41,6 +43,19 @@ int treasure_collected[MAX_TREASURES] = { 0 };
 int completed_level_score[LEVELS] = { 0 };
 struct LevelScore Level_Score = { 0, 0, 0, 0 }; //Was in level.c, moved to scoring.c by Lewin
 
+/*
+game_score
+
+IF level score is locked (level already finished)
+	RETURN
+
+IF player reflected a projectile AND not awarded yet
+	ADD 100 to level score
+IF player killed the NPC AND not awarded yet
+	ADD 300 to level score
+IF pressure plate is pressed AND not awarded yet
+	ADD 750 to level score
+*/
 void game_score(void) {
 
 	if (level_score_locked) {
@@ -66,7 +81,16 @@ void game_score(void) {
 	}
 }
 
-// Resets ONLY the current level's score and flags (keeps player_score intact)
+/*
+level_score_reset
+
+SET level score to 0
+CLEAR all bonus flags (reflect, NPC, door, teleport, time bonus)
+UNLOCK level score
+CLEAR all collected treasures
+
+(player_score is not changed)
+*/
 void level_score_reset(void)
 {
 	level_score = 0;
@@ -84,138 +108,195 @@ void level_score_reset(void)
 	}
 }
 
-	void time_score(void) {
-		if (timer_bonus_awarded == 0) {
+/*
+time_score
 
-			if (Seconds < 25.0f)
-				level_score += 1000;
-			else if (Seconds < 35.0f)
-				level_score += 500;
+IF time bonus not given yet
+	IF under 25 seconds -> ADD 1000 to level score
+	ELSE IF under 35 seconds -> ADD 500 to level score
+	SET time bonus as given
+*/
+void time_score(void) {
+	if (timer_bonus_awarded == 0) {
 
-			timer_bonus_awarded = 1;
-		}
+		if (Seconds < 25.0f)
+			level_score += 1000;
+		else if (Seconds < 35.0f)
+			level_score += 500;
+
+		timer_bonus_awarded = 1;
+	}
+}
+
+
+/*
+score_reset
+
+PRINT scores before reset
+RESET current level score
+SET total score to 0
+CLEAR every level's completed score
+CLEAR saved scores for the leaderboard
+PRINT scores after reset
+*/
+void score_reset(void)
+{
+
+	printf("Before reset: level_score = %d, player_score = %d\n",
+		level_score, player_score);
+
+	level_score_reset();
+	player_score = 0;
+
+	for (int i = 0; i < LEVELS; i++) {
+		completed_level_score[i] = 0;
 	}
 
 
-	void score_reset(void)
-	{
+	Level_Score = (struct LevelScore){ 0, 0, 0, 0 };
 
-		printf("Before reset: level_score = %d, player_score = %d\n",
-			level_score, player_score);
-		
+
+	printf("After reset: level_score = %d, player_score = %d\n",
+		level_score, player_score);
+}
+
+/*
+score_abandoned_level
+
+IF level was not finished
+	RESET current level score
+	CLEAR saved score for this level
+*/
+void score_abandoned_level(void) {
+	// Player did not complete the level
+	if (!level_score_locked)
+	{
 		level_score_reset();
+		save_lvl_score(0); // clears the level score
+	}
+}
+
+
+
+/*
+score_remove_level
+
+IF level number is not valid
+	RETURN
+
+TAKE this level's old score away from total score
+IF total score goes below 0
+	SET total score to 0
+CLEAR this level's old score
+RESET current level score
+*/
+void score_remove_level(int level)
+{
+	if (level < 1 || level >= LEVELS)
+		return;
+
+	// Deduct the selected level's previous contribution
+	player_score -= completed_level_score[level];
+
+	if (player_score < 0)
 		player_score = 0;
-		
-			for (int i = 0; i < LEVELS; i++) {
-				completed_level_score[i] = 0;
-			}
 
+	// Clear the previous contribution
+	completed_level_score[level] = 0;
 
-			Level_Score = (struct LevelScore){ 0, 0, 0, 0 };
-	
+	// Reset the current level's score and flags, but keep remaining player_score intact
+	level_score_reset();
+}
 
-		printf("After reset: level_score = %d, player_score = %d\n",
-			level_score, player_score);
+/*
+score_complete_level
+
+PRINT scores before completion
+IF level score is locked
+	RETURN
+
+ADD bonus points (reflect, NPC, door)
+ADD time bonus
+SAVE level score for this level
+ADD level score to total score
+LOCK level score
+PRINT scores after completion
+*/
+void score_complete_level(void)
+{
+	printf("Complete level scoring called!\n");
+	printf("Before completion: level_score = %d, player_score = %d\n",
+		level_score, player_score);
+
+	// Safety check: stop the score being added twice if this is called more than once
+	if (level_score_locked)
+		return;
+
+	game_score();
+	time_score();
+
+	completed_level_score[level_selected] = level_score;
+
+	// Transfer level score to cumulative score
+	player_score += level_score;
+
+	level_score_locked = 1;
+
+	printf("After completion: level_score = %d, player_score = %d\n",
+		level_score, player_score);
+}
+
+/*
+score_teleport_used
+
+Called once each time the player teleports
+
+PRINT debug message
+IF level score is not locked
+	ADD 200 to level score
+*/
+void score_teleport_used(void)
+{
+	printf("Teleport scoring called!\n");
+	// award 200
+	// check level_score_locked to avoid score changes after win
+	if (!level_score_locked) {
+		level_score += 200;
 	}
+}
 
-	void score_abandoned_level(void) {
-		// Player did not complete the level
-		if (!level_score_locked)
-		{
-			level_score_reset();
-			save_lvl_score(0); // clears the level score
-		}
+/*
+save_lvl_score
+
+Based on Lewin's SaveTime in level.c
+
+CHECK which level is selected
+	LEVEL 1 -> SAVE score as level 1 score
+	LEVEL 2 -> SAVE score as level 2 score
+	LEVEL 3 -> SAVE score as level 3 score
+	LEVEL 4 -> SAVE score as level 4 score
+*/
+void save_lvl_score(int score) {
+	switch (level_selected) {
+	case level_1:
+		// Save score for level 1
+		Level_Score.level1_score = score;
+		break;
+	case level_2:
+		// Save score for level 2
+		Level_Score.level2_score = score;
+		break;
+	case level_3:
+		// Save score for level 3
+		Level_Score.level3_score = score;
+		break;
+	case level_4:
+		// Save score for level 4
+		Level_Score.level4_score = score;
+		break;
 	}
+}
 
-	
-
-	void score_remove_level(int level)
-	{
-		if (level < 1 || level >= LEVELS)
-			return;
-
-		// Deduct the selected level's previous contribution
-		player_score -= completed_level_score[level];
-
-		if (player_score < 0)
-			player_score = 0;
-
-		// Clear the previous contribution
-		completed_level_score[level] = 0;
-
-		// Reset the current level's score and flags, but keep remaining player_score intact
-		level_score_reset();
-	}
-
-	void score_complete_level(void)
-	{
-		printf("Complete level scoring called!\n");
-		printf("Before completion: level_score = %d, player_score = %d\n",
-			level_score, player_score);
-
-		// safety check - just to make sure player dont receive duplicate score if this function kena called many times
-		if (level_score_locked)
-			return;
-
-		game_score();
-		time_score();
-
-		completed_level_score[level_selected] = level_score;
-
-		// Transfer level score to cumulative score
-		player_score += level_score;
-		
-		level_score_locked = 1;
-
-		printf("After completion: level_score = %d, player_score = %d\n",
-			level_score, player_score);
-	}
-	
-	// for teleport activated - award points when teleport is active for 1 frame or small number of frames (event)
-	void score_teleport_used(void)
-	{
-		printf("Teleport scoring called!\n");
-		// award 200 we
-		// check level_score_locked to avoid score changes after win
-		if (!level_score_locked) {
-			level_score += 200;
-		}
-	}
-
-	// called when exiting from pause menu
-	// called when win the game
-	// called when lose the game
-	// nah - just keep saving it while gameplay is running.
-	
-	// referenced from lewin's code
-	void save_lvl_score(int score) {
-		switch (level_selected) {
-		case level_1:
-			// Save score for level 1
-			Level_Score.level1_score = score;
-			break;
-		case level_2:
-			// Save score for level 2
-			Level_Score.level2_score = score;
-			break;
-		case level_3:
-			// Save score for level 3
-			Level_Score.level3_score = score;
-			break;
-		case level_4:
-			// Save score for level 3
-			Level_Score.level4_score = score;
-			break;
-		}
-	}
-
-
-	// player_score is set to 0 first
-
-	// If teleport has been used, +200 
-	// If completed milestone objectives (level dependent)- do last since levels 1,2 & 4 not completed 
-	// If deflected projectiles, +100
-	// If kill enemies, +300
 
 
 
@@ -224,6 +305,23 @@ int Trea_score = 0;
 int Trea;
 
 
+/*
+Treasure
+
+Returns: 1 = collected this frame, 0 = not collected
+
+IF treasure is already collected
+	RETURN 0
+
+DRAW treasure as an orange square
+GET treasure edges from its center and size
+GET player edges from its position
+
+IF player overlaps the treasure
+	SET treasure as collected
+	RETURN 1
+RETURN 0
+*/
 int Treasure(float x, float y, int treasure_id)
 {
 	float trea_w = 20.0f;
@@ -263,4 +361,3 @@ int Treasure(float x, float y, int treasure_id)
 
 	return 0;
 }
-

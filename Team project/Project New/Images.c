@@ -1,6 +1,7 @@
 /*!
 @file     Images.c
-@author   Lewin Yeo , Jun Kai
+@author   Lee Jun Kai (l.junkai)
+@co-author Lewin Yeo - Free Level Images
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     15/11/26
@@ -37,6 +38,13 @@ CP_Image demonBoss;
 CP_Image vent;
 CP_Image npc1;
 
+/*
+LoadImages
+
+LOAD menu images (main menu, defeat, level select, button frame, pause)
+LOAD menu font
+LOAD level background images for the leaderboard screen
+*/
 void LoadImages(void) {
     mainbackground = CP_Image_Load("Assets/MainMenu.png");
     defeat = CP_Image_Load("Assets/Defeat.png");
@@ -52,6 +60,20 @@ void LoadImages(void) {
 	backgroundfour_pre = CP_Image_Load("Assets/bossBG.png");
 }
 
+/*
+LoadLevelImages
+
+IF level images are already loaded
+    RETURN
+
+LOAD game font
+LOAD player sprites (jump, grab 1, grab 2, carry, standing)
+LOAD level backgrounds and boss background
+LOAD NPC, boss, vent, platform and projectile images
+LOAD object images and their highlight images
+
+SET level images as loaded
+*/
 void LoadLevelImages(void)
 {
     if (level_images_loaded)
@@ -84,6 +106,18 @@ void LoadLevelImages(void)
     level_images_loaded = 1;
 }
 
+/*
+FreeLevelImages
+
+IF level images are not loaded
+    RETURN
+
+FREE all level images
+FREE all object images and highlight images
+SET every freed image to NULL
+
+SET level images as not loaded
+*/
 void FreeLevelImages(void)
 {
     if (!level_images_loaded)

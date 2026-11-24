@@ -1,6 +1,7 @@
 /*!
 @file     game.c
-@author   Sin Wee, Jun Kai
+@author   Sin Wee
+@co-author Lee Jun Kai (l.junkai) - Structuring of Game_Update & Game_Reset
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     19/09/26
@@ -20,6 +21,19 @@
 #include <stdio.h>
 
 // For Resume Game Btn
+/*
+Game_Init
+
+LOAD font
+CREATE colours
+LOAD level images
+RESET level objects
+RESET level score
+CLEAR projectile
+SET frame rate to 120
+SET player as not on ground
+SET timer to restart
+*/
 void Game_Init(void)
 {
 	Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
@@ -33,6 +47,28 @@ void Game_Init(void)
 	TimeSet = 0;
 }
 
+/*
+Game_Reset
+
+LOAD level images
+PRINT current level and player spawn position
+
+SET teleport charges (4 = unlimited on boss level, otherwise 3)
+RESET teleport cooldown
+RESET player state (not on ground, not carrying, not picking up, not dropping, standing)
+RESET level objects
+RESET timer
+MOVE player and NPC to this level's spawn points
+
+RESET scoring flags (NPC, reflect, door, pressure plate)
+CLEAR projectile
+RESET level score
+CLEAR all collected treasures
+MOVE level 4 kill zone back to the start
+
+IF boss level
+	RESET boss level (done last so its spawn points override the ones above)
+*/
 void Game_Reset(void)
 {
 	LoadLevelImages();
@@ -80,6 +116,37 @@ void Game_Reset(void)
 }
 
 // Used in Game_Update() to call the appropriate level function based on the current level_selected value.
+/*
+Game_Update
+
+RUN current level (draw platforms, kill zones, treasures, exit)
+
+IF Esc is pressed
+	SAVE current time
+	GO to pause menu
+
+DRAW objective and score
+UPDATE and DRAW timer
+UPDATE teleport cooldown and teleport
+
+UPDATE NPC (move, attack, projectiles, shield and reflect checks)
+DRAW projectiles
+
+IF carrying an object
+	MOVE player with carry controls
+ELSE
+	MOVE player with normal controls
+UPDATE shield
+
+IF NPC hits the player
+	CLEAR level score
+	CLEAR projectiles
+	GO to lose screen
+	RETURN
+
+DRAW objects, player, wall cling bar and shield
+SAVE level score for leaderboard
+*/
 void Game_Update(void)
 {		
 		level_selection(level_selected);
@@ -125,7 +192,12 @@ void Game_Update(void)
 		save_lvl_score(level_score);
 }
 
+/*
+Game_Next_Level
 
+GO to next level number
+RESET game
+*/
 void Game_Next_Level(void) {
 
 
@@ -134,6 +206,12 @@ void Game_Next_Level(void) {
 	
 }
 
+/*
+Game_Exit
+
+FREE level images
+FREE font
+*/
 void Game_Exit(void)
 {
 	FreeLevelImages();

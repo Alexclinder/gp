@@ -1,6 +1,6 @@
 /*!
 @file     colors.h
-@author   
+@author   Sin Wee
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     20/10/26

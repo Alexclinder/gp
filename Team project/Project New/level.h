@@ -1,6 +1,7 @@
 /*!
 @file     level.h
-@author   Sin Wee, Lewin Yeo
+@author   Sin Wee
+@co-author Lewin Yeo
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     19/09/26

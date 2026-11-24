@@ -1,6 +1,7 @@
 /*!
 @file     game_mechanics.h
-@author   Jun Kai , Lewin Yeo
+@author   Jun Kai (l.junkai)
+@co-author  Sin Wee & Lewin Yeo
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     19/09/26
