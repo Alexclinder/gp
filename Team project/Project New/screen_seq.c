@@ -12,6 +12,13 @@
         5) Leaderboard Menu
         6) Level Select Menu
         7) Controls Menu
+
+        Also Includes functions related to on-screen/display functions under 
+        These include:
+        1)Print Text Positions
+        2)Interactions of the Buttons for all mainmenus
+        3)Dynamic button motion
+
 *//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game_mechanics.h"

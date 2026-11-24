@@ -6,8 +6,16 @@
 @module   csd1401f26 Software Engineering Project 1
 @section  B
 @date     19/09/26
-@brief	Implements the core gameplay mechanics: player movement, wall cling,
-		teleport, shield, collision, pressure plates, kill zones and moving platforms.
+@brief	Implements the core gameplay mechanics: 
+		1)player movement, 
+		2)wall cling
+		3)teleport: PLayer travels a short distance within an instant
+		4)shield
+		5)Drawing Platforms
+		6)collision
+		7)pressure plates
+		8)kill zones 
+		9)moving platforms.
 *//*______________________________________________________________________*/
 
 #include "cprocessing.h"
