@@ -115,9 +115,9 @@ void TeleportTimer(void);
 
 @param  None.
 
-@return 1 if the player teleported this frame, otherwise 0.
+@return None.
 *//*_______________________________________________________________________*/
-int Teleport_Mechannic(void);
+void Teleport_Mechannic(void);
 
 
 /* ===== Player state ===== */

@@ -146,7 +146,7 @@ IF player has charges
 
 RETURN 0
 */
-int Teleport_Mechannic(void) {
+void Teleport_Mechannic(void) {
 
 	// X-coordinates for each teleport charges 
 	TeleportTextCoordinates.XLeft = 1520.0;
@@ -203,18 +203,14 @@ int Teleport_Mechannic(void) {
 			//Teleport the player's character base on TeleportDistance to the right
 			position.x += TeleportDistance;
 			Teleport_Activated(); //Runs the nesscary related functions that happen onc the teleport is activated
-			return 1;
 		}
 		//OR
 		if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the left and presses the LeftShift key,
 			//Teleport the player's character base on TeleportDistance to the left
 			position.x -= TeleportDistance;
 			Teleport_Activated();//Runs the nesscary related functions that happen onc the teleport is activated
-			return 1;
 		}
 	}
-	return 0;
-
 }
 
 /************************Object Related Functions**********************/

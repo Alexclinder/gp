@@ -51,6 +51,8 @@ float Seconds, Zeroing_Time;
 int TimeSet, PauseTimeStatus, ResetTime;
 float PauseingameTime = 0.0, differenceTime = 0.0, WinScreenTime;
 struct LevelTimer Level_Timer = { 0.0f, 0.0f, 0.0f , 0.0f };
+
+
 float PosX = 0.0f;
 float PosY = 0.0f;
 float alpha = 255.0f;
