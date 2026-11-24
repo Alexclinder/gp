@@ -600,7 +600,7 @@ void Level_Select_Screen(void) {
 }
 
 
-enum { NUMBER_OF_CONTROLS = 7 };
+enum { NUMBER_OF_CONTROLS = 8 };
 /*
 Controls_Screen
 
@@ -631,7 +631,8 @@ void Controls_Screen(void) {
         "KICK",
         "PICK UP / DROP",
         "PARRY / BLOCK",
-        "PAUSE/BACK"
+        "PAUSE/BACK",
+        "TELEPORT"
     };
     // x, y, w, h, text, scalar
 
@@ -643,12 +644,13 @@ void Controls_Screen(void) {
         "F",
         "E",
         "P",
-        "ESC"
+        "ESC",
+        "LEFT-SHIFT W A/D"
     };
 
     float first_control_y = 100.0f;
     float first_control_x = 550.0f;
-    float y_offset = 100.0f; // vertical spacing between controls
+    float y_offset = 90.0f; // vertical spacing between controls
 
     float first_controlkey_x = first_control_x * 2.0f;
 
