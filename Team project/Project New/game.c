@@ -127,7 +127,7 @@ IF Esc is pressed
 
 DRAW objective and score
 UPDATE and DRAW timer
-UPDATE teleport cooldown and teleport
+UPDATE teleport cooldown and run teleport mechanic
 
 UPDATE NPC (move, attack, projectiles, shield and reflect checks)
 DRAW projectiles

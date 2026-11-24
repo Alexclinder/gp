@@ -168,7 +168,12 @@ extern struct LevelTimer {
 
 /*!
 @brief  Saves a time into Level_Timer for the current level_selected.
-		Any level other than levels 1 to 3 is saved to level4_time.
+		All levels from levels 1 to 3 is saved using a switch case that 
+		checks the current level_selected value stored level4/boss-level is 
+		the default as we are assuming that the bos level will always be the 
+		last level.
+		Once the level_selected value is checked it saves the time tracked taken 
+		on the cuurent level, until the player has reached the end of the level.
 
 @param  time  The time to save, in seconds.
 
@@ -180,10 +185,14 @@ void SaveTime(float time);
 @brief  Updates and draws the in-game timer. On the first call it records
 		the start time. After that it computes the elapsed time, saves it
 		with SaveTime(), draws it at the top centre of the screen, and
-		draws the star rating. The first star always shows. The second
-		shows under 35 seconds (90 in the boss level) and the third under
-		25 seconds (70 in the boss level). It also handles the pause and
-		reset flags (PauseTimeStatus, ResetTime).
+		draws the star rating. 
+		The first star always shows. 
+		The second shows under 35 seconds (90 in the boss level)
+		and the third under 25 seconds (70 in the boss level). 
+		It also handles the pause and reset flags (PauseTimeStatus, ResetTime).
+		Where these flags indicate if the player has done either of these actions:
+		-Pause the game and entered into the mainmenu
+		-Entered a new level or restart the current level
 
 @param  None.
 

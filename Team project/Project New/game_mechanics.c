@@ -55,6 +55,7 @@ float kick_moved = 0.0f;
 int   shieldActive = 0;
 float shieldTimer = 0.0f;
 
+/******Teleport Related variables********/
 int Teleport_count = 3; // Number of Teleportes available
 int Teleport_Status = 1;
 float TeleportWindowTiming = 0.1f;
@@ -109,18 +110,23 @@ void TeleportTimer(void) {
 	float dt = CP_System_GetDt();
 	//Cooldown before pressing to Teleport again
 	TeleportWindowTiming += dt; // Contuously increase the Teleport window timing based on the delta time
+	//Clamp the TeleportWindowTiming to the Cooldown to ensure that it does not exceed the intended value.
+	
 	TeleportWindowTiming = CP_Math_ClampFloat(TeleportWindowTiming, 0.0, TeleportCooldown);
 	if (TeleportWindowTiming >= TeleportCooldown)
 		Teleport_Status = 1; // reset the Teleport status once the Teleport cooldown is reset
 }
 //Things to do once Teleport is activated//
 void Teleport_Activated(void) {
-	CP_Sound_Play(teleportSound);
-	TeleportWindowTiming = 0;
-	Teleport_Status = 0;
-	if (Teleport_count <= 3)
+	CP_Sound_Play(teleportSound);//Play Teleport Sound
+	TeleportWindowTiming = 0;	 // Set the Timing cooldown to 0
+	Teleport_Status = 0;		 //Set Flag to 0 disabling the teleport mechanic
+	
+	if (Teleport_count <= 3) //Check if the player now is currently holding 3 or less charges for teleport
+		//decrement count if so reducing the number of charges a player has to use
 		Teleport_count--;
-	score_teleport_used();
+
+	score_teleport_used();//Update and add to the sccore when player use teleport
 }
 
 //Teleport Mechanic//
@@ -141,53 +147,69 @@ IF player has charges
 RETURN 0
 */
 int Teleport_Mechannic(void) {
+
+	// X-coordinates for each teleport charges 
 	TeleportTextCoordinates.XLeft = 1520.0;
 	TeleportTextCoordinates.XMiddle = 1550.0;
 	TeleportTextCoordinates.Xright = 1580.0;
+	// Y-coordinate for all teleport charges
 	TeleportTextCoordinates.y = 40.0;
+
+	//Scale for the cooldwon bar above the player
 	float TeleportCooldownBarScale = 25.0f;
 
+	//Ensure that the shapes are drawn from the left corner
 	CP_Settings_RectMode(CP_POSITION_CORNER);
-	if (TeleportWindowTiming < TeleportCooldown) {// A "Meter" above the player's head indicating the teleport cooldown
+	if (TeleportWindowTiming < TeleportCooldown) {
+		// A "Meter" above the player's head indicating the teleport cooldown
 		CP_Settings_Fill(yellow);
+		// Once the player uses their teleport, Draw the cooldown above the player & scale the length of the bar base on the TeleportWindowTiming time 
 		CP_Graphics_DrawRect(position.x, position.y - 20.0f, TeleportWindowTiming * TeleportCooldownBarScale, 10.0f);
 	}
 
+	//Draws the charges at the top right corner
 	CP_Settings_Fill(medium_light_green);
 	CP_Font_Set(Font);
 	CP_Settings_TextSize(25);
 	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_RIGHT, CP_TEXT_ALIGN_V_TOP);
 
-	//show how many teleports the player has left
+	//show how many teleports the player has left based on the Teleport_count given at the start of the level
 	switch (Teleport_count) {
 	case 3:
+		//Draws the Most left icon
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.XLeft, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 2:
+		//Draws the Middle icon
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.XMiddle, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 1:
+		//Draws the Most right icon & the text relating to teleporting 
 		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.Xright, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 
 		//CP_Graphics_DrawRect(TeleportTextCoordinates.XLeft-15.0, TeleportTextCoordinates.y+25.0, TeleportWindowTiming* TeleportCooldownBarScale, 20.0);
 		break;
 	case 4:
+		//If the level selected gives the player 4 charges it is essentially unlimted as it wont decrement.
 		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
 		CP_Font_DrawText("Unlimted Charges", 1600.0f, 30.0f);
 		break;
 	}
 
-	//Activate Teleport when movement key & LeftShift is pressed
-	if (Teleport_count > 0) {
+	//*****Activation of Teleport******** 
+	// when movement key & LeftShift is pressed
+	if (Teleport_count > 0) {//Check if the player still have teleport charges
+		
 		if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the right and presses the LeftShift key,
+			//Teleport the player's character base on TeleportDistance to the right
 			position.x += TeleportDistance;
-			Teleport_Activated();
+			Teleport_Activated(); //Runs the nesscary related functions that happen onc the teleport is activated
 			return 1;
 		}
+		//OR
 		if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the left and presses the LeftShift key,
-			//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
-			//Held Down it returns false, so the player will have to release the key and press it again to trigger the Teleport mechanic.
+			//Teleport the player's character base on TeleportDistance to the left
 			position.x -= TeleportDistance;
-			Teleport_Activated();
+			Teleport_Activated();//Runs the nesscary related functions that happen onc the teleport is activated
 			return 1;
 		}
 	}
