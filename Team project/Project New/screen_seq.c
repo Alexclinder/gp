@@ -10,6 +10,8 @@
         3) Win Menu
         4) Lose Menu
         5) Leaderboard Menu
+        6) Level Select Menu
+        7) Controls Menu
 *//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game_mechanics.h"
