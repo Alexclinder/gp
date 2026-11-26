@@ -15,7 +15,7 @@ CP_Sound teleportSound;
 CP_Sound grabSound;
 CP_Sound dropSound;
 CP_Sound kickSound;
-CP_Sound shieldSound;
+CP_Sound ShieldSound;
 
 /*****Music*****/
 CP_Sound backgroundMusic;
@@ -29,18 +29,12 @@ CP_Sound winSound;
 /*****Menu Sounds*****/
 CP_Sound buttonClickSound;
 CP_Sound buttonHoverSound;
-CP_Sound levelSelectSound;
-CP_Sound pauseSound;
-CP_Sound resumeSound;
+
 
 /*****Boss Music & Sounds*****/
 CP_Sound bossMusic;
 CP_Sound bossAttackSound;
-CP_Sound bossDefeatSound;
-CP_Sound bossPhaseChangeSound;
 CP_Sound bossRoarSound;
-CP_Sound bossSummonSound;
-CP_Sound Keybooard_Attack_Sound;
 
 enum {
 
@@ -54,6 +48,7 @@ void LoadSounds(void) {
 
 	/*****Player Ability Sounds*****/
 	teleportSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Teleport_Sound.wav");
+	ShieldSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Shield_Sound.wav");
 
 	/*****Level Music & Sounds*****/
 	level_MusicP1 = CP_Sound_LoadMusic("Assets/Sounds/Music/Level_MusicPart1.wav");
@@ -72,7 +67,6 @@ void PlayMainMenu(int *PlayOnce) {
 
 void PlaylevelMusicP1(void) {
 	CP_Sound_PlayAdvanced(level_MusicP1, 0.4f, 1.0f, 1, CP_SOUND_GROUP_2);
-
 }
 
 void PauseMenuMusic(int* PlayOnce) {

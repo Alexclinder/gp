@@ -283,6 +283,7 @@ void Shield_Update(void) {
 	/* --- P : summon shield (can't recast while one is up) --- */
 	if (CP_Input_KeyTriggered(KEY_P) && !shieldActive) {
 		shieldActive = 1;
+		CP_Sound_Play(ShieldSound);
 		shieldTimer = 0.0f;
 	}
 

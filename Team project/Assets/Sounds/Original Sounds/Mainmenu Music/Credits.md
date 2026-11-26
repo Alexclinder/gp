@@ -1,0 +1,12 @@
+***Main Menu***
+
+Deep bass growl.wav by ShadyDave -- https://freesound.org/s/270657/ -- License: Attribution 4.0
+
+https://freesound.org/people/ShadyDave/sounds/270657/
+
+
+
+***Pause Menu***
+
+Beach Relax - Disco Electronic Electric Beat Chill Retro Synth Dance Cinematic Music Surround.wav by szegvari -- https://freesound.org/s/611466/ -- License: Creative Commons 0
+
