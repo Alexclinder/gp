@@ -216,6 +216,8 @@ FREE font
 */
 void Game_Exit(void)
 {
+	CP_Sound_StopGroup(CP_SOUND_GROUP_3);//Stop Pause Menu Music
+	PauseMenu_Music = 1; //Renable Pause Music
 	FreeLevelImages();
 	CP_Font_Free(Font);
 }

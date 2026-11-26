@@ -19,7 +19,7 @@ CP_Sound shieldSound;
 
 /*****Music*****/
 CP_Sound backgroundMusic;
-CP_Sound level_Music;
+CP_Sound PlayPauseMenu;
 CP_Sound level_MusicP1;
 
 /*****Game State Sounds*****/
@@ -49,6 +49,8 @@ void LoadSounds(void) {
 	// Load sound files
 	/*****Main Menu Music Sounds*****/
 	backgroundMusic = CP_Sound_LoadMusic("Assets/Sounds/Music/MainMenu.wav");
+	//Pause Menu
+	PlayPauseMenu = CP_Sound_LoadMusic("Assets/Sounds/Music/PauseMenu.wav");
 
 	/*****Player Ability Sounds*****/
 	teleportSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Teleport_Sound.wav");
@@ -69,8 +71,15 @@ void PlayMainMenu(int *PlayOnce) {
 
 
 void PlaylevelMusicP1(void) {
-	CP_Sound_PlayAdvanced(level_MusicP1, 0.5f, 1.0f, 1, CP_SOUND_GROUP_2);
+	CP_Sound_PlayAdvanced(level_MusicP1, 0.4f, 1.0f, 1, CP_SOUND_GROUP_2);
 
+}
+
+void PauseMenuMusic(int* PlayOnce) {
+	if (*PlayOnce == 1) {
+		CP_Sound_PlayAdvanced(PlayPauseMenu, 0.1f, 1.0f, 1, CP_SOUND_GROUP_3);
+		*PlayOnce = 0;
+	}
 }
 void StopMusic(int* PlayOnce) {
 	CP_Sound_StopAll();

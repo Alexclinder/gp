@@ -58,4 +58,6 @@ extern CP_Sound Keybooard_Attack_Sound;
 void LoadSounds(void);
 void LoadSounds(void);
 void PlayMainMenu(int *PlayOnce);
+void PauseMenuMusic(int* PlayOnce);
 void PlaylevelMusicP1(void);
+void StopMusic(int* PlayOnce);

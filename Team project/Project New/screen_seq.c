@@ -44,7 +44,7 @@ float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
 int MainMenu_Music = 1;
-int* MainMenu_Musicpointer = &MainMenu_Music;
+int PauseMenu_Music = 1;
 
 // Slide-in animation timer for the Level Select screen
 static float level_anim_time = 0.0f;
@@ -64,13 +64,13 @@ void Screen_Init(void)
         printf("ERROR: Failed to load font!\n");
     }
     CP_Font_Set(Font);
-    PlayMainMenu(&MainMenu_Music);
     PauseTimeStatus = 1;
 }
 
 void Screen_Exit(void)
 {
-    CP_Sound_ResumeGroup(CP_SOUND_GROUP_1);
+    CP_Sound_StopGroup(CP_SOUND_GROUP_3);//Stop Pause Menu Music
+    PauseMenu_Music = 1; //Renable Pause Music
     CP_Image_Free(mainbackground);
     CP_Image_Free(defeat);
     CP_Image_Free(levelselection);
@@ -98,7 +98,9 @@ void Next_level_Init(void) {
 
 void Exit_Main_Menu_Init(void)
 {
+    MainMenu_Music = 1; //Reenable Mainmenu Music
     // deducted whatever points earned 
+
     score_abandoned_level();
     level_score_reset();
     Screen_Init();
@@ -141,7 +143,7 @@ void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl
 
 /*****************************Main Menu Screens*******************************/
 void Main_Menu_Update(void) {
-    MainMenu_Music = 0;
+    PlayMainMenu(&MainMenu_Music);
     static float anim_time = 0.0f;   // keeps its value between frames
     float rect_x = 320.0f;
 
@@ -246,6 +248,7 @@ SET timer to restart (start time is set again next frame)
 */
 void Game_Resume_Init(void)
 {
+    PlaylevelMusicP1();
     Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
     color_create();
     LoadLevelImages();
@@ -257,7 +260,8 @@ void Game_Resume_Init(void)
 
 void Pause_Menu_Update(void)
 {
-
+    CP_Sound_StopGroup(CP_SOUND_GROUP_2);//Stop Level Music
+    PauseMenuMusic(&PauseMenu_Music);
     float rect_x = 250.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
     CP_Image_Draw(pausemenu, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);
@@ -331,7 +335,7 @@ void Win_Screen(void) {
 }
 
 void Lose_Screen(void) {
-    CP_Sound_StopGroup(CP_SOUND_GROUP_2);
+    CP_Sound_StopGroup(CP_SOUND_GROUP_2);//Stop Level Music
     float rect_y = CP_System_GetWindowHeight() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
     CP_Image_Draw(defeat, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);

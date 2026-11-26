@@ -245,7 +245,7 @@ spawn NPC_1_spawns[LEVELS] = {
 // Level selection function to call the appropriate level function based on the current level_selected value.
 int level_selected = level_1;
 void level_selection(int level_no) {
-	CP_Sound_PauseGroup(CP_SOUND_GROUP_1);
+	CP_Sound_StopGroup(CP_SOUND_GROUP_1);//Pause Main Menu Music;
 	switch (level_no) {
 	case main_menu:
 		Main_Menu_Update();
