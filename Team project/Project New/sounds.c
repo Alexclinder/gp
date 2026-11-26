@@ -1,3 +1,11 @@
+/*!
+@file     sounds.c
+@author	  Lewin Yeo
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     20/10/26
+@brief    Implementation for the sound constants
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "sounds.h"
 #include "screen_seq.h"

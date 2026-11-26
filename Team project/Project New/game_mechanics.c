@@ -1,3 +1,23 @@
+/*!
+@file     game_mechanics.c
+@author   Lee Jun Kai (l.junkai)- Player movement, wall climb, shield, collision, carrying object, kicking object, platform collisions, cling bar
+@co-author  Sin Wee - Plaforms(static, moving, alternating), Win Condition, Killzone, Pressure Plate
+			Lewin Yeo - Teleporting
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     19/09/26
+@brief	Implements the core gameplay mechanics: 
+		1)player movement, 
+		2)wall cling
+		3)teleport: PLayer travels a short distance within an instant
+		4)shield
+		5)Drawing Platforms
+		6)collision
+		7)pressure plates
+		8)kill zones 
+		9)moving platforms.
+*//*______________________________________________________________________*/
+
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"
@@ -43,6 +63,7 @@ float kick_moved = 0.0f;
 int   shieldActive = 0;
 float shieldTimer = 0.0f;
 
+/******Teleport Related variables********/
 int Teleport_count = 3; // Number of Teleportes available
 int Teleport_Status = 1;
 float TeleportWindowTiming = 0.1f;
@@ -97,83 +118,137 @@ void TeleportTimer(void) {
 	float dt = CP_System_GetDt();
 	//Cooldown before pressing to Teleport again
 	TeleportWindowTiming += dt; // Contuously increase the Teleport window timing based on the delta time
+	//Clamp the TeleportWindowTiming to the Cooldown to ensure that it does not exceed the intended value.
+	
 	TeleportWindowTiming = CP_Math_ClampFloat(TeleportWindowTiming, 0.0, TeleportCooldown);
 	if (TeleportWindowTiming >= TeleportCooldown)
 		Teleport_Status = 1; // reset the Teleport status once the Teleport cooldown is reset
 }
 //Things to do once Teleport is activated//
 void Teleport_Activated(void) {
-	CP_Sound_Play(teleportSound);
-	TeleportWindowTiming = 0;
-	Teleport_Status = 0;
-	if(Teleport_count<=3)
+	CP_Sound_Play(teleportSound);//Play Teleport Sound
+	TeleportWindowTiming = 0;	 // Set the Timing cooldown to 0
+	Teleport_Status = 0;		 //Set Flag to 0 disabling the teleport mechanic
+	
+	if (Teleport_count <= 3) //Check if the player now is currently holding 3 or less charges for teleport
+		//decrement count if so reducing the number of charges a player has to use
 		Teleport_count--;
-	score_teleport_used();
+
+	score_teleport_used();//Update and add to the sccore when player use teleport
 }
+
 //Teleport Mechanic//
-int Teleport_Mechannic(void){
+/*
+Teleport_Mechannic
+
+IF teleport is on cooldown
+	DRAW cooldown bar above player
+
+DRAW teleport charges HUD based on Teleport_count
+
+IF player has charges
+	IF moving right AND Left Shift pressed AND teleport ready
+		MOVE player right, use teleport, RETURN 1
+	IF moving left AND Left Shift pressed AND teleport ready
+		MOVE player left, use teleport, RETURN 1
+
+RETURN 0
+*/
+void Teleport_Mechannic(void) {
+
+	// X-coordinates for each teleport charges 
 	TeleportTextCoordinates.XLeft = 1520.0;
 	TeleportTextCoordinates.XMiddle = 1550.0;
 	TeleportTextCoordinates.Xright = 1580.0;
+	// Y-coordinate for all teleport charges
 	TeleportTextCoordinates.y = 40.0;
+
+	//Scale for the cooldwon bar above the player
 	float TeleportCooldownBarScale = 25.0f;
 
+	//Ensure that the shapes are drawn from the left corner
 	CP_Settings_RectMode(CP_POSITION_CORNER);
-	if (TeleportWindowTiming < TeleportCooldown) {// A "Meter" above the player's head indicating the dash cooldown
+	if (TeleportWindowTiming < TeleportCooldown) {
+		// A "Meter" above the player's head indicating the teleport cooldown
 		CP_Settings_Fill(yellow);
-		CP_Graphics_DrawRect(position.x, position.y - 20.0, TeleportWindowTiming * TeleportCooldownBarScale, 10.0);
+		// Once the player uses their teleport, Draw the cooldown above the player & scale the length of the bar base on the TeleportWindowTiming time 
+		CP_Graphics_DrawRect(position.x, position.y - 20.0f, TeleportWindowTiming * TeleportCooldownBarScale, 10.0f);
 	}
 
+	//Draws the charges at the top right corner
 	CP_Settings_Fill(medium_light_green);
 	CP_Font_Set(Font);
 	CP_Settings_TextSize(25);
 	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_RIGHT, CP_TEXT_ALIGN_V_TOP);
 
-	//show how many teleports the player has left
+	//show how many teleports the player has left based on the Teleport_count given at the start of the level
 	switch (Teleport_count) {
 	case 3:
+		//Draws the Most left icon
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.XLeft, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 2:
+		//Draws the Middle icon
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.XMiddle, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 	case 1:
+		//Draws the Most right icon & the text relating to teleporting 
 		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
 		CP_Graphics_DrawRectAdvanced(TeleportTextCoordinates.Xright, TeleportTextCoordinates.y, 20.0, 20.0, 45.0, 30.0);
 
 		//CP_Graphics_DrawRect(TeleportTextCoordinates.XLeft-15.0, TeleportTextCoordinates.y+25.0, TeleportWindowTiming* TeleportCooldownBarScale, 20.0);
 		break;
 	case 4:
+		//If the level selected gives the player 4 charges it is essentially unlimted as it wont decrement.
 		CP_Font_DrawText("Teleport Charges", 1600.0f, 0.0f);
 		CP_Font_DrawText("Unlimted Charges", 1600.0f, 30.0f);
 		break;
 	}
 
-	//Activate Teleport when movement key & LeftShift is pressed
-	if (Teleport_count > 0) {
+	//*****Activation of Teleport******** 
+	// when movement key & LeftShift is pressed
+	if (Teleport_count > 0) {//Check if the player still have teleport charges
+		
 		if (CP_Input_KeyDown(KEY_D) && velocity.x > 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the right and presses the LeftShift key,
+			//Teleport the player's character base on TeleportDistance to the right
 			position.x += TeleportDistance;
-			Teleport_Activated();
-			return 1;
+			Teleport_Activated(); //Runs the nesscary related functions that happen onc the teleport is activated
 		}
-		if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the left and presses the A key, check for double tap
-			//*Note*: since CP_Input_KeyTriggered checks on the exact frame the key is pressed, the function returns true only once when the key is pressed for that frame.
-			//Held Down it returns false, so the player will have to release the key and press it again to trigger the Teleport mechanic.
+		//OR
+		if (CP_Input_KeyDown(KEY_A) && velocity.x < 0 && Teleport_Status == 1 && CP_Input_KeyTriggered(KEY_LEFT_SHIFT)) {// If the player is moving to the left and presses the LeftShift key,
+			//Teleport the player's character base on TeleportDistance to the left
 			position.x -= TeleportDistance;
-			Teleport_Activated();
-			return 1;
+			Teleport_Activated();//Runs the nesscary related functions that happen onc the teleport is activated
 		}
 	}
-	return 0;
-
 }
 
 /************************Object Related Functions**********************/
-// t = 0 at start spot, 1 at end spot
+/*
+HeldObject_MoveTo
+
+t = 0 means start position, t = 1 means end position
+
+SET held object's x = start x + (end x - start x) * t
+SET held object's y = start y + (end y - start y) * t
+*/
 void HeldObject_MoveTo(float t)
 {
 	current_objects[heldObject][0] = fromX + (toX - fromX) * t;
 	current_objects[heldObject][1] = fromY + (toY - fromY) * t;
 }
 
+/*
+Shield_Draw
+
+IF shield is not active
+	RETURN
+
+IF shield is still in parry window
+	SET colour to gold (will reflect)
+ELSE
+	SET colour to blue (block only)
+
+DRAW shield circle centered on player
+*/
 void Shield_Draw(void) {
 	if (!shieldActive) return;
 
@@ -187,10 +262,25 @@ void Shield_Draw(void) {
 		SHIELD_SIZE);
 }
 
+/*
+Shield_Update
+
+GET frame time
+
+IF P is pressed AND shield is not active
+	TURN shield on
+	RESET shield timer
+
+IF shield is active
+	ADD frame time to shield timer
+	IF shield timer reaches shield duration
+		TURN shield off
+		RESET shield timer
+*/
 void Shield_Update(void) {
 	float dt = CP_System_GetDt();
 
-	/* --- Right click: summon shield (can't recast while one is up) --- */
+	/* --- P : summon shield (can't recast while one is up) --- */
 	if (CP_Input_KeyTriggered(KEY_P) && !shieldActive) {
 		shieldActive = 1;
 		shieldTimer = 0.0f;
@@ -206,7 +296,58 @@ void Shield_Update(void) {
 	}
 }
 
+/*
+Character_MovementDefault
 
+GET frame time, ground height and screen width
+
+IF P is pressed AND shield is not active
+	TURN shield on, RESET shield timer
+IF shield is active
+	ADD frame time to shield timer
+	IF timer reaches shield duration
+		TURN shield off, RESET shield timer
+
+IF E is pressed AND not picking up AND not kicking AND on ground AND touching an object
+	START pick up
+	SAVE object's start position and position above player's head
+
+IF picking up
+	ADD frame time to carry timer
+	PLAY grab animation and move object up in steps
+	WHEN animation is done
+		STOP picking up, SET player to carrying
+
+IF F is pressed AND not picking up AND not kicking AND touching an object
+	START kick
+	SET kick direction away from player
+
+IF kicking
+	MOVE object a bit in kick direction
+	KEEP object inside screen
+	IF object has moved kick distance
+		STOP kick
+
+IF not picking up
+	A moves left, D moves right
+
+IF W or Space is pressed AND on ground AND not picking up
+	JUMP
+
+APPLY gravity
+IF S is held AND in the air
+	APPLY extra gravity
+LIMIT fall speed
+
+MOVE player by velocity
+
+IF player is at or below ground
+	SNAP to ground, STOP falling, SET on ground
+ELSE
+	SET not on ground
+
+KEEP player inside screen horizontally
+*/
 void Character_MovementDefault(void) {
 
 	int   shieldActive = 0;
@@ -215,8 +356,8 @@ void Character_MovementDefault(void) {
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/* --- Right click: summon shield (can't recast while one is up) --- */
-	if (CP_Input_MouseReleased(MOUSE_BUTTON_RIGHT) && !shieldActive) {
+	/* --- P : summon shield (can't recast while one is up) --- */
+	if (CP_Input_KeyTriggered(KEY_P) && !shieldActive) {
 		shieldActive = 1;
 		shieldTimer = 0.0f;
 	}
@@ -230,7 +371,7 @@ void Character_MovementDefault(void) {
 		}
 	}
 
-	/* --- Space: pick up (grounded + touching an object, not mid-kick) --- */
+	/* --- E: pick up (grounded + touching an object, not mid-kick) --- */
 	if (CP_Input_KeyTriggered(KEY_E) && !pickingUp && kickedObject == -1 && onGround && (heldObject = Object_Check()) != -1) {
 		pickingUp = 1;
 		carry_timer = 0.0f;
@@ -239,7 +380,7 @@ void Character_MovementDefault(void) {
 		toX = position.x + (PLAYER_SIZE - current_objects[heldObject][OBJ_W]) / 2.0f;
 		toY = position.y - current_objects[heldObject][OBJ_H];
 	}
-
+	/* --- Animation of carrying --- */
 	if (pickingUp) {
 		carry_timer += dt;
 		if (carry_timer <= 0.15) { player_action = GRABBING_1; HeldObject_MoveTo(0.0f); }
@@ -320,14 +461,56 @@ void Character_MovementDefault(void) {
 	if (position.x + PLAYER_SIZE > screenW) position.x = screenW - PLAYER_SIZE;
 }
 
+/* Handles player movement, jumping, gravity, and drop animation while carrying an object. */
+/*
+Character_MovementCarry
 
+GET frame time, ground height and screen width
+
+IF E is pressed AND not dropping AND on ground
+	START drop
+	SAVE object's start position
+	SET drop position to the right of player
+	IF that is off screen
+		SET drop position to the left of player
+
+IF dropping
+	ADD frame time to carry timer
+	PLAY drop animation and move object down in steps
+	WHEN animation is done
+		STOP dropping, STOP carrying
+		SET player to standing, CLEAR held object
+
+IF not dropping
+	A moves left, D moves right
+
+IF W or Space is pressed AND on ground AND not dropping
+	JUMP
+
+APPLY gravity
+IF S is held AND in the air
+	APPLY extra gravity
+LIMIT fall speed
+
+MOVE player by velocity
+
+IF player is at or below ground
+	SNAP to ground, STOP falling, SET on ground
+ELSE
+	SET not on ground
+
+KEEP player inside screen horizontally
+
+IF not dropping
+	KEEP held object on top of player's head
+*/
 void Character_MovementCarry(void)
 {
 	float dt = CP_System_GetDt();
 	float groundY = (float)CP_System_GetWindowHeight();
 	float screenW = (float)CP_System_GetWindowWidth();
 
-	/* --- G: drop (grounded only) --- */
+	/* --- E: drop (grounded only) --- */
 	if (CP_Input_KeyTriggered(KEY_E) && !dropping && onGround) {
 		float w = current_objects[heldObject][OBJ_W];
 		float h = current_objects[heldObject][OBJ_H];
@@ -339,7 +522,7 @@ void Character_MovementCarry(void)
 		if (toX + w > screenW) toX = position.x - w;
 		toY = position.y + PLAYER_SIZE - h;
 	}
-
+	/* --- animation of dropping --- */
 	if (dropping) {
 		carry_timer += dt;
 		if (carry_timer <= 0.15) { player_action = CARRY;      HeldObject_MoveTo(0.0f); }
@@ -398,6 +581,55 @@ void Character_MovementCarry(void)
 	}
 }
 
+/* Pushes the player out of a platform, handles wall clinging, and returns the side hit (0-4). */
+/*
+collision_check
+
+Returns: 0 = no hit, 1 = top, 2 = bottom, 3 = left side, 4 = right side
+
+IF player is on ground
+	RESET wall cling timer
+
+GET platform edges from its center, width and height
+GET player edges from its position
+WORK OUT how far player is inside the platform from each side
+
+IF player is not inside the platform
+	IF wall climb is off
+		RETURN 0
+	IF player is not right next to a side of the platform
+		RETURN 0
+	SNAP player flush against that side
+	SET side to left or right
+
+ELSE IF player hit the top
+	PUT player on top of platform, STOP falling
+	SET on ground, RESET wall cling timer
+	RETURN 1
+
+ELSE IF player hit the bottom
+	PUT player under platform, STOP moving up
+	RETURN 2
+
+ELSE IF player hit the left side
+	PUSH player out to the left
+	SET side to left
+
+ELSE
+	PUSH player out to the right
+	SET side to right
+
+IF wall climb is on
+	IF this is a new wall
+		RESET wall cling timer, SAVE this wall
+	IF cling time is not used up
+		ADD frame time to wall cling timer
+		CANCEL gravity so player sticks to wall
+		W or Space climbs up, S climbs down
+		SET clinging and which side the wall is on
+
+RETURN side
+*/
 int collision_check(float area_center_x, float area_center_y, float area_width, float area_height)
 {
 	float dt = CP_System_GetDt();
@@ -482,7 +714,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 	// --- WALL CLIMB (only reached when touching a side) ---
 	if (wall_climb == 1)
 	{
-		// Touching a new wall -> fresh 3 seconds
+		// Touching a new wall -> cling timer starts again
 		if (area_center_x != cling_wall_x || area_center_y != cling_wall_y)
 		{
 			wall_timer = 0.0f;
@@ -502,7 +734,7 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 			if (CP_Input_KeyDown(KEY_W) || CP_Input_KeyTriggered(KEY_SPACE)) position.y -= CLIMB_SPEED * dt;
 			if (CP_Input_KeyDown(KEY_S)) position.y += CLIMB_SPEED * dt;
 
-			is_clinging = 1;      // tell level.c to draw the bar
+			is_clinging = 1;      // tell Draw_ClingBar to draw the bar
 			cling_side = side;    // which side the wall is on
 		}
 	}
@@ -514,6 +746,31 @@ int collision_check(float area_center_x, float area_center_y, float area_width, 
 #define CLING_BAR_W    8.0f   // bar thickness
 #define CLING_BAR_GAP  5.0f   // space between player and bar
 
+/* Draws the draining wall-cling endurance bar beside the player while clinging. */
+/*
+Draw_ClingBar
+
+IF player is not clinging
+	RETURN
+
+WORK OUT how much cling time is left (1 = full, 0 = empty)
+SET bar height based on time left
+
+IF wall is on player's right
+	PUT bar on player's left
+ELSE
+	PUT bar on player's right
+
+DRAW grey background bar, full player height
+
+IF more than 25% cling time left
+	SET colour to green
+ELSE
+	SET colour to red
+DRAW filled bar, shrinking from top to bottom
+
+RESET clinging (collision_check sets it again next frame if still clinging)
+*/
 void Draw_ClingBar(void)
 {
 	if (!is_clinging) return;
@@ -547,6 +804,22 @@ void Draw_ClingBar(void)
 	is_clinging = 0;   // collision_check sets it again next frame if still clinging
 }
 
+/* Returns 1 if a circle overlaps a rectangle (top-left x, y), 0 otherwise. */
+/*
+sphere_aabb_intersection
+
+Returns: 1 = circle touches or overlaps box, 0 = no hit
+
+FIND closest point on the box to the circle's center
+	CLAMP circle's x between box's left and right
+	CLAMP circle's y between box's top and bottom
+
+GET distance from closest point to circle's center (squared)
+
+IF distance is less than or equal to radius (squared)
+	RETURN 1
+RETURN 0
+*/
 int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y, float w, float h)
 {
 	// Find the closest point on the platform to the sphere centre
@@ -582,6 +855,16 @@ int sphere_aabb_intersection(float cx, float cy, float radius, float x, float y,
 	return 0;
 }
 
+/* Draws a grey platform centered at (x, y) and checks player collision against it. */
+/*
+DrawPlatform
+
+SET colour to grey
+SET rectangle to draw from its center
+DRAW platform with given size, rotation and rounded corners
+
+CHECK player collision with this platform
+*/
 void DrawPlatform(float x, float y, float w, float h,
 	float degrees, float cornerRadius)
 {
@@ -597,7 +880,20 @@ void DrawPlatform(float x, float y, float w, float h,
 
 }
 
+/* Draws the player sprite for the current player_action. */
+/*
+Player_Animation
 
+CHECK player's current action
+	STANDING   -> DRAW standing sprite
+	RUNNING    -> DRAW standing sprite
+	JUMPING    -> DRAW jump sprite
+	GRABBING_1 -> DRAW grab sprite 1
+	GRABBING_2 -> DRAW grab sprite 2
+	CARRY      -> DRAW carry sprite
+
+All sprites are drawn at the player's position and size
+*/
 void Player_Animation(void)
 {
 	switch (player_action)
@@ -611,11 +907,11 @@ void Player_Animation(void)
 		break;
 
 	case JUMPING:
-		CP_Image_Draw(jump, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		CP_Image_Draw(jump, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 		break;
 
 	case GRABBING_1:
-		CP_Image_Draw(g1, position.x, position.y,PLAYER_SIZE, PLAYER_SIZE, 255);
+		CP_Image_Draw(g1, position.x, position.y, PLAYER_SIZE, PLAYER_SIZE, 255);
 		break;
 
 	case GRABBING_2:
@@ -628,16 +924,16 @@ void Player_Animation(void)
 	}
 }
 
+/* Returns 1 if the player overlaps the goal rectangle (top-left x, y), 0 otherwise. */
 int CheckWinCondition(float x, float y, float w, float h, float degrees, float cornerRadius)
 {
 	return (position.x + PLAYER_SIZE > x && position.x < x + w && position.y + PLAYER_SIZE > y && position.y < y + h);
 }
 
-// Ask Sin Wee if dont understand
-
 // p will be assigned the address of position, to avoid pass by value
-CP_Vector *p = &position;
+CP_Vector* p = &position;
 
+/* Sets the player's position to the spawn point of the selected level. */
 void Player_Starting_Pos(spawn arr[], int level_selected) {
 	// When the address of p is updated, value stored within position is updated.
 	*p = arr[level_selected].pos;
@@ -646,90 +942,41 @@ void Player_Starting_Pos(spawn arr[], int level_selected) {
 int unlocked_gate_score = 0;
 int pressed;
 
+/* Draws a pressure plate and its door; the door opens while the player or an object is on the plate. */
+/*
+Pressure_Plate_Door
+
+GET pressure plate edges from its center, width and height
+SET plate as not pressed
+
+IF player overlaps the plate
+	SET plate as pressed
+FOR each object (until plate is pressed)
+	IF object overlaps the plate
+		SET plate as pressed
+
+IF plate is pressed
+	DRAW plate in dark green
+ELSE
+	DRAW plate in light green
+	DRAW door (closed)
+	CHECK player collision with door
+*/
 void Pressure_Plate_Door(float pres_x, float pres_y, float pres_width, float pres_height,
 	float door_x, float door_y, float door_width, float door_height) {
 
-	// if characteer or object intersects the pressure plate, the door will open.
-
-	{
-		pressed = 0;
-
-		// 
-		// create a function to call the argument parameters
-		float plate_left = pres_x - pres_width / 2.0f;
-		float plate_right = pres_x + pres_width / 2.0f;
-		float plate_top = pres_y - pres_height / 2.0f;
-		float plate_bottom = pres_y + pres_height / 2.0f;
-
-		// placing into header file
-		float player_left = position.x;
-		float player_right = position.x + PLAYER_SIZE;
-		float player_top = position.y;
-		float player_bottom = position.y + PLAYER_SIZE;
-
-		if (player_right > plate_left &&
-			player_left < plate_right &&
-			player_bottom > plate_top &&
-			player_top < plate_bottom)
-		{
-			pressed = 1;
-		}
-
-		// for loop to check how long player/object is intersecting pressure plate 
-		for (int i = 0; i < current_obj_count && !pressed; i++)
-		{
-			float obj_left = current_objects[i][OBJ_X];
-			float obj_right = obj_left + current_objects[i][OBJ_W];
-			float obj_top = current_objects[i][OBJ_Y];
-			float obj_bottom = obj_top + current_objects[i][OBJ_H];
-
-			if (obj_right > plate_left &&
-				obj_left < plate_right &&
-				obj_bottom > plate_top &&
-				obj_top < plate_bottom)
-			{
-				pressed = 1;
-			}
-		}
-
-		if (pressed) {
-			CP_Settings_Fill(medium_light_green);
-		}
-		else {
-			
-			CP_Settings_Fill(light_green);
-		}
-		CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
-
-
-		if (!pressed)
-		{	
-			
-			CP_Settings_Fill(purple);
-			CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
-
-			collision_check(door_x, door_y, door_width, door_height);
-		}
-	}
-}
-
-void Pressure_Plate_2Door(float pres_x, float pres_y, float pres_width, float pres_height,
-	float door1_x, float door1_y, float door1_width, float door1_height,
-	float door2_x, float door2_y, float door2_width, float door2_height) {
-
-	// if characteer or object intersects the pressure plate, the door will open.
+	// if character or object intersects the pressure plate, the door will open.
 
 		{
 			pressed = 0;
 
-			// 
-			// create a function to call the argument parameters
+			// Pressure plate edges
 			float plate_left = pres_x - pres_width / 2.0f;
 			float plate_right = pres_x + pres_width / 2.0f;
 			float plate_top = pres_y - pres_height / 2.0f;
 			float plate_bottom = pres_y + pres_height / 2.0f;
 
-			// placing into header file
+			// Player edges
 			float player_left = position.x;
 			float player_right = position.x + PLAYER_SIZE;
 			float player_top = position.y;
@@ -743,7 +990,96 @@ void Pressure_Plate_2Door(float pres_x, float pres_y, float pres_width, float pr
 				pressed = 1;
 			}
 
-			// for loop to check how long player/object is intersecting pressure plate 
+			// check if any object is on the pressure plate
+			for (int i = 0; i < current_obj_count && !pressed; i++)
+			{
+				float obj_left = current_objects[i][OBJ_X];
+				float obj_right = obj_left + current_objects[i][OBJ_W];
+				float obj_top = current_objects[i][OBJ_Y];
+				float obj_bottom = obj_top + current_objects[i][OBJ_H];
+
+				if (obj_right > plate_left &&
+					obj_left < plate_right &&
+					obj_bottom > plate_top &&
+					obj_top < plate_bottom)
+				{
+					pressed = 1;
+				}
+			}
+
+			if (pressed) {
+				CP_Settings_Fill(medium_light_green);
+			}
+			else {
+
+				CP_Settings_Fill(light_green);
+			}
+			CP_Graphics_DrawRect(pres_x, pres_y, pres_width, pres_height);
+
+
+			if (!pressed)
+			{
+
+				CP_Settings_Fill(purple);
+				CP_Graphics_DrawRect(door_x, door_y, door_width, door_height);
+
+				collision_check(door_x, door_y, door_width, door_height);
+			}
+		}
+}
+
+/* Pressure plate that toggles two doors: pressing it opens door 1 and closes door 2. */
+/*
+Pressure_Plate_2Door
+
+GET pressure plate edges from its center, width and height
+SET plate as not pressed
+
+IF player overlaps the plate
+	SET plate as pressed
+FOR each object (until plate is pressed)
+	IF object overlaps the plate
+		SET plate as pressed
+
+IF plate is pressed
+	DRAW door 2 (closed)
+	CHECK player collision with door 2
+	DRAW plate
+ELSE
+	DRAW plate in light green
+	DRAW door 1 (closed)
+	CHECK player collision with door 1
+*/
+void Pressure_Plate_2Door(float pres_x, float pres_y, float pres_width, float pres_height,
+	float door1_x, float door1_y, float door1_width, float door1_height,
+	float door2_x, float door2_y, float door2_width, float door2_height) {
+
+	// if character or object intersects the pressure plate, the door will open.
+
+		{
+			pressed = 0;
+
+			// Pressure plate edges
+			float plate_left = pres_x - pres_width / 2.0f;
+			float plate_right = pres_x + pres_width / 2.0f;
+			float plate_top = pres_y - pres_height / 2.0f;
+			float plate_bottom = pres_y + pres_height / 2.0f;
+
+			// Player edges
+			float player_left = position.x;
+			float player_right = position.x + PLAYER_SIZE;
+			float player_top = position.y;
+			float player_bottom = position.y + PLAYER_SIZE;
+
+			if (player_right > plate_left &&
+				player_left < plate_right &&
+				player_bottom > plate_top &&
+				player_top < plate_bottom)
+			{
+				pressed = 1;
+			}
+
+			// check if any object is on the pressure plate
 			for (int i = 0; i < current_obj_count && !pressed; i++)
 			{
 				float obj_left = current_objects[i][OBJ_X];
@@ -786,24 +1122,32 @@ void Pressure_Plate_2Door(float pres_x, float pres_y, float pres_width, float pr
 		}
 }
 
+/*
+kill_zone
+
+SET rectangle to draw from its center
+SET colour to red
+DRAW kill zone
+
+GET kill zone edges from its center, width and height
+GET player edges from its position
+
+IF player overlaps the kill zone
+	GO to lose screen
+*/
 void kill_zone(float x, float y, float w, float h)
 {
 	CP_Settings_RectMode(CP_POSITION_CENTER);
 	CP_Settings_Fill(red);
 	CP_Graphics_DrawRect(x, y, w, h);
 
-	// void c (float left, float right, float top, float bottom){
-	// zone_left = left;
-
-	//  name x-w/2.0f
-	// to call c( (x-w/2.0f), (x+w/2.0f), (y-h/2.0f)
-	
+	// Kill zone edges
 	float zone_left = x - w / 2.0f;
 	float zone_right = x + w / 2.0f;
 	float zone_top = y - h / 2.0f;
 	float zone_bottom = y + h / 2.0f;
-	
-	// In header file
+
+	// Player edges
 	float player_left = position.x;
 	float player_right = position.x + PLAYER_SIZE;
 	float player_top = position.y;
@@ -822,9 +1166,27 @@ void kill_zone(float x, float y, float w, float h)
 float platform_velocity = -100.0f;
 float platform_move = 0.0f;
 
+/*
+platform_alternating_movement
+
+GET frame time
+ADD platform speed * frame time to platform's offset
+SET platform's new x = start x + offset
+
+IF platform reaches left boundary
+	LOCK platform to left boundary
+	FIX offset to match
+	MOVE platform right
+ELSE IF platform reaches right boundary
+	LOCK platform to right boundary
+	FIX offset to match
+	MOVE platform left
+
+DRAW platform at new x (also checks player collision)
+*/
 void platform_alternating_movement(float x, float y, float w, float h,
-								   float degrees, float cornerRadius, 
-								   float left_boundary, float right_boundary) {
+	float degrees, float cornerRadius,
+	float left_boundary, float right_boundary) {
 	float dt = CP_System_GetDt();
 
 	// This code makes stuff move 
@@ -850,7 +1212,7 @@ void platform_alternating_movement(float x, float y, float w, float h,
 		updated_x = right_boundary;
 		// update offset with the remaining distance
 		platform_move = updated_x - x;
-		// makes thing go right
+		// makes thing go left
 		platform_velocity = -100.0f;
 	}
 	// draw stuff
@@ -861,6 +1223,24 @@ void platform_alternating_movement(float x, float y, float w, float h,
 float kill_velocity = -100.0f;
 float kill_move = 0.0f;
 
+/*
+kill_zone_alternating_movement
+
+GET frame time
+ADD kill zone speed * frame time to kill zone's offset
+SET kill zone's new x = start x + offset
+
+IF kill zone reaches left boundary
+	LOCK kill zone to left boundary
+	FIX offset to match
+	MOVE kill zone right
+ELSE IF kill zone reaches right boundary
+	LOCK kill zone to right boundary
+	FIX offset to match
+	MOVE kill zone left
+
+DRAW kill zone at new x (also checks if player touches it)
+*/
 void kill_zone_alternating_movement(float x, float y, float w, float h, float left_boundary, float right_boundary)
 {
 	float dt = CP_System_GetDt();

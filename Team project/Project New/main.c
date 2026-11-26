@@ -1,7 +1,23 @@
+/*!
+@file     main.c
+@author   Sin Wee
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     19/09/26
+@brief	  Welcome to Office Runner. 
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "screen_seq.h"
 #include "sounds.h"
 
+/*
+main
+
+SET first game state to main menu
+SET window size to 1600 x 900
+RUN the game
+RETURN 0
+*/
 int main(void)
 {
 	CP_Engine_SetNextGameState(Screen_Init, Main_Menu_Update, Screen_Exit);

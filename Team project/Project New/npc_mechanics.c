@@ -1,4 +1,12 @@
-
+/*!
+@file     npc_mechanics.c
+@author   Paul David Sheeba Christobel Kezin David (david.p)
+@module   csd1401f26 Software Engineering Project 1
+@section  B
+@date     23/09/26
+@brief    Implements the NPC: movement, projectile attack, and the collision
+          checks for the player, the shield and reflected projectiles.
+*//*______________________________________________________________________*/
 #include "cprocessing.h"
 #include "game.h"
 #include "game_mechanics.h"
@@ -41,9 +49,37 @@ int NPC_ded = 0;
 int NPC_reflected = 0;
 
 // NPC Movement
+/*
+NPC_MovementDefault
+
+IF NPC is dead
+    RETURN
+
+GET frame time, ground height and screen width
+
+APPLY gravity
+LIMIT fall speed
+MOVE NPC down by velocity
+
+IF NPC is at or below ground
+    SNAP to ground, STOP falling, SET on ground
+ELSE
+    SET not on ground
+
+IF on ground
+    MOVE left or right depending on direction
+
+IF NPC reaches left edge of screen
+    SET direction to right
+IF NPC reaches right edge of screen
+    SET direction to left
+
+MOVE NPC sideways by velocity
+DRAW NPC
+*/
 void NPC_MovementDefault(void)
 {
-    if (NPCalive == 0) return;      // ADDED: no movement, no drawing
+    if (NPCalive == 0) return;      // dead NPC: no movement, no drawing
 
     float dt = CP_System_GetDt();
     float groundY = (float)CP_System_GetWindowHeight();
@@ -111,10 +147,24 @@ void NPC_MovementDefault(void)
 }
 
 
-// NPC Attack
+/*
+NPC_Attack
+
+IF NPC is dead
+    RETURN
+
+ADD frame time to shoot timer
+
+IF shoot timer reaches shoot interval AND no projectile is out
+    GET center of NPC and center of player
+    SPAWN projectile at NPC's center
+    AIM projectile at the player
+    SET projectile as active and not reflected
+    RESET shoot timer
+*/
 void NPC_Attack(void)
 {
-    if (NPCalive == 0) return;      // ADDED: dead NPCs don't shoot
+    if (NPCalive == 0) return;      // dead NPCs don't shoot
 
     float dt = CP_System_GetDt();
     shootTimer += dt;
@@ -144,13 +194,25 @@ void NPC_Attack(void)
         Projvelocity = CP_Vector_Scale(direction, PROJECTILE_SPEED);
 
         ProjectileActive = 1;
-        ProjReflected = 0;          // ADDED: new shot is dangerous again
+        ProjReflected = 0;          // new shot can hit the player again
         shootTimer = 0.0f;
     }
 }
 
 
-// Update NPC Projectiles
+/*
+NPC_UpdateProjectiles
+
+check: 1 = update projectile, 0 = clear projectile
+
+IF check is 1 AND projectile is active
+    MOVE projectile by its velocity
+    IF projectile leaves the screen
+        REMOVE projectile
+ELSE IF check is 0
+    REMOVE projectile
+    RESET shoot timer
+*/
 void NPC_UpdateProjectiles(int check)
 {
     float dt = CP_System_GetDt();
@@ -183,7 +245,12 @@ void NPC_UpdateProjectiles(int check)
 }
 
 
-// Draw NPC Projectiles
+/*
+NPC_DrawProjectiles
+
+IF projectile is active
+    DRAW red circle at projectile's position
+*/
 void NPC_DrawProjectiles(void)
 {
     if (ProjectileActive == 1)
@@ -199,15 +266,27 @@ void NPC_DrawProjectiles(void)
 }
 
 
-// Check Player Collision
+/*
+NPC_CheckPlayerCollision
+
+Returns: 1 = projectile hit the player, 0 = no hit
+
+IF projectile is active AND not reflected
+    GET distance from projectile to player's center
+    IF distance is less than player radius + projectile radius
+        REMOVE projectile
+        RETURN 1
+
+RETURN 0
+*/
 int NPC_CheckPlayerCollision(void)
 {
-    if (ProjectileActive == 1 && ProjReflected == 0)   // ADDED: && ProjReflected == 0
+    if (ProjectileActive == 1 && ProjReflected == 0)
     {
         float dx = Projposition.x - (position.x + PLAYER_SIZE / 2.0f);
         float dy = Projposition.y - (position.y + PLAYER_SIZE / 2.0f);
 
-        float distance = sqrt(dx * dx + dy * dy);
+        float distance = sqrtf(dx * dx + dy * dy);
 
         if (distance < PLAYER_SIZE / 2.0f + PROJECTILE_SIZE / 2.0f)
         {
@@ -220,8 +299,28 @@ int NPC_CheckPlayerCollision(void)
 }
 
 
-// ADDED: Check Shield Collision
-// Returns 1 = reflected, 2 = blocked, 0 = no hit
+/*
+NPC_CheckShieldCollision
+
+Returns: 1 = reflected, 2 = blocked, 0 = no hit
+
+IF no projectile OR shield is off OR projectile already reflected
+    RETURN 0
+
+GET distance from projectile to shield's center
+
+IF projectile touches the shield
+    IF shield is still in parry window
+        SEND projectile back the way it came
+        SET projectile as reflected
+        UNLOCK reflect score
+        RETURN 1
+    ELSE
+        REMOVE projectile (shield blocks it)
+        RETURN 2
+
+RETURN 0
+*/
 int NPC_CheckShieldCollision(void)
 {
     if (ProjectileActive == 0 || shieldActive == 0 || ProjReflected == 1)
@@ -238,7 +337,7 @@ int NPC_CheckShieldCollision(void)
     {
         if (shieldTimer <= SHIELD_PARRY_TIME)
         {
-            // Within the 1 second window: send it back the way it came
+            // Within the parry window: send it back the way it came
             Projvelocity = CP_Vector_Negate(Projvelocity);
             ProjReflected = 1;
             NPC_reflected = (ProjReflected) ? 1 : 0;
@@ -258,7 +357,24 @@ int NPC_CheckShieldCollision(void)
 }
 
 
-// ADDED: Reflected projectile hits the NPC -> NPC disappears
+/*
+NPC_CheckReflectedHit
+
+Returns: 1 = reflected projectile hit the NPC, 0 = no hit
+
+IF NPC is dead OR no projectile OR projectile not reflected
+    RETURN 0
+
+GET distance from projectile to NPC's center
+
+IF projectile touches the NPC
+    SET NPC as dead
+    UNLOCK NPC kill score
+    REMOVE projectile
+    RETURN 1
+
+RETURN 0
+*/
 int NPC_CheckReflectedHit(void)
 {
     if (NPCalive == 0 || ProjectileActive == 0 || ProjReflected == 0)
@@ -275,22 +391,28 @@ int NPC_CheckReflectedHit(void)
     {
         NPCalive = 0;           // NPC disappears
         NPC_ded = (!NPCalive) ? 1 : 0;
-        // unlock npc_score on subsequent kills
+        // unlock npc_score so the kill gives 300 points
         npc_score = 0;
         ProjectileActive = 0;   // projectile disappears too
         return 1;
     }
 
-   
+
     return 0;
 }
 
 
-// p will be assigned the address of position, to avoid pass by value
+// npc_p points to NPCposition, so the spawn function can change it directly
 CP_Vector* npc_p = &NPCposition;
 
+/*
+NPC_Starting_Pos
+
+SET NPC's position to this level's spawn point
+SET NPC as alive
+*/
 void NPC_Starting_Pos(spawn arr[], int level_selected) {
-    // When the address of p is updated, value stored within position is updated.
+    // Updating *npc_p updates NPCposition
     *npc_p = arr[level_selected].pos;
-    NPCalive = 1;               // ADDED: NPC is alive again on level start
+    NPCalive = 1;               // NPC is alive again on level start
 }
