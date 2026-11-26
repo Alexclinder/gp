@@ -293,6 +293,8 @@ void ResetALLTimers_StatusBossLvl(void);
 void ResetALLTimers_Status(void);
 
 extern CP_Font Font;  /*!< Font used for text. Defined in Images.c, also declared in Images.h. */
-extern CP_Font Font;
 extern int MainMenu_Music;
 extern int PauseMenu_Music;
+extern int Lose_Sound;
+extern int Win_Sound;
+

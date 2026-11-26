@@ -25,6 +25,7 @@ CP_Sound level_MusicP1;
 /*****Game State Sounds*****/
 CP_Sound gameOverSound;
 CP_Sound winSound;
+CP_Sound loseSound;
 
 /*****Menu Sounds*****/
 CP_Sound buttonClickSound;
@@ -52,6 +53,8 @@ void LoadSounds(void) {
 
 	/*****Level Music & Sounds*****/
 	level_MusicP1 = CP_Sound_LoadMusic("Assets/Sounds/Music/Level_MusicPart1.wav");
+	loseSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Lose.wav");
+	winSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Win.ogg");
 
 	/*****Boss Music & Sounds*****/
 }
@@ -75,6 +78,20 @@ void PauseMenuMusic(int* PlayOnce) {
 		*PlayOnce = 0;
 	}
 }
+
+void PlayLoseSound(int* PlayOnce) {
+	if (*PlayOnce == 1) {
+		CP_Sound_PlayAdvanced(loseSound, 0.1f, 1.0f, 0, CP_SOUND_GROUP_4);
+		*PlayOnce = 0;
+	}
+}
+void PlayWinSound(int* PlayOnce) {
+	if (*PlayOnce == 1) {
+		CP_Sound_PlayAdvanced(winSound, 0.1f, 1.0f, 0, CP_SOUND_GROUP_4);
+		*PlayOnce = 0;
+	}
+}
+
 void StopMusic(int* PlayOnce) {
 	CP_Sound_StopAll();
 	*PlayOnce = 1;

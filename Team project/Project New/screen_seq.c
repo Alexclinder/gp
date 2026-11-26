@@ -43,8 +43,12 @@ float fourth_y;
 float rect_width = 400.0f;
 float rect_height = 100.0f;
 float scalar;
+
+//Sound Flags//
 int MainMenu_Music = 1;
 int PauseMenu_Music = 1;
+int Lose_Sound = 1;
+int Win_Sound = 1;
 
 // Slide-in animation timer for the Level Select screen
 static float level_anim_time = 0.0f;
@@ -71,6 +75,8 @@ void Screen_Exit(void)
 {
     CP_Sound_StopGroup(CP_SOUND_GROUP_3);//Stop Pause Menu Music
     PauseMenu_Music = 1; //Renable Pause Music
+    Lose_Sound = 1;//Renable Lose Sound
+
     CP_Image_Free(mainbackground);
     CP_Image_Free(defeat);
     CP_Image_Free(levelselection);
@@ -295,6 +301,8 @@ void Pause_Menu_Update(void)
 }
 
 void Win_Screen(void) {
+    CP_Sound_StopGroup(CP_SOUND_GROUP_2);//Stop Level Music
+    PlayWinSound(&Win_Sound);
     float rect_x = (float)CP_System_GetWindowWidth() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
 
@@ -336,6 +344,7 @@ void Win_Screen(void) {
 
 void Lose_Screen(void) {
     CP_Sound_StopGroup(CP_SOUND_GROUP_2);//Stop Level Music
+    PlayLoseSound(&Lose_Sound);
     float rect_y = CP_System_GetWindowHeight() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
     CP_Image_Draw(defeat, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);

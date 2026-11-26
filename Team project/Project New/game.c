@@ -218,6 +218,8 @@ void Game_Exit(void)
 {
 	CP_Sound_StopGroup(CP_SOUND_GROUP_3);//Stop Pause Menu Music
 	PauseMenu_Music = 1; //Renable Pause Music
+	Lose_Sound = 1;//Renable Lose Sound
+	Win_Sound = 1;//Renable Win Sound
 	FreeLevelImages();
 	CP_Font_Free(Font);
 }

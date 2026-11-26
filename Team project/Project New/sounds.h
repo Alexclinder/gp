@@ -27,6 +27,7 @@ extern CP_Sound level_MusicP1;
 /*****Game State Sounds*****/
 extern CP_Sound gameOverSound;
 extern CP_Sound winSound;
+extern CP_Sound loseSound;
 
 /*****Menu Sounds*****/
 extern CP_Sound buttonClickSound;
@@ -50,7 +51,9 @@ extern CP_Sound bossRoarSound;
 *//*_______________________________________________________________________*/
 void LoadSounds(void);
 void LoadSounds(void);
-void PlayMainMenu(int *PlayOnce);
-void PauseMenuMusic(int* PlayOnce);
-void PlaylevelMusicP1(void);
+void PlayMainMenu(int *PlayOnce);//Main Menu
+void PauseMenuMusic(int* PlayOnce);//Pause Menu
+void PlayWinSound(int* PlayOnce);//Win Menu Sound
+void PlayLoseSound(int* PlayOnce);//Lose Menu Sound
+void PlaylevelMusicP1(void);//Level Music
 void StopMusic(int* PlayOnce);
