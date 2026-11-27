@@ -38,6 +38,10 @@ extern CP_Sound bossMusic;
 extern CP_Sound bossAttackSound;
 extern CP_Sound bossRoarSound;
 
+/*Sound Effects for Objects*/
+extern CP_Sound Treasure_Sound;
+extern CP_Sound ObjectPickupSound;
+
 /*!
 @brief  Loads the sound files used by the game from the Assets/Sounds
         folder and assigns them to the shared sound variables declared

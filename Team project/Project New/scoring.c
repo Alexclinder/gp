@@ -13,6 +13,7 @@
 #include "level.h"
 #include "scoring.h"
 #include "colors.h"
+#include "sounds.h"
 #include <stdio.h>
 
 
@@ -356,7 +357,7 @@ int Treasure(float x, float y, int treasure_id)
 		player_top < trea_bottom)
 	{
 		treasure_collected[treasure_id] = 1;
-
+		CP_Sound_Play(Treasure_Sound);//Sound when Player collects the treasure
 		return 1; // Treasure collected this frame
 	}
 

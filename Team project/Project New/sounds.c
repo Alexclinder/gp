@@ -37,12 +37,18 @@ CP_Sound bossMusic;
 CP_Sound bossAttackSound;
 CP_Sound bossRoarSound;
 
+/*Sound Effects for Objects*/
+CP_Sound Treasure_Sound;
+CP_Sound ObjectPickupSound;
+
+
+
 enum {
 
 };
 void LoadSounds(void) {
 	// Load sound files
-	/*****Main Menu Music Sounds*****/
+	/*****Main Menu BGMusic Sounds*****/
 	backgroundMusic = CP_Sound_LoadMusic("Assets/Sounds/Music/MainMenu.wav");
 	//Pause Menu
 	PlayPauseMenu = CP_Sound_LoadMusic("Assets/Sounds/Music/PauseMenu.wav");
@@ -55,6 +61,9 @@ void LoadSounds(void) {
 	level_MusicP1 = CP_Sound_LoadMusic("Assets/Sounds/Music/Level_MusicPart1.wav");
 	loseSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Lose.wav");
 	winSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Win.ogg");
+
+	Treasure_Sound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Pick_up_Treasure.wav");
+	ObjectPickupSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Pick_Up Object.wav");
 
 	/*****Boss Music & Sounds*****/
 }
