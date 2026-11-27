@@ -518,6 +518,8 @@ void Elevator_Update(void)
     // Check if player reaches the vent
     if (Vent_CheckCollision())
     {
+        // Level 4 & Boss Level are integrated, so whatever score in level 4 is carried over to boss level.
+        score_complete_level();
         CP_Engine_SetNextGameState(Screen_Init, Leaderboard_Screen, Screen_Exit);
         return;
     }

@@ -178,17 +178,42 @@ void Objective_Text(void) {
 	game_score();
 
 	char buffer[TIME_BUF_SIZE] = { 0 };
-	sprintf_s(buffer, TIME_BUF_SIZE, "%d", level_score);
+
+	int display_score = level_score;
+
+	// Level 4 and Boss Level share their saved score
+	if (level_selected == level_4 || level_selected == boss_level)
+	{
+		display_score = completed_level_score[level_4]
+			+ completed_level_score[boss_level];
+
+		// Add current level points before completion
+		if (!level_score_locked)
+		{
+			display_score += level_score;
+		}
+	}
+
+	sprintf_s(buffer, TIME_BUF_SIZE, "%d", display_score);
+
+
 
 	// Text size = textSize (50.0f) * text_size
 
 	// display level_score that will persists through all levels
 	switch (level_selected) {
-	case level_4:
-		drawTextTopLeft("Objective: Fight the Boss", top_left_x, top_left_y, text_size, white);
+	case boss_level:
+		drawTextTopLeft("Objective: Survive & Get to the top", top_left_x, top_left_y, text_size, white);
 		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size, white);
 		drawTextTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size, white);
 		break;
+
+	case level_4:
+		drawTextTopLeft("Objective: Escape the laser!", top_left_x, top_left_y, text_size, white);
+		drawTextTopLeft("Score :", top_left_x, top_left_y + score_offset_y, text_size, white);
+		drawTextTopLeft(buffer, top_left_x + score_offset_x, top_left_y + score_offset_y, text_size, white);
+		break;
+
 	case level_3:
 		drawTextTopLeft("Objective: Get through the", top_left_x, top_left_y, text_size, white);
 		drawTextTopLeft("Manufacturing floor", top_left_x, top_left_y + 50.0f, text_size, white);
@@ -227,7 +252,7 @@ spawn player_spawns[LEVELS] = {
 
 
 /*****************Spawn Locations for NPCs********************/
-// [LEVELS][NUMBER_OF_NPC]
+// [LEVELS]
 #define NUMBER_OF_NPC 1
 spawn NPC_1_spawns[LEVELS] = {
 
@@ -236,7 +261,7 @@ spawn NPC_1_spawns[LEVELS] = {
 							   { 100.0f, 900.0f }, // level 2
 							   { 800.0f, 900.0f }, // level 3
 							   { 1200.0f, 900.0f }, // level 4
-							   { 300.0f, 900.0f }, // boss level
+							   { 1000.0f, 900.0f }, // boss level
 
 };
 
@@ -953,10 +978,17 @@ void level_4th(void) {
 		score_complete_level();
 		NPC_UpdateProjectiles(0);
 		level_selected = boss_level;
+		// Reset current level score and bonus flags for Boss Level
+		level_score_reset();
 		CP_Engine_SetNextGameState(Elevator_Init, Game_Update, Elevator_Exit);    // Move to boss lvl after lvl 4
 	}
 }
 
+/***************** Reset Laser Position When Restarting Level: ********************/
+void KillZone_Reset(void)
+{
+	killZoneX = 0.0f; // Reset to starting position
+}
 
 
 /**********************************************************Treasure/Collectables Functions*********************************************************************/

@@ -26,18 +26,24 @@
 Game_Init
 
 LOAD font
+RESET NPC projectile reflection status
+RESET reflection score flag
 CREATE colours
 LOAD level images
 RESET level objects
-RESET level score
+RESET current level score and bonus flags
 CLEAR projectile
-SET frame rate to 120
+SET frame rate to 120 FPS
 SET player as not on ground
-SET timer to restart
+RESET timer
+IF selected level is Level 1, 2 or 3
+	PLAY level music
 */
 void Game_Init(void)
 {
 	Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
+	NPC_reflected = 0;
+	reflect_score = 0;
 	color_create();
 	LoadLevelImages();
 	Objects_Reset();
@@ -117,7 +123,6 @@ void Game_Reset(void)
 		treasure_collected[i] = 0;
 	}
 	
-	killZoneX = 0.0f;
 
 	// Boss level: reset health, lasers, platforms, camera, vent and boss.
 	// Called last so the boss level's player/NPC positions override the ones above.

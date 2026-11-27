@@ -16,6 +16,9 @@ extern int level_score;     /*!< Points earned in the current level only. Reset 
 								 starts or restarts. Added to player_score when the level is completed. */
 extern int player_score;    /*!< Total score across all completed levels. */
 
+// LEVELS are 6
+extern int completed_level_score[LEVELS]; /*!< Stores the score earned in each level, including separate Level 4 and Boss Level contributions. */
+
 /* ===== Award flags ===== */
 /* Each flag is 0 while its award can still be given and 1 once it has been
    given, so that a bonus is only awarded once. */
@@ -176,4 +179,5 @@ extern int treasure_collected[MAX_TREASURES];   /*!< 1 for each treasure that ha
 @return 1 on the frame the player collects the treasure, otherwise 0.
 *//*_______________________________________________________________________*/
 int Treasure(float x, float y, int treasure_id);
+
 

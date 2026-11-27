@@ -13,8 +13,7 @@
 #pragma once
 
 /***************LEVEL****************/
-extern float killZoneX; /*!< Current x position of the advancing kill zone in level 4.
-							 Game_Reset() sets it back to 0. */
+void KillZone_Reset(void); /* Resets the moving killzone when called in level_4_init() */
 
 /*!
 @brief  Describes the exit (goal) rectangle of a level.

@@ -96,12 +96,25 @@ void Screen_Exit(void)
 /*
 Next_level_Init
 
-GO to next level
-RESET game
+ADVANCE to the next level
+RESET level timers and teleport charges
+INITIALIZE the game
+SET the player's starting position for the new level
+REMOVE the previous score recorded for the new level
+RESET NPC starting positions
 */
 void Next_level_Init(void) {
     Game_Next_Level();
-    Game_Reset();
+
+    ResetALLTimers_StatusBossLvl();
+
+    Game_Init();
+
+    Player_Starting_Pos(player_spawns, level_selected);
+
+    score_remove_level(level_selected);
+
+    NPC_Starting_Pos(NPC_1_spawns, level_selected);
 }
 
 void Exit_Main_Menu_Init(void)
@@ -146,8 +159,8 @@ void ResetALLTimers_StatusBossLvl(void) {
 void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
 void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
 void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
-void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);
-}
+void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); KillZone_Reset(); Level_Score.level4_score = 0;}
+void Boss_Level_Init(void) {level_selected = boss_level; ResetALLTimers_StatusBossLvl(); Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); Elevator_Init(); }
 
 
 /*****************************Main Menu Screens*******************************/
@@ -363,7 +376,7 @@ void Lose_Screen(void) {
     // Exit to Main Menu
     second_y = (float)CP_System_GetWindowHeight() / 2.0f + 150.0f;
     CP_Settings_Fill(purple_blue);
-    dynamicBtn("Restart Level", 300, rect_y, white, Game_Reset, Game_Update, Game_Exit);
+    dynamicBtn("Restart Level", 300, rect_y, white, Game_Restart_Init, Game_Update, Game_Exit);
     CP_Settings_Fill(purple_blue);
     dynamicBtn("Exit to Main Menu", 1300, rect_y, white, Exit_Main_Menu_Init, Main_Menu_Update, Screen_Exit);
 
@@ -373,15 +386,40 @@ void Lose_Screen(void) {
 /*
 Game_Restart_Init
 
-SET UP game
-RESET game
+IDENTIFY the currently selected level
+REINITIALIZE the selected level using its initialization function
+RESET player and NPC starting positions
+RESET level-specific timers and variables
+RESET boss-level elements when restarting the boss level
 REMOVE score earned in the current level
 */
 void Game_Restart_Init(void)
 {
-    Game_Init();
-    Game_Reset();
-    score_remove_level(level_selected);
+    switch (level_selected)
+    {
+    case level_1:
+        Level_1_Init();
+        break;
+
+    case level_2:
+        Level_2_Init();
+        break;
+
+    case level_3:
+        Level_3_Init();
+        break;
+
+    case level_4:
+        Level_4_Init();
+        break;
+
+    case boss_level:
+        Boss_Level_Init();
+        break;
+
+    default:
+        break;
+    }
 }
 
 /*
@@ -532,7 +570,7 @@ void Leaderboard_Screen(void) {
             if (row && col) {
                 DrawBG(backgroundfour_pre, x + 15.0f, y + 15.0f, bg_width, bg_height, alpha);
 
-                drawTextCenter("Level 4", card_center_x, y - level_text_yOffset, level_text_scalar, text_color);
+                drawTextCenter("Level 4/Boss", card_center_x, y - level_text_yOffset, level_text_scalar, text_color);
 
                 sprintf_s(Level4_Time, TIME_BUF_SIZE, "Time: %.2f", Level_Timer.level4_time);
                 drawTextCenter(Level4_Time, card_center_x, y + level_box_height - 65.0f, text_scalar, text_color);

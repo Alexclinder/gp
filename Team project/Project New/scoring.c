@@ -41,8 +41,7 @@ int timer_bonus_awarded = 0;
 int level_score_locked = 0;
 
 int treasure_collected[MAX_TREASURES] = { 0 };
-// LEVELS are 6
-int completed_level_score[LEVELS] = { 0 };
+int completed_level_score[LEVELS] = { 0 }; // LEVELS are 6
 struct LevelScore Level_Score = { 0, 0, 0, 0 }; //Was in level.c, moved to scoring.c by Lewin
 
 /*
@@ -58,26 +57,29 @@ IF player killed the NPC AND not awarded yet
 IF pressure plate is pressed AND not awarded yet
 	ADD 750 to level score
 */
-void game_score(void) {
-
-	if (level_score_locked) {
+void game_score(void)
+{
+	// Do not award points after completing the level
+	if (level_score_locked)
 		return;
-	}
 
-	// award 100 if reflect projectiles
-	if (NPC_reflected && reflect_score == 0) {
+	// Award 100 points for reflecting a projectile (once per level)
+	if (NPC_reflected && reflect_score == 0)
+	{
 		level_score += 100;
 		reflect_score = 1;
 	}
 
-	// award 300 points if kill npc
-	if (NPC_ded && npc_score == 0) {
+	// Award 300 points for killing an NPC (once per level)
+	if (NPC_ded && npc_score == 0)
+	{
 		level_score += 300;
 		npc_score = 1;
 	}
 
-	// award 750 if completed milestone objectives (or opened the door)
-	if (pressed && unlocked_gate_score == 0) {
+	// Award 750 points for opening the door (once per level)
+	if (pressed && unlocked_gate_score == 0)
+	{
 		level_score += 750;
 		unlocked_gate_score = 1;
 	}
@@ -165,16 +167,69 @@ void score_reset(void)
 /*
 score_abandoned_level
 
-IF level was not finished
-	RESET current level score
-	CLEAR saved score for this level
+CHECK which level the player is leaving
+
+IF Level 4 or Boss Level is selected
+	REMOVE the selected level's score from total player score
+	IF total score goes below 0
+		SET total score to 0
+	CLEAR the selected level's saved score
+	UPDATE the shared Level 4/Boss Level leaderboard score
+	RESET current level score and bonus flags
+	SAVE the updated shared leaderboard score
+
+ELSE IF current level is not completed
+	RESET current level score and bonus flags
+	CLEAR saved score for the current level
+
+	CHECK which level is selected
+		LEVEL 1 -> CLEAR level 1 completed score
+		LEVEL 2 -> CLEAR level 2 completed score
+		LEVEL 3 -> CLEAR level 3 completed score
+
+KEEP scores from other completed levels unchanged
 */
-void score_abandoned_level(void) {
-	// Player did not complete the level
-	if (!level_score_locked)
+void score_abandoned_level(void)
+{
+	// Player is leaving the current level
+	if (level_selected == level_4 || level_selected == boss_level)
 	{
+		// Only remove the score belonging to the selected level
+		player_score -= completed_level_score[level_selected];
+
+		if (player_score < 0)
+			player_score = 0;
+
+		// Clear the selected level's saved score
+		completed_level_score[level_selected] = 0;
+
+		// Update the shared Level 4/Boss Level leaderboard score
+		Level_Score.level4_score =
+			completed_level_score[level_4] +
+			completed_level_score[boss_level];
+
+		// Reset current level score and flags
 		level_score_reset();
-		save_lvl_score(0); // clears the level score
+		save_lvl_score(Level_Score.level4_score);
+	}
+	else if (!level_score_locked)
+	{
+		// Player did not complete the level
+		level_score_reset();
+		save_lvl_score(0);
+
+		// Clear the completed score based on selected level
+		switch (level_selected)
+		{
+		case level_1:
+		case level_2:
+		case level_3:
+			completed_level_score[level_selected] = 0;
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
@@ -186,11 +241,19 @@ score_remove_level
 IF level number is not valid
 	RETURN
 
-TAKE this level's old score away from total score
+DEDUCT the selected level's previous score from total player score
+
 IF total score goes below 0
 	SET total score to 0
-CLEAR this level's old score
-RESET current level score
+
+CLEAR the selected level's saved score
+
+IF selected level is Level 4 or Boss Level
+	UPDATE the shared Level 4/Boss Level leaderboard score
+	USING the remaining saved scores from both levels
+
+RESET current level score and scoring flags
+(Keep remaining total player score intact)
 */
 void score_remove_level(int level)
 {
@@ -206,22 +269,41 @@ void score_remove_level(int level)
 	// Clear the previous contribution
 	completed_level_score[level] = 0;
 
+	// Level 4 and Boss Level share the leaderboard score
+	if (level == level_4 || level == boss_level)
+	{
+		Level_Score.level4_score =
+			completed_level_score[level_4] +
+			completed_level_score[boss_level];
+	}
+
 	// Reset the current level's score and flags, but keep remaining player_score intact
 	level_score_reset();
 }
-
 /*
 score_complete_level
 
 PRINT scores before completion
+
 IF level score is locked
 	RETURN
 
 ADD bonus points (reflect, NPC, door)
 ADD time bonus
-SAVE level score for this level
-ADD level score to total score
-LOCK level score
+
+CHECK which level is selected
+	LEVEL 1, 2 or 3
+		SAVE level score for the selected level
+
+	LEVEL 4 or BOSS LEVEL
+		ADD level score to the selected level's saved score
+		UPDATE shared Level 4/Boss Level leaderboard score
+		USING the combined scores of both levels
+
+ADD current level score to total player score
+
+LOCK level score to prevent duplicate scoring
+
 PRINT scores after completion
 */
 void score_complete_level(void)
@@ -237,7 +319,28 @@ void score_complete_level(void)
 	game_score();
 	time_score();
 
-	completed_level_score[level_selected] = level_score;
+	// Save score for the completed level
+	// Level 4 and Boss Level share the leaderboard score
+	switch (level_selected)
+	{
+	case level_1:
+	case level_2:
+	case level_3:
+		completed_level_score[level_selected] = level_score;
+		break;
+
+	case level_4:
+	case boss_level:
+		completed_level_score[level_selected] += level_score;
+
+		Level_Score.level4_score =
+			completed_level_score[level_4] +
+			completed_level_score[boss_level];
+		break;
+
+	default:
+		break;
+	}
 
 	// Transfer level score to cumulative score
 	player_score += level_score;
@@ -251,22 +354,27 @@ void score_complete_level(void)
 /*
 score_teleport_used
 
-Called once each time the player teleports
+Called whenever the player successfully teleports
 
-PRINT debug message
-IF level score is not locked
-	ADD 200 to level score
+IF level score is locked
+	RETURN
+
+ADD 200 points to current level score
+INCREMENT teleport score counter
 */
 void score_teleport_used(void)
 {
 	printf("Teleport scoring called!\n");
-	// award 200
-	// check level_score_locked to avoid score changes after win
-	if (!level_score_locked) {
-		level_score += 200;
-	}
-}
 
+	// Prevent scoring after the level has been completed
+	if (level_score_locked)
+		return;
+
+	// Award 200 points for every successful teleport
+	level_score += 200;
+
+	teleport_score++;
+}
 /*
 save_lvl_score
 
