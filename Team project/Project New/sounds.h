@@ -13,6 +13,7 @@
    but does not include "cprocessing.h" itself. */
 
 /*****Player Ability Sounds*****/
+extern CP_Sound JumpSound;
 extern CP_Sound teleportSound;
 extern CP_Sound grabSound;
 extern CP_Sound dropSound;
@@ -33,10 +34,12 @@ extern CP_Sound loseSound;
 extern CP_Sound buttonClickSound;
 extern CP_Sound buttonHoverSound;
 
-/*****Boss Music & Sounds*****/
-extern CP_Sound bossMusic;
+/*****Boss Music & Enemy Sounds*****/
+extern CP_Sound bossMusicBGP1;
+extern CP_Sound bossMusicBGP2;
 extern CP_Sound bossAttackSound;
 extern CP_Sound bossRoarSound;
+extern CP_Sound enemy_Shoot;
 
 /*Sound Effects for Objects*/
 extern CP_Sound Treasure_Sound;
@@ -60,4 +63,5 @@ void PauseMenuMusic(int* PlayOnce);//Pause Menu
 void PlayWinSound(int* PlayOnce);//Win Menu Sound
 void PlayLoseSound(int* PlayOnce);//Lose Menu Sound
 void PlaylevelMusicP1(void);//Level Music
+void PlayBossMusicP1(int* PlayOnce);//Boss Music Part 1
 void StopMusic(int* PlayOnce);

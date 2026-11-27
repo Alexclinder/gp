@@ -297,4 +297,5 @@ extern int MainMenu_Music;
 extern int PauseMenu_Music;
 extern int Lose_Sound;
 extern int Win_Sound;
+extern int BossMusic_Play;
 

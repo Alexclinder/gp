@@ -14,6 +14,7 @@
 #include "colors.h"
 #include <math.h>
 #include "scoring.h"
+#include "sounds.h"
 
 
 // NPC Stats
@@ -196,6 +197,7 @@ void NPC_Attack(void)
         ProjectileActive = 1;
         ProjReflected = 0;          // new shot can hit the player again
         shootTimer = 0.0f;
+        CP_Sound_Play(enemy_Shoot); //Play Enemy shooting sound
     }
 }
 

@@ -374,6 +374,7 @@ void Character_MovementDefault(void) {
 
 	/* --- E: pick up (grounded + touching an object, not mid-kick) --- */
 	if (CP_Input_KeyTriggered(KEY_E) && !pickingUp && kickedObject == -1 && onGround && (heldObject = Object_Check()) != -1) {
+		CP_Sound_Play(ObjectPickupSound);//Plays sound for Object being picked up/Put down
 		pickingUp = 1;
 		carry_timer = 0.0f;
 		fromX = current_objects[heldObject][OBJ_X];
@@ -433,6 +434,7 @@ void Character_MovementDefault(void) {
 
 	/* --- Jump: only when standing on something, not during animation --- */
 	if ((CP_Input_KeyTriggered(KEY_W) || CP_Input_KeyTriggered(KEY_SPACE)) && onGround && !pickingUp) {
+		CP_Sound_Play(JumpSound);//Plays sound for When Player Jumps
 		velocity.y = -JUMP_SPEED;
 		onGround = 0;
 	}
@@ -513,6 +515,7 @@ void Character_MovementCarry(void)
 
 	/* --- E: drop (grounded only) --- */
 	if (CP_Input_KeyTriggered(KEY_E) && !dropping && onGround) {
+		CP_Sound_Play(ObjectPickupSound);//Plays sound for Object being picked up/Put down
 		float w = current_objects[heldObject][OBJ_W];
 		float h = current_objects[heldObject][OBJ_H];
 		dropping = 1;
@@ -547,6 +550,7 @@ void Character_MovementCarry(void)
 
 	/* --- Jump: only when standing on something, not during animation --- */
 	if ((CP_Input_KeyTriggered(KEY_W) || CP_Input_KeyTriggered(KEY_SPACE)) && onGround && !dropping) {
+		CP_Sound_Play(JumpSound);//Plays sound for When Player Jumps
 		velocity.y = -JUMP_SPEED;
 		onGround = 0;
 	}

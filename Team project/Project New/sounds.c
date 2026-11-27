@@ -11,6 +11,7 @@
 #include "screen_seq.h"
 
 /*****Player Ability Sounds*****/
+CP_Sound JumpSound;
 CP_Sound teleportSound;
 CP_Sound grabSound;
 CP_Sound dropSound;
@@ -32,10 +33,13 @@ CP_Sound buttonClickSound;
 CP_Sound buttonHoverSound;
 
 
-/*****Boss Music & Sounds*****/
-CP_Sound bossMusic;
+/*****Boss Music & Enemy Sounds*****/
+CP_Sound bossMusicBGP1;
+CP_Sound bossMusicBGP2;
 CP_Sound bossAttackSound;
 CP_Sound bossRoarSound;
+CP_Sound enemy_Shoot;
+
 
 /*Sound Effects for Objects*/
 CP_Sound Treasure_Sound;
@@ -54,6 +58,7 @@ void LoadSounds(void) {
 	PlayPauseMenu = CP_Sound_LoadMusic("Assets/Sounds/Music/PauseMenu.wav");
 
 	/*****Player Ability Sounds*****/
+	JumpSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Player_Jump.wav");
 	teleportSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Teleport_Sound.wav");
 	ShieldSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Shield_Sound.wav");
 
@@ -65,8 +70,12 @@ void LoadSounds(void) {
 	Treasure_Sound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Pick_up_Treasure.wav");
 	ObjectPickupSound = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Pick_Up Object.wav");
 
-	/*****Boss Music & Sounds*****/
+	/*****Boss Music & Enemy Sounds*****/
+	enemy_Shoot = CP_Sound_LoadMusic("Assets/Sounds/Sound Effects/Enemy_Shoot.wav");
+	bossMusicBGP1 = CP_Sound_LoadMusic("Assets/Sounds/Music/Boss_Music_P1.wav");
+	bossMusicBGP2 = CP_Sound_LoadMusic("Assets/Sounds/Music/Boss_Music_P2.wav");
 }
+
 
 void PlayMainMenu(int *PlayOnce) {
 
@@ -100,6 +109,15 @@ void PlayWinSound(int* PlayOnce) {
 		*PlayOnce = 0;
 	}
 }
+void PlayBossMusicP1(int* PlayOnce) {
+	if (*PlayOnce == 1) {
+		CP_Sound_PlayAdvanced(bossMusicBGP1, 0.7f, 1.0f, 1, CP_SOUND_GROUP_5);//Plays Boss Music Part 1
+		*PlayOnce = 0;
+	}
+}
+
+
+
 
 void StopMusic(int* PlayOnce) {
 	CP_Sound_StopAll();

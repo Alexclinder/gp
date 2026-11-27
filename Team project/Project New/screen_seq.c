@@ -49,6 +49,7 @@ int MainMenu_Music = 1;
 int PauseMenu_Music = 1;
 int Lose_Sound = 1;
 int Win_Sound = 1;
+int BossMusic_Play = 1;
 
 // Slide-in animation timer for the Level Select screen
 static float level_anim_time = 0.0f;
@@ -76,6 +77,7 @@ void Screen_Exit(void)
     CP_Sound_StopGroup(CP_SOUND_GROUP_3);//Stop Pause Menu Music
     PauseMenu_Music = 1; //Renable Pause Music
     Lose_Sound = 1;//Renable Lose Sound
+    BossMusic_Play = 1;//Renable Boss Sound
 
     CP_Image_Free(mainbackground);
     CP_Image_Free(defeat);
@@ -144,7 +146,8 @@ void ResetALLTimers_StatusBossLvl(void) {
 void Level_1_Init(void) { level_selected = level_1; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
 void Level_2_Init(void) { level_selected = level_2; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
 void Level_3_Init(void) { level_selected = level_3; ResetALLTimers_Status();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
-void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected); }
+void Level_4_Init(void) { level_selected = level_4; ResetALLTimers_StatusBossLvl();  Game_Init(); Player_Starting_Pos(player_spawns, level_selected); score_remove_level(level_selected); NPC_Starting_Pos(NPC_1_spawns, level_selected);
+}
 
 
 /*****************************Main Menu Screens*******************************/
@@ -254,7 +257,10 @@ SET timer to restart (start time is set again next frame)
 */
 void Game_Resume_Init(void)
 {
-    PlaylevelMusicP1();
+    if (levelselection <= 3)//Only Play Level Music for Levels 1-3
+    {
+        PlaylevelMusicP1();
+    }
     Font = CP_Font_Load("Assets/Exo2-Regular.ttf");
     color_create();
     LoadLevelImages();
@@ -267,6 +273,7 @@ void Game_Resume_Init(void)
 void Pause_Menu_Update(void)
 {
     CP_Sound_StopGroup(CP_SOUND_GROUP_2);//Stop Level Music
+    CP_Sound_StopGroup(CP_SOUND_GROUP_5);//Stop Boss Music
     PauseMenuMusic(&PauseMenu_Music);
     float rect_x = 250.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 200, 100, 0));
@@ -344,7 +351,9 @@ void Win_Screen(void) {
 
 void Lose_Screen(void) {
     CP_Sound_StopGroup(CP_SOUND_GROUP_2);//Stop Level Music
+    CP_Sound_StopGroup(CP_SOUND_GROUP_5);//Stop Boss Music
     PlayLoseSound(&Lose_Sound);
+
     float rect_y = CP_System_GetWindowHeight() / 2.0f;
     CP_Graphics_ClearBackground(CP_Color_Create(100, 100, 100, 0));
     CP_Image_Draw(defeat, (float)CP_System_GetWindowWidth() / 2.0f, (float)CP_System_GetWindowHeight() / 2.0f, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 255);

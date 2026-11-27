@@ -46,7 +46,10 @@ void Game_Init(void)
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 	TimeSet = 0;
-	PlaylevelMusicP1();
+	if (levelselection <= 3)//Only Play Level Music for Levels 1-3
+	{
+		PlaylevelMusicP1();
+	}
 }
 
 /*
@@ -73,7 +76,11 @@ IF boss level
 */
 void Game_Reset(void)
 {
-	PlaylevelMusicP1();
+	if (levelselection <=3)//Only Play Level Music for Levels 1-3
+	{
+		PlaylevelMusicP1();
+	}
+		
 	LoadLevelImages();
 	printf("Current Level Restarted: %d\n", level_selected);
 	printf("Current Player Coordinates After Level Restarted: (%.2f, %.2f)\n",
@@ -115,6 +122,7 @@ void Game_Reset(void)
 	// Boss level: reset health, lasers, platforms, camera, vent and boss.
 	// Called last so the boss level's player/NPC positions override the ones above.
 	if (level_selected == boss_level)
+		PlayBossMusicP1(&BossMusic_Play);//Play Boss Music
 		Elevator_Reset();
 }
 
@@ -220,6 +228,7 @@ void Game_Exit(void)
 	PauseMenu_Music = 1; //Renable Pause Music
 	Lose_Sound = 1;//Renable Lose Sound
 	Win_Sound = 1;//Renable Win Sound
+	BossMusic_Play = 1;//Renable Boss Sound
 	FreeLevelImages();
 	CP_Font_Free(Font);
 }

@@ -924,11 +924,8 @@ void level_3rd(void) {
 /***************** LEVEL 4: ********************/
 void level_4th(void) {
 
-
-
+	PlayBossMusicP1(&BossMusic_Play);//Play Boss Music Part 1 once and ensures no repeat playing problem
 	CP_Graphics_ClearBackground(CP_Color_Create(0, 0, 0, 255));
-
-
 
 	float dt = CP_System_GetDt();
 	killZoneX += killZoneSpeed * dt;
