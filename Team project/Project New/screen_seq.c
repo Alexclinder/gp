@@ -257,7 +257,7 @@ SET timer to restart (start time is set again next frame)
 */
 void Game_Resume_Init(void)
 {
-    if (levelselection <= level_3)//Only Play Level Music for Levels 1-3
+    if (level_selected <= level_3)//Only Play Level Music for Levels 1-3
     {
         PlaylevelMusicP1();
     }

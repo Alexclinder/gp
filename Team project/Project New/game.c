@@ -46,7 +46,7 @@ void Game_Init(void)
 	CP_System_SetFrameRate(120.0f);
 	onGround = 0;
 	TimeSet = 0;
-	if (levelselection <= level_3)//Only Play Level Music for Levels 1-3
+	if (level_selected <= level_3)//Only Play Level Music for Levels 1-3
 	{
 		PlaylevelMusicP1();
 	}
@@ -76,7 +76,7 @@ IF boss level
 */
 void Game_Reset(void)
 {
-	if (levelselection <= level_3)//Only Play Level Music for Levels 1-3
+	if (level_selected <= level_3)//Only Play Level Music for Levels 1-3
 	{
 		PlaylevelMusicP1();
 	}
