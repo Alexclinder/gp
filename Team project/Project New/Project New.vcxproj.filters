@@ -34,9 +34,6 @@
     <ClCompile Include="demonBoss.c">
       <Filter>Source Files\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="Objects.c">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Images.c" />
   </ItemGroup>
   <ItemGroup>
@@ -66,9 +63,6 @@
     </ClInclude>
     <ClInclude Include="sounds.h">
       <Filter>Header File\Assets Related</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects.h">
-      <Filter>Header File\Objects</Filter>
     </ClInclude>
     <ClInclude Include="PlayerStats.h">
       <Filter>Header File\Player</Filter>
@@ -101,12 +95,6 @@
     </Filter>
     <Filter Include="Source Files\Player">
       <UniqueIdentifier>{7fe43604-40be-41ad-9a28-ac0bba5fce7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header File\Objects">
-      <UniqueIdentifier>{37b9be20-2dd7-4f09-a853-eb70a08b6718}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Objects">
-      <UniqueIdentifier>{771e2e06-f57d-43d1-a80e-7ad1a6e64658}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
