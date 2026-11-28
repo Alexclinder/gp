@@ -30,6 +30,7 @@
 #include "sounds.h"
 #include "scoring.h"
 #include "Images.h"
+#include "elevator.h"
 #include <stdio.h>
 
 // Global variables are required for constant updates.
@@ -77,7 +78,7 @@ void Screen_Exit(void)
     CP_Sound_StopGroup(CP_SOUND_GROUP_3);//Stop Pause Menu Music
     PauseMenu_Music = 1; //Renable Pause Music
     Lose_Sound = 1;//Renable Lose Sound
-    BossMusic_Play = 1;//Renable Boss Sound
+    BossMusic_Play = 1;//Renable Boss Music
 
     CP_Image_Free(mainbackground);
     CP_Image_Free(defeat);

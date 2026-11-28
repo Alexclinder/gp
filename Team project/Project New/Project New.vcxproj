@@ -127,7 +127,6 @@ xcopy "$(SolutionDir)Extern\CProcessing\lib\x64\fmod.dll" "$(OutDir)" /s /r /y /
     <ClInclude Include="Images.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="npc_mechanics.h" />
-    <ClInclude Include="PlayerStats.h" />
     <ClInclude Include="scoring.h" />
     <ClInclude Include="screen_seq.h" />
     <ClInclude Include="sounds.h" />

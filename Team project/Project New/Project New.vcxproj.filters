@@ -4,22 +4,7 @@
     <ClCompile Include="screen_seq.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scoring.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="npc_mechanics.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="level.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game_mechanics.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="colors.c">
@@ -29,34 +14,36 @@
       <Filter>Source Files\Assets Related</Filter>
     </ClCompile>
     <ClCompile Include="elevator.c">
-      <Filter>Source Files\Boss</Filter>
+      <Filter>Source Files\Boss/Enemy</Filter>
     </ClCompile>
     <ClCompile Include="demonBoss.c">
-      <Filter>Source Files\Boss</Filter>
+      <Filter>Source Files\Boss/Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Images.c" />
+    <ClCompile Include="npc_mechanics.c">
+      <Filter>Source Files\Boss/Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Images.c">
+      <Filter>Source Files\Assets Related</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="scoring.c">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="game_mechanics.c">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="level.c">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game.h">
-      <Filter>Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="game_mechanics.h">
-      <Filter>Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="level.h">
-      <Filter>Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="npc_mechanics.h">
-      <Filter>Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="scoring.h">
-      <Filter>Header File</Filter>
-    </ClInclude>
     <ClInclude Include="screen_seq.h">
       <Filter>Header File</Filter>
     </ClInclude>
     <ClInclude Include="demonBoss.h">
-      <Filter>Header File\Boss</Filter>
+      <Filter>Header File\Boss/Enemy</Filter>
     </ClInclude>
     <ClInclude Include="colors.h">
       <Filter>Header File\Assets Related</Filter>
@@ -64,11 +51,23 @@
     <ClInclude Include="sounds.h">
       <Filter>Header File\Assets Related</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStats.h">
-      <Filter>Header File\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Images.h">
       <Filter>Header File\Assets Related</Filter>
+    </ClInclude>
+    <ClInclude Include="npc_mechanics.h">
+      <Filter>Header File\Boss/Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Header File\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="game_mechanics.h">
+      <Filter>Header File\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>Header File\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="scoring.h">
+      <Filter>Header File\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -78,28 +77,31 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{c3dc8d83-9408-4dce-8c8b-c23d95d640da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Boss">
-      <UniqueIdentifier>{16ad9848-9849-4125-a13c-f22faa44acc5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Assets Related">
       <UniqueIdentifier>{896715b3-ed2f-4c65-9b62-c91531d12143}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header File\Assets Related">
       <UniqueIdentifier>{374679b2-7f72-4f65-9cda-187fbf9c3353}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header File\Boss">
-      <UniqueIdentifier>{fac872f1-0a62-40d4-acbb-b0aeaac3ba37}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header File\Player">
       <UniqueIdentifier>{7edde7d3-2e49-4fa8-8c73-6fd0f4fe8cb1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Player">
-      <UniqueIdentifier>{7fe43604-40be-41ad-9a28-ac0bba5fce7f}</UniqueIdentifier>
+    <Filter Include="Source Files\Boss/Enemy">
+      <UniqueIdentifier>{16ad9848-9849-4125-a13c-f22faa44acc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header File\Boss/Enemy">
+      <UniqueIdentifier>{fac872f1-0a62-40d4-acbb-b0aeaac3ba37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gameplay">
+      <UniqueIdentifier>{63e64c6e-70e7-450d-8c49-33992d44a8ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header File\Gameplay">
+      <UniqueIdentifier>{ee87924f-2f03-45ec-81c4-81cf86dc2b3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="elevator.h">
-      <Filter>Header File\Boss</Filter>
+      <Filter>Header File\Boss/Enemy</Filter>
     </None>
   </ItemGroup>
 </Project>
